@@ -10,7 +10,10 @@
     char *buf;  //字符串
 };*/
 
+
 /*2A*/
+
+
 //初始化 sb 结构体，容量为 alloc
 void strbuf_init(struct strbuf *sb, size_t alloc)
 {
@@ -36,89 +39,87 @@ void strbuf_release(struct strbuf *sb)
 //交换两个 strbuf
 void strbuf_swap(struct strbuf *a, struct strbuf *b)
 {
-  int cup1,cup2,i=0;
-  char ch;
+  int cup1;
+  char*cup2;
 
-  cup1=a->len;         /*交换len*/
+  cup1=a->len;   /*交换len*/
   a->len=b->len;
   b->len=cup1;
 
-  cup2=a->alloc;       /*交换alloc*/
+  cup1=a->alloc;    /*交换alloc*/
   a->alloc=b->alloc;
-  b->alloc=cup2;
+  b->alloc=cup1;
 
-  while(*(a->buf+i)!='\0')  /*交换字符串*/
-  {
-    ch=*(a->buf+i);
-    *(a->buf+i)=*(b->buf+i);
-    *(b->buf+i)=ch;
-    i++;
-  }
+  cup2=a->buf;  /*交换字符串*/
+  a->buf=b->buf;
+  b->buf=cup2;
 }
 
 //将 sb 中的原始内存取出，并获得其长度
-/*理解：
-返回buf的内存地址
-长度返给sz
-重置结构体（最简单的free掉重新init，但应该还有其他方法）
-*/
 char *strbuf_detach(struct strbuf *sb, size_t *sz)
 {
-  return sb->buf; /*输出还是return不太确定*/
-  sz=(size_t*)sb->len;
-  free(sb->buf);
-  void strbuf_init(struct strbuf *sb, size_t alloc);
+  char *ss;
+  ss= sb->buf;
+  *sz = sb->alloc;
+  strbuf_init(sb, 0);
+  return ss;
 }
 
 //比较两个 strbuf 的内存是否相同
+/*相同返0*/
 int strbuf_cmp(const struct strbuf *first, const struct strbuf *second)
 {
-  if(sizeof((struct strbuf) *first)==sizeof((struct strbuf )*second))
-  {
-    printf("相同\n");
-  }else printf("不同\n");
+    if(first->len>second->len)
+        return 1;
+    else if(first->len<second->len)
+        return -1;
+    else
+        return 0;
 }
 
 //清空 sb
 void strbuf_reset(struct strbuf *sb)
 {
-  memset(&sb,0,sizeof(sb));  /*函数memset(&struct_name,0,sizeof(struct_name))*/
+  strbuf_init(sb, sb->alloc);
+  sb->buf=(char*)realloc(sb->buf,sb->alloc);
 }
+
 
 
 /*2B*/
+
+
 //将 sb 的长度扩大 extra
 void strbuf_grow(struct strbuf *sb, size_t extra)
 {
-  sb->len=sb->len+extra;
+  sb->buf=(char*)realloc(sb->buf,extra);
+  sb->alloc=sb->len+extra;
 }
 
 //向 sb 追加长度为 len 的数据 data
-/*和attach有点像*/
 void strbuf_add(struct strbuf *sb, const void *data, size_t len)
 {
-  int n;
-  sb->len=sb->len+len;
-  if(sb->len>=sb->alloc)
+  if(data==NULL)
+    return;
+
+	int num=sb->alloc;
+	int mix=sb->len+len;
+
+	if (num<mix)
   {
-    printf("想要扩充空间为原来的几倍？：\n");
-    scanf("%d",&n);
-    sb->alloc=sb->alloc*n;
-    sb->buf=(char*)malloc(sizeof(char)*sb->alloc);
+		strbuf_grow(sb,len+sb->len);
   }
-  strcat(sb->buf,(char*)data);
+	strcat(sb->buf,(char*)data);
+  sb->len=mix;
 }
 
 //向 sb 追加一个字符 c
 void strbuf_addch(struct strbuf *sb, int c)
 {
-  int n;
   sb->len+=1;
   if(sb->len>=sb->alloc)
   {
-    printf("想要扩充空间为原来的几倍？：\n");
-    scanf("%d",&n);
-    sb->alloc=sb->alloc*n;
+    sb->alloc=sb->alloc*2;
     sb->buf=(char*)malloc(sizeof(char)*sb->alloc);
   }
   strcat(sb->buf,(char*)c);
@@ -128,7 +129,6 @@ void strbuf_addch(struct strbuf *sb, int c)
 /*和strbuf_add*/
 void strbuf_addstr(struct strbuf *sb, const char *s)
 {
-  int n;
   sb->len=sb->len+strlen(s);
   if(sb->len>=sb->alloc)
   {
@@ -141,13 +141,10 @@ void strbuf_addstr(struct strbuf *sb, const char *s)
 //向一个 sb 追加另一个 strbuf的数据
 void strbuf_addbuf(struct strbuf *sb, const struct strbuf *sb2)
 {
-  int n;
   sb->len=sb->len+sb2->len;
   if(sb->len>=sb->alloc)
   {
-    printf("想要扩充空间为原来的几倍？：\n");
-    scanf("%d",&n);
-    sb->alloc=sb->alloc*n;
+    sb->alloc=sb->alloc*2;
     sb->buf=(char*)malloc(sizeof(char)*sb->alloc);
   }
   strcat(sb->buf,sb2->buf);
