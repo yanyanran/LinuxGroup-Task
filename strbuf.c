@@ -99,102 +99,103 @@ void strbuf_grow(struct strbuf *sb, size_t extra)
 //向 sb 追加长度为 len 的数据 data
 void strbuf_add(struct strbuf *sb, const void *data, size_t len)
 {
-  if(data==NULL)
-    return;
-
-	int num=sb->alloc;
-	int mix=sb->len+len;
-
-	if (num<mix)
-  {
-		strbuf_grow(sb,len+sb->len);
-  }
-	strcat(sb->buf,(char*)data);
-  sb->len=mix;
+    if(data==NULL)
+    {
+      return;
+    }
+    if(sb->len+len>=sb->alloc)
+    {
+        sb->buf=(char *)realloc(sb->buf,sb->len+len+1);
+        sb->alloc=sb->len+len+1;
+    }
+    memcpy(sb->buf+sb->len,data,len);
+    sb->len+=len;
+    sb->buf[sb->len]='\0';
 }
 
 //向 sb 追加一个字符 c
 void strbuf_addch(struct strbuf *sb, int c)
 {
-  sb->len+=1;
-  if(sb->len>=sb->alloc)
+  if(sb->len+2>=sb->alloc)
   {
     sb->alloc=sb->alloc*2;
-    sb->buf=(char*)malloc(sizeof(char)*sb->alloc);
+    sb->buf=(char*)realloc(sb->buf,sizeof(char)*(sb->alloc)*2);
   }
-  strcat(sb->buf,(char*)c);
+  memcpy(sb->buf+sb->len,&c,2);
+  sb->len++;
 }
 
 //向 sb 追加一个字符串 s
 /*和strbuf_add*/
 void strbuf_addstr(struct strbuf *sb, const char *s)
 {
-  sb->len=sb->len+strlen(s);
-  if(sb->len>=sb->alloc)
+  strbuf_add(sb, s, strlen(s));
+  sb->buf[sb->len] = '\0';
+  /*sb->len=sb->len+strlen(s);
+  if(sb->len+1>=sb->alloc)
   {
-    sb->alloc=sb->alloc*2;
-    sb->buf=(char*)malloc(sizeof(char)*sb->alloc);
+    sb->alloc=sb->len;
+    sb->buf=(char*)realloc(sb->buf,sb->alloc+1);
   }
-  strcat(sb->buf,s);
+  strcat(sb->buf,s);*/
 }
 
 //向一个 sb 追加另一个 strbuf的数据
 void strbuf_addbuf(struct strbuf *sb, const struct strbuf *sb2)
 {
-  sb->len=sb->len+sb2->len;
-  if(sb->len>=sb->alloc)
-  {
-    sb->alloc=sb->alloc*2;
-    sb->buf=(char*)malloc(sizeof(char)*sb->alloc);
-  }
-  strcat(sb->buf,sb2->buf);
+  strbuf_addstr(sb,sb2->buf);
 }
 
 //设置 sb 的长度 len
 void strbuf_setlen(struct strbuf *sb, size_t len)
 {
   sb->len=len;
+  sb->buf[sb->len]='\0';
 }
 
 //计算 sb 目前仍可以向后追加的字符串长度
 size_t strbuf_avail(const struct strbuf *sb)
 {
-  int remain;
-  remain=sb->alloc-sb->len;
-  printf("%d",remain);
+  if(sb->alloc==0)
+  {
+    return 0;
+  }else
+  {
+  int remain=(sb->alloc)-(sb->len)-1;
   return remain;
+  }
 }
 
 //向 sb 内存坐标为 pos 位置插入长度为 len 的数据 data
-/*0000000000000000000000000000000000000000000000000000000000000000000000000
-pos超过len/pos没超过len
-*/
 void strbuf_insert(struct strbuf *sb, size_t pos, const void *data, size_t len)
 {
-  int i,j;
-  /*先对pos判断*/
-    if(pos>sb->len)  //pos超过len
-      sb->len=pos+len;
-    else sb->len+=len; //pos没超过len
-
-    char *temp=(char*)malloc(sizeof(char)*(sb->len));
-
-    if(pos<sb->len-len)
-    {
-      for(i=0;i<sb->len;i++)
-        *(temp+i)=*((sb->buf)+pos +i);
-    }
-    //.....
+  int n_len=len+sb->len;
+	int n_alloc=sb->alloc;
+//判断内存是否足够，内存不够扩大长度
+	if(n_alloc<sizeof(char)*n_len)
+	{
+		strbuf_grow(sb, sizeof(char*)*len);
+  }
+//分段重置
+	for(int i=sb->len;i>=pos;i--)  
+	{
+		sb->buf[i+len]=sb->buf[i];
+	}
+	for(int j=0,k=pos;j<len;j++,k++)
+	{
+		sb->buf[k]=((char*)data)[j];
+	}
+	sb->len=n_len;
 }
 
 
 /*2C*/
-//去除 sb 缓冲区左端的所有 空格，tab, '\t'
+
+//去除 sb 缓冲区右端的所有 空格，tab, '\t'
 void strbuf_rtrim(struct strbuf *sb)
 {
-  int num,i;
-  char *temp =(char*)malloc(sizeof(char)*sb->alloc);
-  num=0;
+  /*int num=0,i;
+  char *temp=(char*)malloc(sizeof(char)*(sb->len));
   for(i=0;i<sb->len;i++)  //遍历
   {
     if(*(sb->buf+i)!=' '&&*(sb->buf+i)!='  '&&*(sb->buf+i)!='\t')
@@ -204,47 +205,75 @@ void strbuf_rtrim(struct strbuf *sb)
     }
   }
   sb->len=num;
-  sb->buf=temp;
+  sb->buf=temp;*/
+  //遍历识别到存在删除项时让长度减1，完了直接在长度末尾结束字符串
+  while(sb->buf[sb->len-1]==' '||sb->buf[sb->len-1]=='\t')
+  {
+    sb->len--; 
+  }
+  sb->buf[sb->len]='\0';
 }
 
-//去除 sb 缓冲区右端的所有 空格，tab, '\t'
+//去除 sb 缓冲区左端的所有 空格，tab, '\t'
 void strbuf_ltrim(struct strbuf *sb)  //遇到就变成\0
 {
-  int i;
+  /*int i;
   for(i=sb->len;i<sb->alloc;i++)
   {
     if(*(sb->buf+i)==' '||*(sb->buf+i)=='  '||*(sb->buf+i)=='\t')
     {
       *(sb->buf+i)='\0';
     }
+  }*/
+  char *s=sb->buf;
+  while(*s=='\t'||*s==' ')
+  {
+    sb->len--;
+    s++;
   }
+  memmove(sb->buf,s,sb->len);//保证不重叠
 }
 
 //删除 sb 缓冲区从 pos 坐标长度为 len 的内容
-/*和strbuf_rtrim相似*/
 void strbuf_remove(struct strbuf *sb, size_t pos, size_t len)
 {
-  int num,i;
-  char *temp =(char*)malloc(sizeof(char)*sb->alloc);
-  num=0;
+  /*int num=0,i;
+  char *temp =(char*)malloc(sizeof(char)*sb->len);
   for(i=0;i<sb->len;i++)
   {
-    if(*(sb -> buf + i)!='\0')  //判断条件变一下
+    if(*(sb -> buf + i)!='\0')
     {
       *(temp+num)=*(sb->buf+i);
       num++;
     }
   }
   sb->len=num;
-  sb->buf=temp;
+  sb->buf=temp;*/
+  memmove(sb->buf+pos,sb->buf+pos+len,sb->len-pos-len);
+  sb->len=sb->len-len;
 }
 
 
 /*2D*/
+
+
 //为 sb 直接扩容 hint ? hint : 8192 大小， 然后将文件描述符为 fd 的所有文件内容读取到 sb 中
 ssize_t strbuf_read(struct strbuf *sb, int fd, size_t hint)
 {
-
+      FILE *fp;
+    char e;
+    if(((fp=fdopen(fd,"r"))==NULL)||(e=fgetc(fp))==EOF)    //fdopen()会将参数fildes 的文件描述词, 转换为对应的文件指针后返回
+        return sb->len;
+    else {
+        sb->alloc+=(hint?hint:8192);
+        sb->buf=(char*)realloc(sb->buf,sizeof(char)*(sb->alloc));
+        sb->buf[sb->len++]=e;
+        while((e=fgetc(fp))!=EOF) {  // 持续赋值
+            sb->buf[sb->len]=e;
+            sb->len++;
+        }
+        sb->buf[sb->len]='\0';  // !
+        return sb->len;
 }
 
 //为 sb 直接扩容 hint ? hint : 8192 大小， 然后将路径为 path 的所有文件内容读取到 sb 中
@@ -261,6 +290,8 @@ int strbuf_getline(struct strbuf *sb, FILE *fp)
 
 
 /*CHALLENGE*/
+
+
 //将长度为 len 的字符串 str 根据切割字符 terminator 切成多个 strbuf,并从结果返回，max 可以用来限定最大切割数量
 struct strbuf **strbuf_split_buf(const char *str, size_t len, int terminator, int max)
 {
