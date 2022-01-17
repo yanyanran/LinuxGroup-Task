@@ -260,52 +260,49 @@ void strbuf_remove(struct strbuf *sb, size_t pos, size_t len)
 //为 sb 直接扩容 hint ? hint : 8192 大小， 然后将文件描述符为 fd 的所有文件内容读取到 sb 中
 ssize_t strbuf_read(struct strbuf *sb, int fd, size_t hint)
 {
-      FILE *fp;
-    char e;
-    if(((fp=fdopen(fd,"r"))==NULL)||(e=fgetc(fp))==EOF)    //fdopen()会将参数fildes 的文件描述词, 转换为对应的文件指针后返回
-        return sb->len;
-    else {
-        sb->alloc+=(hint?hint:8192);
-        sb->buf=(char*)realloc(sb->buf,sizeof(char)*(sb->alloc));
-        sb->buf[sb->len++]=e;
-        while((e=fgetc(fp))!=EOF) {  // 持续赋值
-            sb->buf[sb->len]=e;
-            sb->len++;
-        }
-        sb->buf[sb->len]='\0';  // !
-        return sb->len;
+  int o_len,o_alloc,f,r;
+  char*o_buf;
+  o_len=sb->len;
+  o_alloc=sb->alloc;
+  strbuf_grow(sb,hint);
+  char*num= sb->buf+sb->len;
+  while(r=read(fd,num,hint))
+  {
+    if(r==0)
+      break;
+    f=r;
+    sb->len=sb->len+f;
+  }
+  if(sb->len==o_len)
+  {
+    sb->alloc=o_alloc;
+  }else{
+    sb->buf[sb->len]='\0';
+  }
+  return 1;
 }
 
-//为 sb 直接扩容 hint ? hint : 8192 大小， 然后将路径为 path 的所有文件内容读取到 sb 中
-ssize_t strbuf_read_file(struct strbuf *sb, const char *path, size_t hint)
-{
-
-}
-
-//将 将文件句柄为 fp 的一行内容读取到 sb
+//将文件句柄为 fp 的一行内容读取到 sb
 int strbuf_getline(struct strbuf *sb, FILE *fp)
 {
+  int cnt=0,i;
+  while(1)
+  {
+    if(((i=fgetc(fp))==EOF)||i=='\n')
+      break;  //读取到行结束或文件结尾跳出
 
-}
+    if(strbuf_avail(sb)>=1)  //可追加字符数量达标
+    {
+      strbuf_addch(sb,i); 
+      cnt++;
+    }else if(strbuf_avail(sb)<1)
+    {
+      sb->buf=(char*)realloc(sb->buf,sizeof(char)*(sb->alloc+1));
+      strbuf_addch(sb,i); 
+      cnt++;
+    }
 
-
-/*CHALLENGE*/
-
-
-//将长度为 len 的字符串 str 根据切割字符 terminator 切成多个 strbuf,并从结果返回，max 可以用来限定最大切割数量
-struct strbuf **strbuf_split_buf(const char *str, size_t len, int terminator, int max)
-{
-
-}
-
-//target_str : 目标字符串，str : 前缀字符串，strlen : target_str 长度 ，前缀相同返回 true 失败返回 false
-bool strbuf_begin_judge(char* target_str, const char* str, int strlen)
-{
-
-}
-
-//target_str : 目标字符串，begin : 开始下标，end 结束下标。len : target_buf的长度，参数不合法返回 NULL. 下标从0开始，[begin, end]区间
-char* strbuf_get_mid_buf(char* target_buf, int begin, int end, int len)
-{
-
+  }
+  sb->len=cnt;
+  return 1;
 }
