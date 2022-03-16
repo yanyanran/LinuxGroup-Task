@@ -1,13 +1,13 @@
 /*
--a 列出目录下的所有文件，包括以.开头的隐含文件
--l 列出文件的详细信息（包括文件属性和权限等）
--R 使用递归连同目录中的子目录中的文件显示出来，如果要显示隐藏文件就要添加-a参数
+***-a 列出目录下的所有文件，包括以.开头的隐含文件
+***-l 列出文件的详细信息（包括文件属性和权限等）
+***-R 使用递归连同目录中的子目录中的文件显示出来，如果要显示隐藏文件就要添加-a参数
    （列出所有子目录下的文件）
--t 以时间排序
--r 对目录反向排序
--i 输出文件的i节点的索引信息
--s 在每个文件名后输出该文件的大小
-*/
+-t 按修改时间进行排序，先显示最后编辑的文件
+-r 对目录反向排序（以目录的每个首字符所对应的ASCII值进行大到小排序）
+***-i 输出文件的i节点的索引信息
+-s 在每个文件名后输出该文件的大小*/
+
 #include<stdio.h>
 #include<sys/types.h>
 #include<sys/stat.h>
@@ -37,16 +37,16 @@ static char *buf_cat(const char *path, const char *name)
     strcat(bufcat,name);
     return bufcat;
 }
+
 // 判断是否为隐藏文件
 static int hide(const char *path)
 {
-    if(*path == '.')
-        return 1;
-    else
-        return 0;
+    if(*path == '.') return 1;
+    else return 0;
 }
 
-int ls_l_1(const char *path,const char *name){
+int ls_l_1(const char *path,const char *name) //列信息（ls-l）
+{
     struct stat mystat;
     struct passwd *pwd = NULL;
     struct tm *tmp = NULL;
@@ -55,14 +55,18 @@ int ls_l_1(const char *path,const char *name){
 
     buf = buf_cat(path,name);
 
-    if(lstat(buf, &mystat) == -1){
-        perror("stat()");
+    if(lstat(buf, &mystat) == -1)
+    {
+        //perror()输出错误原因
+        perror("stat()");//stat()获取文件信息，成功获取返回0,失败返回-1
         return 1;
     }
 
-    if(hide(name) == 0){
+    if(hide(name) == 0)
+    {
         num +=mystat.st_blocks/2;
-        switch(mystat.st_mode & S_IFMT){
+        switch(mystat.st_mode & S_IFMT)
+        {
             case S_IFREG:
                 printf("-");
                 break;
@@ -97,8 +101,10 @@ int ls_l_1(const char *path,const char *name){
             putchar('w');
         else
             putchar('-');
-        if(mystat.st_mode & S_IXUSR){
-            if(mystat.st_mode &S_ISUID){
+        if(mystat.st_mode & S_IXUSR)
+        {
+            if(mystat.st_mode &S_ISUID)
+            {
                 putchar('s');
             }else
                 putchar('x');
@@ -113,8 +119,10 @@ int ls_l_1(const char *path,const char *name){
             putchar('w');
         else
             putchar('-');
-        if(mystat.st_mode & S_IXGRP){
-            if(mystat.st_mode &S_ISGID){
+        if(mystat.st_mode & S_IXGRP)
+        {
+            if(mystat.st_mode &S_ISGID)
+            {
                 putchar('s');
             }else
                 putchar('x');
@@ -129,8 +137,10 @@ int ls_l_1(const char *path,const char *name){
             putchar('w');
         else
             putchar('-');
-        if(mystat.st_mode & S_IXOTH){
-            if(mystat.st_mode &S_ISVTX){
+        if(mystat.st_mode & S_IXOTH)
+        {
+            if(mystat.st_mode &S_ISVTX)
+            {
                 putchar('t');
             }else
                 putchar('x');
@@ -152,15 +162,13 @@ int ls_l_1(const char *path,const char *name){
 
         //获取文件时间
         tmp = localtime(&mystat.st_mtim.tv_sec);
-        //if error
-        if(tmp == NULL)
-            return 1;
+        //错误
+        if(tmp == NULL) return 1;
         strftime(buf, SIZE, "%m月  %d %H:%M",tmp);
         printf("%s ", buf);
 
         //文件名
         printf("%s ", name);
-
         putchar('\n');
     }
     return 0;
@@ -173,30 +181,36 @@ int ls_l(const char *path)
     struct dirent *entry = NULL;
     char buf[SIZE] = {};
     struct stat sstat;
-    if(lstat(path,&sstat) == -1){
+    if(lstat(path,&sstat) == -1)//如果错误
+    {
         perror("stat()");
         return 1;
     }
-    if(S_ISREG(sstat.st_mode)){
+    if(S_ISREG(sstat.st_mode))
+    {
         ls_l_1(".", path);
     }else{
         dp = opendir(path);
-        if(dp == NULL){
+        if(dp == NULL)
+        {
             perror("opendir()");
             return 1;
         }
 
-        while(1){
+        while(1)
+        {
             entry = readdir(dp);
-            if(NULL == entry){
-                if(errno){
+            if(NULL == entry)
+            {
+                if(errno)
+                {
                     perror("readdir()");
                     closedir(dp);
                     return 1;
                 }
                 break;
             }
-            ls_l_1(path, entry->d_name);
+            ls_l_1(path, entry->d_name); //成功打印信息
         }
         printf("总用量：%d\n", num);
         closedir(dp);
@@ -222,7 +236,7 @@ int ls_i(const char *path)
     strcpy(buf,path);
     strcat(buf,"/*");
     glob(buf,0,NULL,&myglob);
-    //  memset(buf,'\0',BUFFSIZE);
+
     for(int i=0;i<myglob.gl_pathc;i++)
     {
         if(lstat(((myglob.gl_pathv)[i]),&mystat)<0)
@@ -278,19 +292,97 @@ int ls_a(const char *path)
     return 0;
 }
 
+//显示文件大小和最后修改时间（-s -t）
+/*static int get_file_size_time (const char *filename)
+{
+    struct stat statbuf;
+    if(stat(filename, &statbuf)==-1)
+    {
+        printf("Get stat on %s Error：%s\n", filename, strerror (errno));
+        return -1;
+    }
+    if(S_ISDIR(statbuf.st_mode)) return 1;
+    if(S_ISREG(statbuf.st_mode))
+    {
+        printf("%s size：%ld bytes\tmodified at %s",filename, statbuf.st_size, ctime(&statbuf.st_mtime));
+        return 0;
+    }
+}
+
+int main(int argc, char **argv)
+{
+    DIR *dirp;
+    struct dirent *direntp;
+    int stats;
+    if(argc != 2)
+    {
+      printf ("Usage：%s filename\n\a", argv[0]);
+      exit (1);
+    }
+    if(((stats = get_file_size_time (argv[1])) == 0) || (stats == -1))
+    exit(1);
+    if((dirp = opendir (argv[1])) == NULL)
+    {
+        printf ("Open Directory %s Error：%s\n", argv[1], strerror(errno));
+        exit (1);
+    }
+    while((direntp = readdir (dirp)) != NULL)
+    if(get_file_size_time (direntp ->d_name) == -1) break;
+    closedir(dirp);
+    exit(1);
+}*/
+
+//ls -R
+int ls_R(char *basePath)
+{
+    DIR *dir;
+    struct dirent *ptr;
+    char base[1000];
+
+    if ((dir=opendir(basePath))==NULL)//错误
+    {
+        perror("error");
+        exit(1); //退出
+    }
+
+    while ((ptr=readdir(dir)) != NULL)
+    {
+        if(strcmp(ptr->d_name,".")==0 || strcmp(ptr->d_name,"..")==0)    //current dir OR parrent dir
+            continue;
+        else if(ptr->d_type == 8)    ///文件
+            printf("d_name:%s/%s\n",basePath,ptr->d_name);
+        else if(ptr->d_type == 10)    ///链接文件
+            printf("d_name:%s/%s\n",basePath,ptr->d_name);
+        else if(ptr->d_type == 4)    ///目录
+        {
+            memset(base,'\0',sizeof(base));
+            strcpy(base,basePath);
+            strcat(base,"/");
+            strcat(base,ptr->d_name);
+            ls_R(base);
+        }
+    }
+    closedir(dir);
+    return 1;
+}
+
+
 int main(int argc, char *argv[])
 {
+    DIR *dir;
+    char basePath[1000];
     int c;
     char *optstring ="-l::a::i::h::";
 
     if(argc < 2)
         return 1;
 
-    while(1){
+    while(1)
+    {
         c =getopt(argc, argv, optstring);
-        if(c == -1)
-            break;
-        switch (c) {
+        if(c == -1) break;
+        switch (c)
+        {
             case 'l':
                 ls_l(argv[2]);
                 break;
@@ -300,10 +392,15 @@ int main(int argc, char *argv[])
             case 'i':
                 ls_i(argv[2]);
                 break;
+            case 'R':
+                memset(argv[2],'\0',sizeof(argv[2]));
+                getcwd(argv[2], 999);
+                printf("现在的目录是: %s\n",argv[2]);
+                ls_R(argv[2]);
+                break;
             case '?':
                 printf("不认识此选项%s\n", argv[optind -1]);
                 break;
-        //    case 1:printf("%s\n", argv[optind -1]);break;
             default:
                 break;
         }
