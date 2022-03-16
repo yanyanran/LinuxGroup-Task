@@ -7,7 +7,6 @@
 -r 对目录反向排序（以目录的每个首字符所对应的ASCII值进行大到小排序）
 ***-i 输出文件的i节点的索引信息
 -s 在每个文件名后输出该文件的大小*/
-
 #include<stdio.h>
 #include<sys/types.h>
 #include<sys/stat.h>
