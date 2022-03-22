@@ -331,20 +331,20 @@ int main(int argc, char *argv[])
 
     if(argc < 2) return 1;
     c =getopt(argc, argv, optstring); //解析命令行选项参数
-    printf("%d",c);
+    //printf("%d",c);
     switch(c)
     {
         case 'l':
-            ls_l(argv[2]);
+            ls_l(optstring);
             break;
         case 'a':
-            ls_a(argv[2]);
+            ls_a(optstring);
             break;
         case 'i':
-            ls_i(argv[2]);
+            ls_i(optstring);
             break;
         case 'R':
-            ls_R(argv[2]);
+            ls_R(optstring);
             break;
         default:
             printf("不认识此选项\n");
