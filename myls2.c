@@ -7,6 +7,8 @@
 ***-r 对目录反向排序（以目录的每个首字符所对应的ASCII值进行大到小排序）
 ***-i 输出文件的i节点的索引信息
 -s 在每个文件名后输出该文件的大小*/
+#include "command_execute.h"
+#include "command_input.h"
 #include<stdio.h>
 #include<sys/types.h>
 #include<sys/stat.h>
@@ -20,225 +22,357 @@
 #include<glob.h>
 #include<stdlib.h>
 
-#define SIZE 1024
-#define PARAM_NONE 0
-#define PARAM_A    1              //参数a
-#define PARAM_L    2              //参数l
-#define PARAM_I    4              //参数i
-#define PARAM_R    8              //参数r
-#define PARAM_T    16             //参数t
-#define PARAM_RR   32             //参数R
-#define PARAM_S    64             //参数s
-#define MAXROWLEN  155            //每行所用最大格数
- 
-int g_maxlen;                     //最长文件名长度
-int g_leave_len = MAXROWLEN;
-int total = 0;                    //文件的大小总和
-int h = 0;                        //每行已输出文件名的个数，用来判断是否换行
-int han = 4;                      //一行输出文件名的个数
-
-static int num;
-
-static char *buf_cat(const char *path, const char *name)
+/*命令判断函数
+ready_command传入待比较的命令 ，n_comm传入需要比较的命令，ready_size传入前缀已经匹配的字符串*/
+bool command_explain(const char *ready_command, const char *n_comm)
 {
-    char *bufcat = malloc(SIZE);
-    memset(bufcat,'\0',SIZE);
-    strcpy(bufcat,path);
-    strcat(bufcat,"/");
-    strcat(bufcat,name);
-    return bufcat;
-}
-
-// 判断是否为隐藏文件
-static int hide(const char *path)
-{
-    if(*path == '.') return 1;
-    else return 0;
-}
-
-int ls_l_1(const char *path,const char *name) //列信息（ls-l）
-{
-    struct stat mystat;
-    struct passwd *pwd = NULL;
-    struct tm *tmp = NULL;
-    struct group *grp = NULL;
-    char *buf = NULL;
-
-    buf = buf_cat(path,name);
-
-    if(lstat(buf, &mystat) == -1)
+    int r_size = strlen(ready_command);
+    int n_size = strlen(n_comm);
+    if (r_size != n_size)
     {
-        //perror()输出错误原因
-        perror("stat()");//stat()获取文件信息，成功获取返回0,失败返回-1
-        return 1;
+        return false;
+    }
+    int i = 0;
+    for (i = 0; i < r_size; i++)
+    {
+        if (ready_command[i] != n_comm[i])
+        {
+            return false;
+        }
+    }
+    return true;
+}
+void listdir_choice(const char *command)
+{
+    if (command_explain("ls",command)||command_explain("ls -a",command)||command_explain("ls -c", command))
+    {
+        ls();
+    }
+    else if(command_explain("ls -al",command))
+    {
+        ls__al();
+    }
+    else if((!command_explain("ls -al ",command)))
+    {
+        ls_al_filename(command);
+    }
+}
+void ls()
+{
+    DIR *dir;
+    struct dirent *ptr;
+    char ch = '0';
+    char buf[32] = {0};
+    char pathname_buf[256];
+    getcwd(pathname_buf,sizeof(pathname_buf));
+    //获取当前路径
+    dir=opendir(pathname_buf);
+    struct stat s_buf;
+    int stat_buf;
+    int i=0;
+    while ((ptr = readdir(dir)) != NULL)
+    {
+        stat_buf=stat(ptr->d_name, &s_buf);
+        if (S_ISDIR(s_buf.st_mode))
+        {
+            //目录文件打印
+            color_set(BLUE);
+            printf("%-20s", ptr->d_name);
+            i++;
+        }
+        else if (s_buf.st_mode & S_IXGRP)
+        {
+            //可执行文件打印
+            color_set(GREEN);
+            printf("%-20s", ptr->d_name);
+            i++;
+        }
+        else if (S_ISREG(s_buf.st_mode))
+        {
+            //普通文件打印
+            color_set(WHITE);
+            printf("%-20s", ptr->d_name);
+            i++;
+        }
+        if (i==5) //对齐换行
+        {
+            printf("\n");
+            i=0;
+        }
+    }
+    printf("\n");
+    closedir(dir);
+}
+
+void ls__al()
+{
+    struct stat s_buf;
+    char name[128];
+    DIR *dir;
+
+    char pathname_buf[256];
+    getcwd(pathname_buf, sizeof(pathname_buf));
+
+    //获取当前路径
+    dir=opendir(pathname_buf);
+    struct dirent *ptr;
+    while ((ptr=readdir(dir)) != NULL)
+    {
+        lstat(ptr->d_name,&s_buf);
+        ls_al_ana(&s_buf,ptr->d_name);
+        printf("\n");
+    }
+    closedir(dir);
+}
+
+//-al命令对文件的仔细分析
+void ls_al_ana(struct stat *buf, const char *file_name)
+{
+    //文件属性
+    if (S_ISLNK(buf->st_mode))
+    {
+        printf("l"); //链接文件
+    }
+    else if (S_ISREG(buf->st_mode))
+    {
+        printf("-"); //文件
+    }
+    else if (S_ISCHR(buf->st_mode))
+    {
+        printf("d"); //目录文件
+    }
+    else if (S_ISDIR(buf->st_mode))
+    {
+        printf("c"); //串行端口设备
+    }
+    else if (S_ISFIFO(buf->st_mode))
+    {
+        printf("f"); //FIFO文件
+    }
+    else if (S_ISSOCK(buf->st_mode))
+    {
+        printf("s"); //套接字文件
     }
 
-    if(hide(name) == 0)
+    //文件权限
+
+    // 1.拥有者权限打印
+    if (buf->st_mode & S_IRGRP)
     {
-        num +=mystat.st_blocks/2;
-        switch(mystat.st_mode & S_IFMT)
-        {
-            case S_IFREG:
-                printf("-");
-                break;
-            case S_IFBLK:
-                printf("b");
-                break;
-            case S_IFDIR:
-                printf("d");
-                break;
-            case S_IFCHR:
-                printf("c");
-                break;
-            case S_IFSOCK:
-                printf("s");
-                break;
-            case S_IFLNK:
-                printf("l");
-                break;
-            case S_IFIFO:
-                printf("p");
-                break;
-            default:
-                break;
-        }
-
-        //所有者权限
-        if(mystat.st_mode & S_IRUSR)
-            putchar('r');
-        else
-            putchar('-');
-        if(mystat.st_mode & S_IWUSR)
-            putchar('w');
-        else
-            putchar('-');
-        if(mystat.st_mode & S_IXUSR)
-        {
-            if(mystat.st_mode &S_ISUID)
-            {
-                putchar('s');
-            }else
-                putchar('x');
-        }else
-            putchar('-');
-
-        //所属组权限
-        if(mystat.st_mode & S_IRGRP)
-            putchar('r');
-        else
-            putchar('-');
-        if(mystat.st_mode & S_IWGRP)
-            putchar('w');
-        else
-            putchar('-');
-        if(mystat.st_mode & S_IXGRP)
-        {
-            if(mystat.st_mode &S_ISGID)
-            {
-                putchar('s');
-            }else
-                putchar('x');
-        }else
-            putchar('-');
-
-        //其他人权限
-        if(mystat.st_mode & S_IROTH)
-            putchar('r');
-        else
-            putchar('-');
-        if(mystat.st_mode & S_IWOTH)
-            putchar('w');
-        else
-            putchar('-');
-        if(mystat.st_mode & S_IXOTH)
-        {
-            if(mystat.st_mode &S_ISVTX)
-            {
-                putchar('t');
-            }else
-                putchar('x');
-        }else
-            putchar('-');
-
-        //硬链接
-        printf(" %ld ",mystat.st_nlink);
-
-        //文件拥有者名
-        pwd = getpwuid(mystat.st_uid);
-        printf("%s ", pwd->pw_name);
-
-        //文件所属组
-        grp = getgrgid(mystat.st_gid);
-        printf("%s ",grp->gr_name);
-
-        //总字节个数
-        printf("%ld ", mystat.st_size);
-
-        //获取文件时间
-        tmp = localtime(&mystat.st_mtim.tv_sec);
-
-        //错误
-        if(tmp == NULL) return 1;
-        strftime(buf, SIZE, "%m月  %d %H:%M",tmp);
-        printf("%s ", buf);
-
-        //文件名
-        printf("%s ", name);
-        putchar('\n');
+        printf("r");
     }
-    return 0;
+    else
+    {
+        printf("-");
+    }
+
+    if (buf->st_mode & S_IWGRP)
+    {
+        printf("w");
+    }
+    else
+    {
+        printf("-");
+    }
+
+    if (buf->st_mode & S_IXGRP)
+    {
+        printf("x");
+    }
+    else
+    {
+        printf("-");
+    }
+
+    // 2.用户组权限打印
+    if (buf->st_mode & S_IRGRP)
+    {
+        printf("r");
+    }
+    else
+    {
+        printf("-");
+    }
+    if (buf->st_mode & S_IWGRP)
+    {
+        printf("w");
+    }
+    else
+    {
+        printf("-");
+    }
+    if (buf->st_mode & S_IXGRP)
+    {
+        printf("x");
+    }
+    else
+    {
+        printf("-");
+    }
+
+    // 3.其他用户权限打印
+    if (buf->st_mode & S_IROTH)
+    {
+        printf("r");
+    }
+    else
+    {
+        printf("-");
+    }
+    if (buf->st_mode & S_IWOTH)
+    {
+        printf("w");
+    }
+    else
+    {
+        printf("-");
+    }
+    if (buf->st_mode & S_IXOTH)
+    {
+        printf("x");
+    }
+    else
+    {
+        printf("-");
+    }
+
+    // 空格打印
+    printf("  ");
+
+    struct passwd *psd = getpwuid(buf->st_uid);
+    struct group *grp = getgrgid(buf->st_gid);
+
+    printf("%-3ld", buf->st_nlink);
+    printf("%-8s", psd->pw_name);
+    printf("%-8s", grp->gr_name);
+
+    printf("%6ld", buf->st_size);
+    char buf_time[32];
+    strcpy(buf_time, ctime(&(buf->st_mtime)));
+    buf_time[strlen(buf_time) - 1] = '\0';
+
+    printf("   %s", buf_time);
+    if (S_ISDIR(buf->st_mode))
+    {
+        //目录文件打印
+        color_set(BLUE);
+        printf(" %s", file_name);
+        color_set(WHITE);
+    }
+    else if (buf->st_mode & S_IXGRP)
+    {
+        //可执行文件打印
+        color_set(GREEN);
+        printf(" %s", file_name);
+        color_set(WHITE);
+    }
+    else if (S_ISREG(buf->st_mode))
+    {
+        //一般文件打印
+        color_set(WHITE);
+        printf(" %s", file_name);
+        color_set(WHITE);
+    }
 }
 
-// ls -l
-int ls_l(const char *path)
+// ls -al filename
+void ls_al_filename(const char *command)
 {
-    DIR *dp = NULL;
-    struct dirent *entry = NULL;
-    char buf[SIZE] = {};
-    struct stat sstat;
-    if(lstat(path,&sstat) == -1)//如果错误
+    struct stat s_buf;
+    DIR *dir;
+    char pathname_buf[256];
+    getcwd(pathname_buf, sizeof(pathname_buf)); //获取当前路径
+    dir = opendir(pathname_buf);
+    struct dirent *ptr;
+    char filename[1024];
+    int i = 0;
+    for (; i < 64 - 1; i++)
     {
-        perror("stat()");
-        return 1;
+        filename[i] = command[i + 7];
+        if (filename[i] == 10)
+        {
+            break;
+        }
     }
-    if(S_ISREG(sstat.st_mode))
+    filename[i] = '\n';
+    fflush(stdin);
+    while ((ptr = readdir(dir)) != NULL)
     {
-        ls_l_1(".", path);
-    }else{
-        dp = opendir(path);
-        if(dp == NULL)
+        lstat(ptr->d_name, &s_buf);
+        if (command_explain(filename, ptr->d_name))
         {
-            perror("opendir()");
-            return 1;
+            ls_al_ana(&s_buf, ptr->d_name);
+            printf("\n");
+            closedir(dir);
+            return;
         }
-
-        while(1)
-        {
-            entry = readdir(dp);
-            if(NULL == entry)
-            {
-                if(errno)
-                {
-                    perror("readdir()");
-                    closedir(dp);
-                    return 1;
-                }
-                break;
-            }
-            ls_l_1(path, entry->d_name); //成功打印信息
-        }
-        printf("总用量：%d\n", num);
-        closedir(dp);
-    }   
-    return 0;
+    }
+    if (ptr==NULL)
+    {
+        printf("抱歉，没有找到该文件。\n");
+    }
+    closedir(dir);
+    return;
 }
 
-//ls -i
+//  -r
+const char* getpathname_for_ls_r(const char* filename,char* pathname)
+{
+    getcwd(pathname,sizeof(filename));
+    int cho = strlen(filename);
+    int i=0;
+    for( ;i<sizeof(filename);cho++,i++)
+    {
+        pathname[cho] = filename[i];
+    }
+    return pathname;
+}
+
+//  -R
+int ls_R(const char *path)
+{
+    memset(path,'\0',sizeof(path));
+    getcwd(path, 999);
+    printf("现在的目录是: %s\n",path);
+}
+
+int ls_R_1(char *basePath)
+{
+    DIR *dir;
+    struct dirent *ptr;
+    char base[1000];
+    if ((dir=opendir(basePath))==NULL)//错误
+    {
+        perror("error");
+        exit(1); //退出
+    }
+    while ((ptr=readdir(dir)) != NULL)
+    {
+        if(strcmp(ptr->d_name,".")==0 || strcmp(ptr->d_name,"..")==0)    //当前目录或父目录
+            continue;
+        else if(ptr->d_type == 8)    ///文件
+            printf("d_name:%s/%s\n",basePath,ptr->d_name);
+        else if(ptr->d_type == 10)    ///链接文件
+            printf("d_name:%s/%s\n",basePath,ptr->d_name);
+        else if(ptr->d_type == 4)    ///目录
+        {
+            memset(base,'\0',sizeof(base));
+            strcpy(base,basePath);
+            strcat(base,"/");
+            strcat(base,ptr->d_name);
+            ls_R(base);
+        }
+    }
+    closedir(dir);
+    return 1;
+}
+
+//  -i
 int ls_i(const char *path)
 {
     struct stat mystat;
     glob_t myglob;
-    char buf[SIZE]={};
+    char buf[1024]={};
     if(lstat(path,&mystat)<0)
     {
         perror("lstat()");
@@ -267,441 +401,83 @@ int ls_i(const char *path)
 
 }
 
-//ls -a
-int ls_a(const char *path)
-{
-    struct stat mystat;
-    struct dirent *entry = NULL;
-    DIR *dp = NULL;
-
-    if(lstat(path,&mystat)<0)
-    {
-        perror("lstat()");
-        return -1;
-    }
-
-    dp=opendir(path);
-    if(dp == NULL)
-    {
-        perror("opendir()");
-        return -1;
-    }
-    while(1)
-    {
-        entry = readdir(dp);
-        if(entry == NULL)
-        {
-            if(errno)
-            {
-                perror("readdir()");
-                closedir(dp);
-                return -1;
-            }
-            break;
-        }
-        printf("%s  ",entry->d_name);
-        printf("\n");
-    }
-    closedir(dp);
-    return 0;
-}
-
-
-//显示文件大小和最后修改时间（-s -t）
-static int get_file_size_time(const char *filename)
-{
-    struct stat statbuf;
-    if(stat(filename,&statbuf)==-1)
-    {
-        printf("Get stat on %s Error：%s\n", filename, strerror(errno));
-        return -1;
-    }
-    if(S_ISDIR(statbuf.st_mode)) return 1;
-    if(S_ISREG(statbuf.st_mode))
-    {
-        printf("%s size：%ld bytes\tmodified at %s",filename, statbuf.st_size, ctime(&statbuf.st_mtime));
-        return 0;
-    }
-}
-
-
-//ls -R
-int ls_R(char *basePath)
-{
-    DIR *dir;
-    struct dirent *ptr;
-    char base[1000];
-
-    if ((dir=opendir(basePath))==NULL)//错误
-    {
-        perror("error");
-        exit(1); //退出
-    }
-
-    while ((ptr=readdir(dir)) != NULL)
-    {
-        if(strcmp(ptr->d_name,".")==0 || strcmp(ptr->d_name,"..")==0)    //当前目录或父目录
-            continue;
-        else if(ptr->d_type == 8)    ///文件
-            printf("d_name:%s/%s\n",basePath,ptr->d_name);
-        else if(ptr->d_type == 10)    ///链接文件
-            printf("d_name:%s/%s\n",basePath,ptr->d_name);
-        else if(ptr->d_type == 4)    ///目录
-        {
-            memset(base,'\0',sizeof(base));
-            strcpy(base,basePath);
-            strcat(base,"/");
-            strcat(base,ptr->d_name);
-            ls_R(base);
-        }
-    }
-    closedir(dir);
-    return 1;
-}
-
-/*-R -r -t*/
-/*void display_dir(int flag_param,char *path)  /* flag_param:输入参数的变形  path:要打开的目录名 */
-/*{
-	DIR *dir;
-	long t;
-	int count = 0;
-	int i, j, len;
-	struct dirent *ptr;
-	int flag_param_temp;
-	struct stat  buf;
-    struct stat  name;
-    char temp[PATH_MAX+10];
-	flag_param_temp = flag_param;
-	dir = opendir(path);
-
-
-	if(dir == NULL)
-	{
-		printf("%s:无法打开\n",path);
-		return ;
-	}
-
-	//解析文件个数，及文件名的最长值
-	while((ptr = readdir(dir)) != NULL)
-	{
-		int a = 0;               //用来统计汉字的个数，个数=a/3
-		int b = 0;               //用来统计非汉字的个数b
-		for(i = 0; i < strlen(ptr->d_name); i++)
-		{
-			if(ptr->d_name[i]< 0)
-			{
-				a++;
-			}
-			else
-			{
-				b++;
-			}	
-		}
-		len = a/3*2 + b;
-		if(g_maxlen<len)
-		{
-			g_maxlen = len;
-		}
-		count++;              //文件个数
-	}
-    
-	han = g_leave_len/(g_maxlen+15);
-	if(g_maxlen >40)
-	{
-		han=1;
-	}
-
-	closedir(dir);
-	char **filename=(char **)malloc(sizeof(char*)*count);
-	long **filetime=(long **)malloc(sizeof(long*)*count);
-	len=strlen(path);
-	dir=opendir(path);
-
-	//得到该目录下的所有文件的路径
-	for(i = 0;i < count ;i++)
-	{
-		filename[i] = (char *)malloc(sizeof(char)*1000);
-		ptr = readdir(dir);
-		if(ptr == NULL)
-		{
-			my_err("oppendir",__LINE__);
-		}
-		strncpy(filename[i],path,len);
-		filename[i][len]='\0';
-		strcat(filename[i],ptr->d_name);
-		filename[i][len+strlen(ptr->d_name)]='\0';
-	}
-	closedir(dir);
-	
-	//插入排序
-	if(flag_param & PARAM_T)    //根据时间排序
-	{
-        flag_param-=PARAM_T;
-		for(i=0;i<count;i++)
-		{
-			filetime[i]=(long*)malloc(sizeof(long));
-			stat(filename[i],&buf);       //用buf获取文件filename[i]中的数据
-			filetime[i][0]=buf.st_mtime;
-		}
-
-		for(i=0;i<count;i++)
-		{
-			for(j=i;j<count;j++)
-			{
-				if(filetime[i][0]<filetime[j][0])
-				{
-					/*交换时间filetime还要叫唤文件名*/
-/*					t=filetime[i][0];
-					filetime[i][0]=filetime[j][0];
-					filetime[j][0]=t;
-					strcpy(temp,filename[i]);
-					strcpy(filename[i],filename[j]);
-					strcpy(filename[j],temp);
-				}
-			}
-		}
-	}
-	else if(flag_param & PARAM_R)//根据名字排序
-	{
-		for(i=0;i<count;i++)
-		{
-			for(j=i;j<count;j++)
-			{
-				if(strcmp(filename[i],filename[j])>0)
-				{
-					strcpy(temp,filename[i]);
-					strcpy(filename[i],filename[j]);
-					strcpy(filename[j],temp);
-				}
-			}
-		}
-	}
-
-	//计算总用量total
-    if(flag_param & PARAM_A)
-    {
-        for(i=0;i<count;i++)
-        {
-            stat(filename[i],&name);
-            total=total+name.st_blocks/2;
-        }
-    }
-    else
-    {
-        for(i=0;i<count;i++)
-        {
-            stat(filename[i],&name);
-            if(filename[i][2]!='.')
-            {
-                total=total+name.st_blocks/2;
-            }
-        }
-    }
-    
-
-	if(flag_param & PARAM_L)
-	{
-		printf("总用量： %d\n",total);
-	}
-
-	//输出文件
-	if(flag_param & PARAM_R)
-	{
-		flag_param-=PARAM_R;
-        if(flag_param & PARAM_S)
-        {
-            if(flag_param & PARAM_A)
-            {
-                for(i=0;i<count;i++)
-                {
-                    stat(filename[i],&name);
-                    total=total+name.st_blocks/2;
-                }
-            }
-            else
-            {
-                for(i=0;i<count;i++)
-                {
-                    if(filename[i][2]!='.')
-                    {
-                        stat(filename[i],&name);
-                        total=total+name.st_blocks/2;
-                    }
-                }
-            }
-            printf("总用量: %d\n", total);
-        }
-		if(flag_param & PARAM_RR)//递归输出
-		{
-			flag_param-=PARAM_RR;
-			for(i=count-1;i>=0;i--)
-			{
-				lstat(filename[i],&buf);
-				if(S_ISDIR(buf.st_mode))
-				{
-					len=strlen(filename[i]);
-					if(filename[i][len-1]=='.'&&filename[i][len-2]=='/' || filename[i][len-1]=='.' && filename[i][len-2]=='.' && filename[i][len-3]=='/')
-					{
-						continue;
-					}
-					if(!(flag_param & PARAM_A))
-					{
-						if(filename[i][2]=='.')
-                        {
-                            continue;
-                        }
-					}
-					printf("\n\n%s :\n",filename[i]);
-					len=strlen(filename[i]);
-					filename[i][len]='/';
-					filename[i][len+1]='\0';
-					display_dir(flag_param,path); //递归
-				}
-				else
-				{
-					display_dir(flag_param,filename[i]);
-				}
-			}
-		}
-		else
-		{
-			for(i=count-1;i>=0;i--)
-			{
-				display(flag_param,filename[i]);
-			}
-		}
-	}
-	else
-	{
-        if(flag_param & PARAM_S)
-        {
-            if(flag_param & PARAM_A)
-            {
-                for(i = 0;i<count;i++)
-                {
-                    stat(filename[i],&name);
-                    total=total+name.st_blocks/2;
-                }
-            }
-            else
-            {
-                for(i=0;i<count;i++)
-                {
-                    stat(filename[i],&name);
-                    if(filename[i][2]!='.')
-                    {
-                        total=total+name.st_blocks/2;
-                    }
-                }
-            }
-            printf("总用量: %d\n",total);
-        }
-		if(flag_param & PARAM_RR)
-		{
-			flag_param-=PARAM_RR;
-    		for (i=0;i<count;i++)
-			{
-				lstat(filename[i],&buf);
-				if(S_ISDIR(buf.st_mode))
-				{
-					len=strlen(filename[i]);
-					if(filename[i][len-1]=='.' && filename[i][len-2]=='/' || filename[i][len-1]=='.' && filename[i][len-2]=='.' && filename[i][len-3]=='/') 
-					{
-                        continue;                    }
-					if(!(flag_param & PARAM_A))
-					{
-						if(filename[i][2]=='.')
-						{
-                            continue;
-                        }
-					}
-					printf("\n\n%s :\n",filename[i]);
-					len=strlen(filename[i]);
-					filename[i][len]='/';
-					filename[i][len+1]='\0';		
-					display_dir(flag_param_temp,filename[i]); //递归
-				}
-				else display(flag_param,filename[i]);
-			}
-		}
-		else
-		{
-			for(i=0;i<count;i++)
-			{
-				display(flag_param,filename[i]);
-			}
-		}
-		if((flag_param & PARAM_L)==0)
-		{
-			printf("\n");
-		}	
-	}
-}*/
-
 int main(int argc, char *argv[])
 {
-    DIR *dir;
-    char basePath[1000];
     int c;
-    char *optstring ="-l::a::i::R::s::";
+    char*name[1024] = {}; //保存所有文件名称
+    char s[1024];
+    char *optstring = getcwd( s, sizeof(s));
+    DIR *dir = opendir( optstring );
 
     if(argc < 2) return 1;
-    while(1)
+    c =getopt(argc, argv, optstring); //解析命令行选项参数
+    if(c == -1) return ;
+    switch(c)
     {
-        c =getopt(argc, argv, optstring);
-        if(c==-1) break;
-        switch(c)
-        {
-            case 'l':
-                ls_l(argv[2]);
-                break;
-            case 'a':
-                ls_a(argv[2]);
-                break;
-            case 'i':
-                ls_i(argv[2]);
-                break;
-            case 'R':
-                memset(argv[2],'\0',sizeof(argv[2]));
-                getcwd(argv[2], 999);
-                printf("现在的目录是: %s\n",argv[2]);
-                ls_R(argv[2]);
-                break;
-            case 's':
-
-{
-    DIR *dirp;
-    struct dirent *direntp;
-    int stats;
-    if(argc != 2)
-    {
-      printf ("Usage：%s filename\n\a", argv[0]);
-      exit (1);
+        case 'l':
+            ls_l(argv[2]);
+            break;
+        case 'a':
+            ls_a(argv[2]);
+            break;
+        case 'i':
+            ls_i(argv[2]);
+            break;
+        case 'R':
+            ls_R(argv[2]);
+            break;
+        case '?':
+            printf("不认识此选项%s\n", argv[optind -1]);
+            break;
+        default:
+            break;
     }
-    if(((stats = get_file_size_time(argv[1])) == 0) || (stats == -1))
-    {
-        exit(1);
-    }
-    if((dirp = opendir(argv[1])) == NULL)
-    {
-        printf ("Open Directory %s Error：%s\n", argv[1], strerror(errno));
-        exit (1);
-    }
-    while((direntp = readdir (dirp)) != NULL)
-    if(get_file_size_time(direntp->d_name)==-1)
-    {
-        break;
-    }
-    closedir(dirp);
-    exit(1);
-}
-            case '?':
-                printf("不认识此选项%s\n", argv[optind -1]);
-                break;
-            default:
-                break;
-        }
-    }
-
     return 0;
+}
+int main()
+{ 
+	char* name[1024]={}; //保存所有文件名称
+	char s[1024]={};
+	char* file=getcwd(s,sizeof(s));
+	DIR* dp=opendir(file);
+	
+	if(dp==NULL)
+	{
+		perror("opendir"); //显示文件打开错误信息
+		exit(EXIT_FAILURE);
+	}
+	int cnt=0;
+	struct dirent* dr=readdir(dp);
+	for(;dr;dr=readdir(dp))
+	{
+		if(dr->d_name[0]=='.') 
+			continue;//-a
+		name[cnt++]=dr->d_name;
+	}
+
+	long *fileTime[1024]={};
+	for(int i=0;i<cnt;i++)
+	{
+		struct stat buf={};
+		stat((char*)name[i],&buf);
+		fileTime[i]=(long*)buf.st_mtime;
+		for(int j=i+1;j<cnt;j++)
+		{
+			stat((char*)name[j],&buf);
+			fileTime[j]=(long*)buf.st_mtime;
+			if(fileTime[i]<fileTime[j])
+			{
+				
+				long *t=fileTime[i];
+				fileTime[i]=fileTime[j];
+				fileTime[j]=t;
+				
+				char *temp=name[i];
+				name[i]=name[j];
+				name[j]=temp;
+			}
+		}
+	}
+	closedir(dp);
+	return 0;
 }
