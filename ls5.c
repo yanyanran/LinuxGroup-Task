@@ -37,6 +37,9 @@ struct stat name
 #define T 5
 
 void LS_I(struct stat *STA);
+void MODE(int mode, char str[]);
+char* UID(uid_t uid);
+char* GID(gid_t gid);
 
 //获取当前路径打印文件名
 void list(bool* name,int size)
@@ -81,7 +84,6 @@ void list(bool* name,int size)
         if(name[T] == true)
         {
             LS_T(&s_buf);
-            printf("%s ",name);
         }
         if(name[S] == true)
         {
@@ -103,9 +105,9 @@ void show_file(char* filename, struct stat* STA)
     //连到该文件的硬连接数目，刚建立的文件值为1
     printf(" %d", (int) STA->st_nlink);
     //用户
-    printf(" %s", uid_to_name(STA->st_uid));
+    printf(" %s", UID(STA->st_uid));
     //用户组
-    printf(" %s", gid_to_name(STA->st_gid));
+    printf(" %s", GID(STA->st_gid));
     //文件大小
     printf(" %ld", (long) STA->st_size);
     //ctime:最后一次改变文件内容或目录内容的时间
@@ -115,7 +117,7 @@ void show_file(char* filename, struct stat* STA)
 }
 
 //文件权限
-void MODE(int mode, char str[])  
+void MODE(int mode, char str[])
 {  
     strcpy(str, "----------");  //初始化全为---------- 
       
@@ -182,7 +184,7 @@ void MODE(int mode, char str[])
 } 
 
 //通过uid和gid找到用户名字和用户组名字    
-char* UID(uid_t uid)  
+char* UID(uid_t uid)
 {  
     struct passwd* getpwuid(),* pw_ptr;  
     static char numstr[10];  
@@ -197,7 +199,7 @@ char* UID(uid_t uid)
         return pw_ptr->pw_name;
     }  
 }       
-char* GID(gid_t gid)  
+char* GID(gid_t gid)
 {  
     struct group* getgrgid(),* grp_ptr;  
     static char numstr[10];  
@@ -231,7 +233,7 @@ void LS_T(struct stat *STA)
     char* name[1000]={};  //文件名字
 	long *filetime[1000]={}; //文件修改时间
 
-	for(int i=0;i<6;i++)
+	for(int i=0;i<6;i++) //文件个数（？）
 	{
 		struct stat buf={};
 		stat((char*)name[i],&buf);
@@ -254,7 +256,8 @@ void LS_T(struct stat *STA)
 			}
 		}
 	}
-    return name,filetime;  //返回名字和修改时间
+    //printf("%s ",name);
+    //返回(?)
 }
 
 int main(int argc,char** argv)
