@@ -1,19 +1,19 @@
 /*
-struct stat
+struct stat name
 {
-    dev_t st_dev;    //文件的设备编号
-    int_t  st_ino;     //节点
-    mode_t  st_mode;   //文件的类型和存取的权限
-    nlink_t  st_nlink;     //连到该文件的硬连接数目，刚建立的文件值为1
-    uid_t    st_uid;        //用户ID
-    gid_t    st_gid;        //组ID
-    dev_t    st_rdev;     //(设备类型)若此文件为设备文件，则为其设备编号
-    offf_t   st_size;      //文件字节数(文件大小)
-    unsigned long st_bilsize;   //块大小（文件系统的I/O缓存区大小）
-    unsigend long st_blocks;   //块数
-    time_t   st_atime;  //最后一次访问时间
-    time_t   st_mtime; //最后一次修改时间
-    time_t   st_ctime;   //最后一次改变时间(指属性)
+    dev_t     st_dev;    //文件的设备编号
+    int_t     st_ino;     //节点
+    mode_t    st_mode;   //文件的类型和存取的权限
+    nlink_t   st_nlink;     //连到该文件的硬连接数目，刚建立的文件值为1
+    uid_t     st_uid;        //用户ID
+    gid_t     st_gid;        //组ID
+    dev_t     st_rdev;     //(设备类型)若此文件为设备文件，则为其设备编号
+    offf_t    st_size;      //文件字节数(文件大小)
+    unsigned  long st_bilsize;   //块大小（文件系统的I/O缓存区大小）
+    unsigend  long st_blocks;   //块数
+    time_t    st_atime;  //最后一次访问时间
+    time_t    st_mtime; //最后一次修改时间
+    time_t    st_ctime;   //最后一次改变时间(指属性)
 };*/
 #include<stdio.h>
 #include<sys/types.h>
@@ -46,10 +46,11 @@ void list(bool* name,int size)
     char ch = '0';
     char buf[32] = {0};
     char pathname_buf[256];
-    getcwd(pathname_buf,sizeof(pathname_buf));
-    //获取当前路径
-    dir=opendir(pathname_buf);
-    if(dir == NULL)
+
+    getcwd(pathname_buf,sizeof(pathname_buf));  //获取当前路径
+    dir=opendir(pathname_buf);  //返回目录流
+
+    if(dir == NULL) //如果路径为空，返回错误
     {
         printf("error!cannot open the file\n");
         exit(-1);
@@ -57,12 +58,11 @@ void list(bool* name,int size)
     struct stat s_buf;
     int stat_buf;
     int i=0;
-
     
     while((ptr = readdir(dir)) != NULL)
     {
-        stat_buf=stat(ptr->d_name, &s_buf);
-        if(name[I]==true)
+        stat_buf=stat( ptr->d_name, &s_buf);
+        if(name[I] == true)
         {
             LS_I(&s_buf);
         }
@@ -74,6 +74,9 @@ void list(bool* name,int size)
             {
                 printf("\n");
             }
+        }else if(name[L] == true)
+        {
+            show_file(ptr->d_name, &s_buf);
         }
         if(name[T] == true)
         {
@@ -82,7 +85,7 @@ void list(bool* name,int size)
         }
         if(name[S] == true)
         {
-
+            LS_S(&s_buf);
         }
         
     }
@@ -90,10 +93,136 @@ void list(bool* name,int size)
     closedir(dir);
 }
 
+// 展示单个文件的详细信息 -l 
+void show_file(char* filename, struct stat* STA)  
+{
+    char modestr[11];  
+
+    //权限
+    MODE(STA->st_mode, modestr);  
+    //连到该文件的硬连接数目，刚建立的文件值为1
+    printf(" %d", (int) STA->st_nlink);
+    //用户
+    printf(" %s", uid_to_name(STA->st_uid));
+    //用户组
+    printf(" %s", gid_to_name(STA->st_gid));
+    //文件大小
+    printf(" %ld", (long) STA->st_size);
+    //ctime:最后一次改变文件内容或目录内容的时间
+    printf(" %s", 4 + ctime(&STA->st_mtime));
+    //文件名字（颜色未完成）
+    printf(" %s\n", filename);
+}
+
+//文件权限
+void MODE(int mode, char str[])  
+{  
+    strcpy(str, "----------");  //初始化全为---------- 
+      
+    if(S_ISDIR(mode))   //是否为目录
+    {  
+        str[0] = 'd';  
+    }  
+      
+    if(S_ISCHR(mode))  //是否为字符设置
+    {  
+        str[0] = 'c';  
+    }  
+      
+    if(S_ISBLK(mode))  //是否为块设备
+    {  
+        str[0] = 'b';  
+    }
+
+    //逻辑与
+    /*
+        S_IRUSR：用户读权限
+        S_IWUSR：用户写权限
+        S_IRGRP：用户组读权限
+        S_IWGRP：用户组写权限
+        S_IROTH：其他组都权限
+        S_IWOTH：其他组写权限
+    */
+    if((mode & S_IRUSR))  
+    {  
+        str[1] = 'r';  
+    }  
+    if((mode & S_IWUSR))  
+    {  
+        str[2] = 'w';  
+    }
+    if((mode & S_IXUSR))  
+    {  
+        str[3] = 'x';  
+    }  
+    if((mode & S_IRGRP))  
+    {  
+        str[4] = 'r';  
+    }  
+    if((mode & S_IWGRP))  
+    {  
+        str[5] = 'w';  
+    }
+    if((mode & S_IXGRP))  
+    {  
+        str[6] = 'x';  
+    }  
+    if((mode & S_IROTH))  
+    {  
+        str[7] = 'r';  
+    }  
+    if((mode & S_IWOTH))  
+    {  
+        str[8] = 'w';  
+    }  
+    if((mode & S_IXOTH))  
+    {  
+        str[9] = 'x';  
+    }  
+} 
+
+//通过uid和gid找到用户名字和用户组名字    
+char* UID(uid_t uid)  
+{  
+    struct passwd* getpwuid(),* pw_ptr;  
+    static char numstr[10];  
+      
+    if((pw_ptr = getpwuid(uid)) == NULL)  
+    {  
+        sprintf(numstr,"%d",uid);
+        return numstr;
+    }  
+    else  
+    {  
+        return pw_ptr->pw_name;
+    }  
+}       
+char* GID(gid_t gid)  
+{  
+    struct group* getgrgid(),* grp_ptr;  
+    static char numstr[10];  
+      
+    if(( grp_ptr = getgrgid(gid)) == NULL)  
+    {  
+        sprintf(numstr,"%d",gid);  
+        return numstr;  
+    }  
+    else  
+    {  
+        return grp_ptr->gr_name;  
+    }  
+}  
+
 //打印i节点
 void LS_I(struct stat *STA)
 {
     printf("%ld ", STA->st_ino);
+}
+
+//文件大小 
+void LS_S(struct stat *STA)
+{
+    printf("%ld ",( long )STA->st_size);
 }
 
 //-t 按时间排序
@@ -125,7 +254,7 @@ void LS_T(struct stat *STA)
 			}
 		}
 	}
-    return name;
+    return name,filetime;  //返回名字和修改时间
 }
 
 int main(int argc,char** argv)
@@ -179,4 +308,3 @@ int main(int argc,char** argv)
     list(sum,6);
     return 0;
 }
-
