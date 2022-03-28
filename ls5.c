@@ -14,7 +14,9 @@ struct stat name
     time_t    st_atime;  //最后一次访问时间
     time_t    st_mtime; //最后一次修改时间
     time_t    st_ctime;   //最后一次改变时间(指属性)
-};*/
+}
+*/
+
 #include<stdio.h>
 #include<sys/types.h>
 #include<sys/stat.h>
@@ -37,9 +39,12 @@ struct stat name
 #define T 5
 
 void LS_I(struct stat *STA);
+void LS_S(struct stat *STA);
+void LS_T(struct stat *STA);
 void MODE(int mode, char str[]);
 char* UID(uid_t uid);
 char* GID(gid_t gid);
+void show_file(char* filename, struct stat* STA);
 
 //获取当前路径打印文件名
 void list(bool* name,int size)
@@ -67,17 +72,18 @@ void list(bool* name,int size)
         stat_buf=stat( ptr->d_name, &s_buf);
         if(name[I] == true)
         {
+            //printf("!!!!");
             LS_I(&s_buf);
         }
-        printf("%-20s", ptr->d_name);
-        i++;
+        //printf("%-20s", ptr->d_name); //（？）
+        //i++;
         if(name[L] == false)
         {
             if(i % 5 == 0)
             {
                 printf("\n");
             }
-        }else if(name[L] == true)
+        }else
         {
             show_file(ptr->d_name, &s_buf);
         }
@@ -98,22 +104,24 @@ void list(bool* name,int size)
 // 展示单个文件的详细信息 -l 
 void show_file(char* filename, struct stat* STA)  
 {
-    char modestr[11];  
-
+    char modestr[11];  //存放权限
     //权限
-    MODE(STA->st_mode, modestr);  
+    MODE((int)STA->st_mode, modestr);
     //连到该文件的硬连接数目，刚建立的文件值为1
-    printf(" %d", (int) STA->st_nlink);
+    printf(" %5d", (int) STA->st_nlink);
     //用户
-    printf(" %s", UID(STA->st_uid));
+    printf(" %5s", UID(STA->st_uid));
     //用户组
-    printf(" %s", GID(STA->st_gid));
+    printf(" %5s", GID(STA->st_gid));
     //文件大小
     printf(" %ld", (long) STA->st_size);
     //ctime:最后一次改变文件内容或目录内容的时间
-    printf(" %s", 4 + ctime(&STA->st_mtime));
+    char buf_time[32];
+    strcpy(buf_time, ctime(&(STA->st_mtime)));
+    buf_time[strlen(buf_time) - 1] = '\0';
+    printf(" %5s",buf_time);
     //文件名字（颜色未完成）
-    printf(" %s\n", filename);
+    printf(" %5s\n", filename);
 }
 
 //文件权限
@@ -180,7 +188,9 @@ void MODE(int mode, char str[])
     if((mode & S_IXOTH))  
     {  
         str[9] = 'x';  
-    }  
+    }
+
+    printf("%s ",str);
 } 
 
 //通过uid和gid找到用户名字和用户组名字    
@@ -239,7 +249,7 @@ void LS_T(struct stat *STA)
 		stat((char*)name[i],&buf);
 		filetime[i]=(long*)buf.st_mtime;
 
-		for(int j=i+1;j<6;j++)
+		for(int j=i+1;name[j]!=NULL;j++)  //条件
 		{
 			stat((char*)name[j],&buf);
 			filetime[j]=(long*)buf.st_mtime;
