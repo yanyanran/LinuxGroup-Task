@@ -118,12 +118,11 @@ void list(bool* name,int size)
         if(S_ISDIR(buff->STA.st_mode))
         {
             //目录
-            printf("..");
             COLOR(BULE);
             printf("%5s",(buff+i)->filename);
         }else if(buff->STA.st_mode & S_IXGRP)
         {
-            //可执行文件
+            //可执行文件（位运算？）
             printf("....");
             COLOR(GREEN);
             printf("%5s",(buff+i)->filename);
@@ -131,9 +130,10 @@ void list(bool* name,int size)
         {
             //普通文件
             printf("......................");
-            printf("%5s",(buff+i)->filename);
+            printf("   %5s",(buff+i)->filename);
         }
         //printf("  %5s",(buff+i)->filename);  //输出文件名
+
         if(i % 5 ==0 && name[L] != true)
         {
             printf("\n");
@@ -183,7 +183,7 @@ void show_file(struct stat* STA)
     strcpy(buf_time, ctime(&(STA->st_mtime)));
     buf_time[strlen(buf_time) - 1] = '\0';
     printf(" %5s",buf_time);
-    //文件名字（颜色未完成）
+    //文件名字
     //printf(" %20s\n", filename);
 }
 
