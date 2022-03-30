@@ -37,14 +37,21 @@ struct stat name
 #define I 3
 #define S 4
 #define T 5
+#define BULE 34
+#define GREEN 32
 
+struct file
+{
+    char filename[256];
+    struct stat STA;
+};
 void LS_I(struct stat *STA);
 void LS_S(struct stat *STA);
-void LS_T(struct stat *STA);
+void LS_T(struct file *STA,int len);
 void MODE(int mode, char str[]);
 char* UID(uid_t uid);
 char* GID(gid_t gid);
-void show_file(char* filename, struct stat* STA);
+void show_file(struct stat* STA);
 
 //获取当前路径打印文件名
 void list(bool* name,int size)
@@ -65,44 +72,100 @@ void list(bool* name,int size)
     }
     struct stat s_buf;
     int stat_buf;
-    int i=0;
+    int i=0,j=0;
     
-    while((ptr = readdir(dir)) != NULL)
+    //buf->st_mtime 最后一次修改时间
+
+    struct file* buff = malloc(sizeof(struct file)*100);
+    struct file* temp = buff;  //还原
+    while((ptr = readdir(dir))!= NULL)
     {
-        stat_buf=stat( ptr->d_name, &s_buf);
-        if(name[I] == true)
+        if(name[A] == false)
         {
-            //printf("!!!!");
-            LS_I(&s_buf);
-        }
-        //printf("%-20s", ptr->d_name); //（？）
-        //i++;
-        if(name[L] == false)
-        {
-            if(i % 5 == 0)
+            if(ptr->d_name[0] == '.')
             {
-                printf("\n");
+                continue;
             }
-        }else
-        {
-            show_file(ptr->d_name, &s_buf);
         }
-        if(name[T] == true)
-        {
-            LS_T(&s_buf);
-        }
+        stat_buf=stat(ptr->d_name, &(buff->STA));
+        strcpy(buff->filename,ptr->d_name);
+        //printf("%s ", buff->filename);
+        buff++; //指针后移
+        j++; //记录文件数
+    }
+    buff = temp;  //指向开始
+    if(name[T] == true)
+    {
+        LS_T(buff, j);
+    }
+    for(i=0;i<j;i++)
+    {
         if(name[S] == true)
         {
-            LS_S(&s_buf);
+            LS_S(&(buff+i)->STA);
         }
-        
+        if(name[I] == true)
+        {
+            LS_I(&(buff+i)->STA);
+        }
+        if(name[L] == true)
+        {
+            printf("\n");
+            show_file(&(buff+i)->STA);
+        }
+
+        //输出
+        if(S_ISDIR(buff->STA.st_mode))
+        {
+            //目录
+            printf("..");
+            COLOR(BULE);
+            printf("%5s",(buff+i)->filename);
+        }else if(buff->STA.st_mode & S_IXGRP)
+        {
+            //可执行文件
+            printf("....");
+            COLOR(GREEN);
+            printf("%5s",(buff+i)->filename);
+        }else if(S_ISREG(buff->STA.st_mode))
+        {
+            //普通文件
+            printf("......................");
+            printf("%5s",(buff+i)->filename);
+        }
+        //printf("  %5s",(buff+i)->filename);  //输出文件名
+        if(i % 5 ==0 && name[L] != true)
+        {
+            printf("\n");
+        }
+    }
+    if(name[R] == true)  //-R递归
+    {
+        int i=0;
+        printf("\n");
+        for(;i<j;i++)
+        {
+            printf("%s:\n",(buff+i)->filename);
+            list(&(name[I]),3);
+        }
     }
     printf("\n");
     closedir(dir);
 }
 
+/*
+字颜色:
+普通文件白色
+32:绿色（可执行文件）
+34:蓝色（目录文件）：函数S_ISDIR()判断
+*/
+void COLOR(int color)
+{
+    printf("\033[%dm",color);
+}
+
 // 展示单个文件的详细信息 -l 
-void show_file(char* filename, struct stat* STA)  
+void show_file(struct stat* STA)  
 {
     char modestr[11];  //存放权限
     //权限
@@ -114,14 +177,14 @@ void show_file(char* filename, struct stat* STA)
     //用户组
     printf(" %5s", GID(STA->st_gid));
     //文件大小
-    printf(" %ld", (long) STA->st_size);
+    printf(" %5ld", (long) STA->st_size);
     //ctime:最后一次改变文件内容或目录内容的时间
     char buf_time[32];
     strcpy(buf_time, ctime(&(STA->st_mtime)));
     buf_time[strlen(buf_time) - 1] = '\0';
     printf(" %5s",buf_time);
     //文件名字（颜色未完成）
-    printf(" %5s\n", filename);
+    //printf(" %20s\n", filename);
 }
 
 //文件权限
@@ -225,49 +288,35 @@ char* GID(gid_t gid)
     }  
 }  
 
-//打印i节点
+//打印i节点 -i
 void LS_I(struct stat *STA)
 {
     printf("%ld ", STA->st_ino);
 }
 
-//文件大小 
+//文件大小 -s
 void LS_S(struct stat *STA)
 {
     printf("%ld ",( long )STA->st_size);
 }
 
-//-t 按时间排序
-void LS_T(struct stat *STA)
+//-t 进行排序
+void LS_T(struct file *FILE,int len)
 {
-    char* name[1000]={};  //文件名字
-	long *filetime[1000]={}; //文件修改时间
+    for(int i=1;i<=len-1;i++)
+    {
 
-	for(int i=0;i<6;i++) //文件个数（？）
-	{
-		struct stat buf={};
-		stat((char*)name[i],&buf);
-		filetime[i]=(long*)buf.st_mtime;
+        for(int j=1;j<len-i;j++)
+        {
 
-		for(int j=i+1;name[j]!=NULL;j++)  //条件
-		{
-			stat((char*)name[j],&buf);
-			filetime[j]=(long*)buf.st_mtime;
-
-			if(filetime[i]<filetime[j]) //时间从大到小排序
-			{
-				long *t=filetime[i];
-				filetime[i]=filetime[j];
-				filetime[j]=t;
-				
-				char *temp=name[i];
-				name[i]=name[j];
-				name[j]=temp;
-			}
-		}
-	}
-    //printf("%s ",name);
-    //返回(?)
+            if(FILE[i].STA.st_mtime<FILE[j].STA.st_mtime)//char* a; a-> = (*a)
+            {
+				struct file n = FILE[i];
+				FILE[i] = FILE[j];
+				FILE[j] = n;
+            }
+        }
+    }
 }
 
 int main(int argc,char** argv)
@@ -284,7 +333,7 @@ int main(int argc,char** argv)
             command[A]++;
         }else if(argv[1][i]=='l')
         {
-            command[L]++;
+             command[L]++;
         }else if(argv[1][i]=='R')
         {
             command[R]++;
@@ -317,7 +366,6 @@ int main(int argc,char** argv)
         }
         //printf("\n%d ",sum[i]);
     }
-    
     list(sum,6);
     return 0;
 }
