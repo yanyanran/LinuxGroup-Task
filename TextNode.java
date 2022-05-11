@@ -296,5 +296,74 @@ public class TextNode {
         }
         return b;
     }
+
+    /*--------------------------------------------------------------*/
+    //二叉树的镜像（递归）
+    public static void mirrorTree(Node root){
+        if(root == null ) return;
+
+        //交换该节点指向的左右节点
+        Node temp=root.left;
+        root.left=root.right;
+        root.right=temp;
+
+        //对其左右孩子进行镜像处理
+        mirrorTree(root.left);
+        mirrorTree(root.right);
+    }
+
+    //二叉树的镜像（非递归：层次遍历）
+    public static void Swap(Node root)
+    {
+        Node temp;
+        temp=root.right;
+        root.right=root.left;
+        root.left=temp;
+    }
+    public static void mirrorTreeWithQueue(Node root)
+    {
+        if(root==null)
+            return;
+        //如果树为 null 直接返回。否则将根节点入队列
+        Queue<Node> queue= new LinkedList<Node>();
+        queue.add(root);
+        while(!queue.isEmpty())
+        {
+            //队列不为空时，节点出队，交换该节点的左右子树
+            Node root1=queue.poll();
+            Swap(root);
+            if(root1.right!=null)
+            {
+                queue.add(root1.right);
+                //如果左子树不为 null 入队
+            }
+            if(root1.left!=null)
+            {
+                queue.add(root1.left);
+                //如果右子树不为 null 入队
+            }
+        }
+    }
+    /*--------------------------------------------------------------*/
+    //层序遍历二叉树（广度优先搜索）
+    public static void levelTree(Node root) {
+        if (root == null)  return;
+
+        Queue<Node> q = new ArrayDeque<Node>();
+        q.add(root);
+        Node current;
+
+        while(!q.isEmpty()) {
+            current = q.peek();
+            System.out.print(current.data + " ");
+            if(current.left != null){
+                q.add(current.left);
+            }
+            if(current.right != null){
+                q.add(current.right);
+            }
+            q.poll();
+        }
+    }
 }
 
