@@ -27,12 +27,34 @@ class Node implements Comparable<Node>{
 }
 
 public class TextNode {
+
     public static void main(String[] args) {
-        String content = "whatwhatwhat";
+        String content = "wh";
         byte[] contentBytes = content.getBytes();  //转换成Byte数组
         List<Node> nodes = getNodes(contentBytes);
         byte[] huffmanCodeBytes = huffmanZip(contentBytes);
+        byte[] source = decode(huffmanCodes, huffmanCodeBytes);
+        System.out.println();
+        System.out.println("原来的字符串 = " + new String(source));
+        System.out.println();
         System.out.println(nodes.toString());
+    }
+
+    /***
+     * 创建一个接口函数huffmanZip 封装好实现细节
+     */
+    public static byte[] huffmanZip(byte[] bytes) {
+        System.out.println("处理前的字节数组："+Arrays.toString(bytes)+" 长度 = "+bytes.length);
+        List<Node> nodes = getNodes(bytes);
+        // 创建哈夫曼树
+        Node huffmanTreeRoot = createHuffmanTree(nodes);
+        // 对应的哈夫曼编码
+        Map<Byte, String> huffmanCodes = getCodes(huffmanTreeRoot);
+        // 根据生成的哈夫曼编码，得到压缩后的数组
+        byte[] huffmanCodeBytes = zip(bytes, huffmanCodes);
+        System.out.println("处理后的字节数组："+Arrays.toString(huffmanCodeBytes)+" 长度 = "+huffmanCodeBytes.length);
+        preOrder(huffmanTreeRoot);
+        return huffmanCodeBytes;
     }
 
     private static List<Node> getNodes(byte[] bytes){
@@ -55,6 +77,7 @@ public class TextNode {
         return nodes;
     }
 
+    /*-----------------------压缩---------------------------------------*/
     /**
      * 通过list创建哈夫曼树
      * */
@@ -166,7 +189,7 @@ public class TextNode {
     /**
      *
      * 创建一个接口函数封装好实现的细节
-     * @return 返回处理后的字节数组
+     * 返回处理后的字节数组
      */
     // 前序遍历（递归）
     static void preOrder(Node node) {
@@ -193,18 +216,85 @@ public class TextNode {
         }
     }
   */
-    public static byte[] huffmanZip(byte[] bytes) {
-        System.out.println("处理前的字节数组："+Arrays.toString(bytes)+" 长度="+bytes.length);
-        List<Node> nodes = getNodes(bytes);
-        // 创建哈夫曼树
-        Node huffmanTreeRoot = createHuffmanTree(nodes);
-        // 对应的哈夫曼编码
-        Map<Byte, String> huffmanCodes = getCodes(huffmanTreeRoot);
-        // 根据生成的哈夫曼编码，得到压缩后的数组
-        byte[] huffmanCodeBytes = zip(bytes, huffmanCodes);
-        System.out.println("处理后的字节数组："+Arrays.toString(huffmanCodeBytes)+" 长度="+huffmanCodeBytes.length);
-        preOrder(huffmanTreeRoot);
-        return huffmanCodeBytes;
+
+    /*-----------------------解压---------------------------------------*
+    /*
+    * 1、字节数组转换成二进制字符串
+    * 2、逆向处理生成好的哈夫曼编码表
+    * 3、根据逆向生成的哈夫曼表查询生成原来的字节数组
+    */
+
+    /**       1
+     * 将一个byte转成一个二进制的字符串
+     * b传入的一个字节
+     * flag标志是否为最后一个字节(true表示不是，false表示是)
+     * return --> b对应对二进制对字符串(按补码返回)
+     */
+    public static String byteToBitString(boolean flag, byte b) {
+        int temp = b; // 将b转成int
+        temp |= 256;
+        String str = Integer.toBinaryString(temp);// 返回的是temp对应的二进制补码
+        if (flag || (flag == false && endLen == 0)) {
+            //字符串的截取，只拿后八位
+            return str.substring(str.length() - 8);
+        } else {
+            //不满8bit有多少位拿多少位
+            return str.substring(str.length() - endLen);
+        }
+    }
+
+    public static byte[] decode(Map<Byte, String> huffmanCodes, byte[] huffmanBytes) {
+
+        /**      2
+         * 逆向处理生成好的哈夫曼编码表
+         * 把哈夫曼编码表进行调换，因为要进行反向查询
+         */
+        Map<String, Byte> map = new HashMap<String, Byte>();
+        for(Map.Entry<Byte, String> entry : huffmanCodes.entrySet()) {
+            map.put(entry.getValue(), entry.getKey());
+        }
+
+        /**         3
+         * 根据逆向生成的哈夫曼表查询生成原来的字节数组
+         * huffmanCodes 哈夫曼编码表
+         * huffmanBytes 哈夫曼编码得到对字节数组
+         * return 原来对字符串对应对数组
+         */
+        // 1.先得到 huffmanBytes 对应对二进制字符串，形式10101000...
+        StringBuilder builder = new StringBuilder();
+        // 2.将byte数组转成二进制的字符串
+        for (int i = 0; i < huffmanBytes.length; i++) {
+            byte b = huffmanBytes[i];
+            // 判断是不是最后一个字节
+            boolean flag = (i == huffmanBytes.length - 1);
+            builder.append(byteToBitString(!flag, b));
+        }
+        // 创建集合，存放byte
+        List<Byte> list = new ArrayList<>();
+        for (int i = 0; i < builder.length();) {
+            int count = 1; // 小的计数器
+            boolean flag = true;
+            Byte b = null;
+            while (flag) {
+                // 取出一个bit '1'或者'0'
+                String key = builder.substring(i, i + count); // i 不动 让count移动，直到匹配到一个字符
+                b = map.get(key);
+                if (b == null) {// 没有匹配到
+                    count++;
+                } else {
+                    flag = false;
+                }
+            }
+            list.add(b);
+            i = i + count;
+        }
+        // 当for循环结束以后，list中存放了所有当字符
+        // 把list中的数据放入到byte[] 并返回
+        byte b[] = new byte[list.size()];
+        for (int i = 0; i < b.length; i++) {
+            b[i] = list.get(i);
+        }
+        return b;
     }
 }
 
