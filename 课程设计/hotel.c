@@ -520,7 +520,6 @@ void ChangePassword()
 		}
 		fclose(fp);
 	}
-	system("pause");
 }
 
 void PrintAdministrator()
@@ -528,7 +527,7 @@ void PrintAdministrator()
 	char b[16] = {'0'};
 	int a;
 	printf("序号\t用户名\t\t密码");
-	for (a = 0; a < 25; a++)
+	for (a = 0; a < 11; a++)
 	{
 		if (strcmp(b, group[a].name))
 		{
@@ -545,7 +544,6 @@ void PrintAdministrator()
 			}
 		}
 	}
-	system("pause");
 }
 
 //管理酒店信息
@@ -631,7 +629,6 @@ void DeleteAdministrator()
 	strcpy(group[a - 1].password, b);
 	ChangeGroup(); //写入信息
 	printf("删除成功\n");
-	system("pause");
 }
 
 void ControlAdministrator()
@@ -639,11 +636,10 @@ void ControlAdministrator()
 	int step;
 
 	printf("\n请选择您想执行的操作\n");
+
 	printf("1.查看所有账户信息\n");
 	printf("2.删除一个账户\n");
 	printf("3.修改当前账户密码\n");
-	printf("4.修改当前账户年龄\n");
-	printf("5.修改当前账户性别\n");
 	scanf("%d", &step);
 	switch (step)
 	{
@@ -674,9 +670,7 @@ int Logadministrator()
 			name[d] = c;
 			putchar(c);
 			d++;
-		}
-		else
-		{
+		}else{
 			d--;
 			if (d < 0)
 			{
@@ -691,7 +685,7 @@ int Logadministrator()
 			putchar(' ');
 			putchar('\b');
 		}
-		if (d > 15)
+		if (d > 10)
 		{
 			break;
 		}
@@ -726,7 +720,7 @@ int Logadministrator()
 			putchar(' ');
 			putchar('\b');
 		}
-		if (d > 15 || d < 0)
+		if (d > 6 || d < 0)
 		{
 			break;
 		}
