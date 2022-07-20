@@ -28,24 +28,10 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 
 
-关于帐号管理的登陆、注册、注销 7.19完成。
+关于帐号管理的登陆、注册、注销 7.20完成。
 
-```
-             // create.Statement() 创建语句对象，负责对表执行查询
-            Statement stmt = con.createStatement();
-             // 执行查询student is the table name & address is column
-             // Step 4: 创建声明
-             String query = "ALTER TABLE student Drop address";
-             // Step 5: 执行查询
-             // executeUpdate() 返回行数受语句执行影响
-            int result = stmt.executeUpdate(query);
-             // Step 6: 处理结果
-             // 如果结果大于 0，则表示已添加值
-            if (result > 0)
-                System.out.println(
-                    "表中的一列被删除.");
-            else
-                System.out.println(" 删除失败");
-             // Step 7: 关闭连接
-            con.close();
-```
+
+
+##### 数据库表的构建：
+
+应该根据系统架构中的组件划分，针对每个组件所处理的业务进行组件单元的数据库设计；不同组件间所对应的数据库表之间的关联应尽可能减少，如果不同组件间的表需要外键关联也尽量不要创建外键关联，而只是记录关联表的一个主键，确保组件对应的表之间的独立性，为系统或表结构的重构提供可能性。
