@@ -10,7 +10,7 @@ public class LoginMainPage {
 
     // 登陆完成后显示页面
     public static void LoginPage() throws Exception {
-    //public static void main(String[] args) {
+        //public static void main(String[] args) {
         int unreadMessage = 0;  // 这条代表数据库中“未读消息列表”的消息数
         if (unreadMessage > 0) {
             UserMessage.getUnreadMessage();

@@ -64,6 +64,13 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 **不可以同时登陆两个帐号**（解决：数据库中用户表的state，输入用户名之后遍历state值为1的name，如果有重复就显示在线不能重复登陆）
 
+数据库连接应该在服务端
+
+```java
+String sql3 = "update client set state=1 where username=?"
+ptmt.executeQuery（sql3）;
+```
+
 用户登陆后页面显示（登陆成功后将状态改为在线，接收消息只存入“消息历史记录”表中）
 
 

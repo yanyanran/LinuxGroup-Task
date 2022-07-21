@@ -63,9 +63,9 @@ public class Login {
                 login();
             }
         }else{  // 2、用户名已存在，重来
-                System.out.println("错误：用户名已存在");
-                register();
-            }
+            System.out.println("错误：用户名已存在");
+            register();
+        }
     }
 
     // 登陆
@@ -75,37 +75,34 @@ public class Login {
         System.out.println("请输入您的密码： ");
         password = input.next();
 
-        String sql = "select id,username,password,state from client where username=? and password=?";
+        String sql = "select id,username,password,State from client where username=? and password=?";
         PreparedStatement ptmt = con.prepareStatement(sql);
 
         ptmt.setString(1, username);
         ptmt.setString(2, password);
         ResultSet rs = ptmt.executeQuery();
-
         if(rs.next()){
-            String s = username;
             System.out.println("-------账号登录成功--------");
 
-            // ---------------------------------------------------------------------------
-            String sql2 = "select id,username,password,state from client";
             // state --> 1
-            String sql3 = "update client set state=1 where username=" + "'s'";
+            String sql3 = "update client set State=0 where username='"+ username +"'";
             ptmt.executeUpdate(sql3);
-            // 展开数据库结果集
-            ResultSet m = ptmt.executeQuery(sql2);
 
+            // ---------------------------------------------------------------------------
+            // 展开数据库结果集
+            String sql2 = "select id,username,password,State from client";
+            ResultSet m = ptmt.executeQuery(sql2);
             while(m.next()){
                 // 通过字段检索
                 int ID  = m.getInt("id");
                 String NAME = m.getString("username");
                 String PASSWORD = m.getString("password");
-                int STATE = m.getInt("state");
-
+                int STATE = m.getInt("State");
                 // 输出数据
                 System.out.print("ID: " + ID);
                 System.out.print(", username: " + NAME);
                 System.out.print(", password: " + PASSWORD);
-                System.out.print(",state: " + STATE);
+                System.out.print(", state: " + STATE);
                 System.out.print("\n");
                 // ---------------------------------------------------------------------------
             }
@@ -116,7 +113,7 @@ public class Login {
         }
     }
 
-    
+
 
     // 注销
     public static void logout() throws Exception {
