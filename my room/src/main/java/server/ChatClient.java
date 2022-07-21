@@ -1,6 +1,7 @@
 package server;
 
 import client.login.Login;
+import client.login.LoginMainPage;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -13,6 +14,7 @@ import java.util.Scanner;
 
 /**
  * 聊天室的客户端
+ * 运行后用户先登陆，登陆成功后客户端再与服务器端连接，再输出上线离线内容
  */
 public class ChatClient {
     private String ip;  // IP
@@ -23,7 +25,7 @@ public class ChatClient {
         this.port = port;
     }
 
-    public void run() throws InterruptedException {
+    public void run() throws Exception {
         // 创建线程组
         EventLoopGroup group = null;
         try {
@@ -49,9 +51,10 @@ public class ChatClient {
 
             Channel channel = channelFuture.channel();
             System.out.println("-------" + channel.localAddress().toString().substring(1) +"--------");
-            /**
+            LoginMainPage.LoginPage();
+            /*
              * Future - Listener
-             * */
+             *
             channelFuture.addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {
@@ -61,9 +64,8 @@ public class ChatClient {
                         System.out.println("数据发送失败.");
                     }
                 }
-            });
+            });*/
 
-            Login.homePage();
             /*
             // 向服务端发送消息
             Scanner scanner = new Scanner(System.in);
@@ -78,7 +80,8 @@ public class ChatClient {
             group.shutdownGracefully();
         }
     }
-    public static void main(String[] args) throws InterruptedException {
-        new ChatClient("127.0.0.1", 9998).run();
+    public static void main(String[] args) throws Exception {
+        // 用户登陆
+        Login.run();
     }
 }

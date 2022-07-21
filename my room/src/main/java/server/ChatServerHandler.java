@@ -12,8 +12,9 @@ import java.util.List;
  */
 public class ChatServerHandler extends SimpleChannelInboundHandler<String> {
     public static List<Channel> channelList = new ArrayList<>();
+
     /**
-     * 通道就绪事件
+     * 通道就绪事件 --channel在线
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -27,8 +28,7 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<String> {
      * 通道未就绪--channel下线
      */
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception
-    {
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         Channel channel = ctx.channel();
         //当有客户端断开连接的时候,就移除对应的通道
         channelList.remove(channel);

@@ -40,7 +40,7 @@ public class LoginMainPage {
                 MesManagement();
                 break;
             case "F":
-                System.out.println("您确定退出登录吗? (Y) 确定 (N) 取消\n请输入：\n");
+                System.out.println("您确定退出登录吗? (Y) 确定 (N) 取消\n请输入：");
                 SignOut();
                 break;
             default:
@@ -55,6 +55,7 @@ public class LoginMainPage {
         System.out.println("(A) 查看好友列表");
         System.out.println("(B) 添加好友");
         System.out.println("(C) 删除好友");
+        System.out.println("(D) 返回");
         System.out.println("请输入您的选择:");
         String i = input.nextLine();
 
@@ -64,6 +65,8 @@ public class LoginMainPage {
             case "B":
                 break;
             case "C":
+                break;
+            case "D":
                 break;
         }
     }
@@ -142,9 +145,11 @@ public class LoginMainPage {
         String i = input.nextLine();
         switch (i.toUpperCase()) {
             case "Y":
-                Login.ClientConnect();
+
+                Login.run();
                 break;
             case "N":
+                LoginPage();
             default:
                 System.out.println("您的输入有误！请重新输入：");
                 SignOut();

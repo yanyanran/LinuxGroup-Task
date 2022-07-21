@@ -1,5 +1,7 @@
 package client.login;
 
+import server.ChatClient;
+
 import java.sql.*;
 import java.util.Scanner;
 
@@ -13,7 +15,7 @@ public class Login {
     static Scanner input = new Scanner(System.in);
 
     // main
-    public static void ClientConnect() throws Exception{
+    public static void run() throws Exception {
         // loading....
         Class.forName("com.mysql.cj.jdbc.Driver");
         con = DriverManager.getConnection(url,user,pass);
@@ -96,8 +98,8 @@ public class Login {
                 System.out.print(", password: " + PASSWORD);
                 System.out.print("\n");
                 // ---------------------------------------------------------------------------
-                LoginMainPage.LoginPage();
             }
+            new ChatClient("127.0.0.1", 9998).run();
         }else{
             System.out.println("-------名称或密码错误！---------\n" + "请重新登录:");
             login();
@@ -135,7 +137,7 @@ public class Login {
     // 主页面
     public static void homePage() throws Exception {
         System.out.println("---- Welcome to MyChatRoom -----");
-        System.out.println("请选择：\n 1:用户登录\n 2：用户注册\n 3：注销用户");
+        System.out.println("请选择：\n 1:用户登录\n 2：用户注册\n 3：注销用户\n 4：退出");
         System.out.println("--------------------------------");
 
         int i = input.nextInt();
@@ -150,9 +152,10 @@ public class Login {
                 logout();
                 homePage();
                 break;
+            case 4:
+                System.exit(0);
             default:
                 System.out.println("错误输入!请输入正确的选项");
-                // System.exit(0);
                 homePage();
         }
     }
