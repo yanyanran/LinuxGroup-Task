@@ -54,9 +54,10 @@ public class LoginMainPage {
     // 好友管理页面
     public static void FriendManage() {
         System.out.println("(A) 查看好友列表");
-        System.out.println("(B) 添加好友");
-        System.out.println("(C) 删除好友");
-        System.out.println("(D) 返回");
+        System.out.println("(B) 查看黑名单");
+        System.out.println("(C) 添加好友");
+        System.out.println("(D) 删除好友");
+        System.out.println("(E) 返回");
         System.out.println("请输入您的选择:");
         String i = input.nextLine();
 
@@ -68,6 +69,8 @@ public class LoginMainPage {
             case "C":
                 break;
             case "D":
+                break;
+            case "E":
                 break;
         }
     }
