@@ -78,42 +78,33 @@ public class Login {
         String sql = "select id,username,password,State from client where username=? and password=?";
         PreparedStatement ptmt = con.prepareStatement(sql);
 
-        ptmt.setString(1, username);
-        ptmt.setString(2, password);
-        ResultSet rs = ptmt.executeQuery();
-        if(rs.next()){
-            System.out.println("-------账号登录成功--------");
+        // 判断用户是否处于登陆状态，避免不同客户端重复登陆同个帐号
+        String sql2 = "select State from client where username='"+ username +"'";
+        ResultSet m = ptmt.executeQuery(sql2);
+        while(m.next()) {
+            int state = m.getInt("State");  // state判断
+            if(state == 1) {
+                System.out.println("登陆失败，此用户正处于登陆状态！请重新登陆");
+                login();
+            } else {
+                ptmt.setString(1, username);
+                ptmt.setString(2, password);
+                ResultSet rs = ptmt.executeQuery();
+                if(rs.next()){
+                    System.out.println("-------账号登录成功--------");
 
-            // state --> 1
-            String sql3 = "update client set State=0 where username='"+ username +"'";
-            ptmt.executeUpdate(sql3);
+                    // 登陆之后state立刻设为1，表示在线状态 state --> 1
+                    String sql3 = "update client set State=1 where username='"+ username +"'";
+                    ptmt.executeUpdate(sql3);
 
-            // ---------------------------------------------------------------------------
-            // 展开数据库结果集
-            String sql2 = "select id,username,password,State from client";
-            ResultSet m = ptmt.executeQuery(sql2);
-            while(m.next()){
-                // 通过字段检索
-                int ID  = m.getInt("id");
-                String NAME = m.getString("username");
-                String PASSWORD = m.getString("password");
-                int STATE = m.getInt("State");
-                // 输出数据
-                System.out.print("ID: " + ID);
-                System.out.print(", username: " + NAME);
-                System.out.print(", password: " + PASSWORD);
-                System.out.print(", state: " + STATE);
-                System.out.print("\n");
-                // ---------------------------------------------------------------------------
+                    new ChatClient("127.0.0.1", 9998).run();
+                }else{
+                    System.out.println("-------名称或密码错误！---------\n" + "请重新登录:");
+                    login();
+                }
             }
-            new ChatClient("127.0.0.1", 9998).run();
-        }else{
-            System.out.println("-------名称或密码错误！---------\n" + "请重新登录:");
-            login();
         }
     }
-
-
 
     // 注销
     public static void logout() throws Exception {
@@ -168,5 +159,12 @@ public class Login {
                 System.out.println("错误输入!请输入正确的选项");
                 homePage();
         }
+    }
+
+    public static void setState() throws Exception {
+        // 离线：state --> 0
+        String sql = "update client set State=0 where username='"+ username +"'";
+        PreparedStatement ptmt = con.prepareStatement(sql);
+        ptmt.executeUpdate(sql);
     }
 }
