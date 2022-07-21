@@ -14,7 +14,7 @@ public class Client {
     static Scanner input = new Scanner(System.in);
 
     // main
-    public static void main(String[] args) throws Exception{
+    public static void ClientConnect() throws Exception{
         // loading....
         Class.forName("com.mysql.cj.jdbc.Driver");
         con = DriverManager.getConnection(url,user,pass);
@@ -81,6 +81,7 @@ public class Client {
         if(rs.next()){
             System.out.println("-------账号登录成功--------");
 
+            // ---------------------------------------------------------------------------
             String sql2 = "select id,username,password from client";
             // 展开数据库结果集
             ResultSet m = ptmt.executeQuery(sql2);
@@ -95,6 +96,8 @@ public class Client {
                 System.out.print(", username: " + NAME);
                 System.out.print(", password: " + PASSWORD);
                 System.out.print("\n");
+                // ---------------------------------------------------------------------------
+                LoginMainPage.LoginPage();
             }
         }else{
             System.out.println("-------名称或密码错误！---------\n" + "请重新登录:");

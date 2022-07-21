@@ -1,1 +1,3 @@
 client/login/Client.class
+messages/UserMessage.class
+client/login/LoginMainPage.class
