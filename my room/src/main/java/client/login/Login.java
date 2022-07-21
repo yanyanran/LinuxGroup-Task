@@ -75,29 +75,37 @@ public class Login {
         System.out.println("请输入您的密码： ");
         password = input.next();
 
-        String sql = "select id,username,password from client where username=? and password=?";
+        String sql = "select id,username,password,state from client where username=? and password=?";
         PreparedStatement ptmt = con.prepareStatement(sql);
+
         ptmt.setString(1, username);
         ptmt.setString(2, password);
         ResultSet rs = ptmt.executeQuery();
 
         if(rs.next()){
+            String s = username;
             System.out.println("-------账号登录成功--------");
 
             // ---------------------------------------------------------------------------
-            String sql2 = "select id,username,password from client";
+            String sql2 = "select id,username,password,state from client";
+            // state --> 1
+            String sql3 = "update client set state=1 where username=" + "'s'";
+            ptmt.executeUpdate(sql3);
             // 展开数据库结果集
             ResultSet m = ptmt.executeQuery(sql2);
+
             while(m.next()){
                 // 通过字段检索
                 int ID  = m.getInt("id");
                 String NAME = m.getString("username");
                 String PASSWORD = m.getString("password");
+                int STATE = m.getInt("state");
 
                 // 输出数据
                 System.out.print("ID: " + ID);
                 System.out.print(", username: " + NAME);
                 System.out.print(", password: " + PASSWORD);
+                System.out.print(",state: " + STATE);
                 System.out.print("\n");
                 // ---------------------------------------------------------------------------
             }
@@ -107,6 +115,8 @@ public class Login {
             login();
         }
     }
+
+    
 
     // 注销
     public static void logout() throws Exception {
