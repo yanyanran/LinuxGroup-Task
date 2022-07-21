@@ -5,6 +5,8 @@ import server.ChatClient;
 import java.sql.*;
 import java.util.Scanner;
 
+import static client.login.LoginMainPage.LoginPage;
+
 public class Login {
     private static String username;
     private static String password;
@@ -153,6 +155,7 @@ public class Login {
                 homePage();
                 break;
             case 4:
+                System.out.println("~ 886 ~");
                 System.exit(0);
             default:
                 System.out.println("错误输入!请输入正确的选项");

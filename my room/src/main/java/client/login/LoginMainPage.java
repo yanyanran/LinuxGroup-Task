@@ -4,6 +4,7 @@ import messages.UserMessage;
 
 import java.util.Scanner;
 
+
 public class LoginMainPage {
     static Scanner input = new Scanner(System.in);
 
@@ -144,8 +145,9 @@ public class LoginMainPage {
     public static void SignOut() throws Exception {
         String i = input.nextLine();
         switch (i.toUpperCase()) {
-            case "Y":
-
+            case "Y":   // state --> 0
+                // String sqlUpdate = "update client set state=1 where username='y3'";
+                // ptmt.executeUpdate(sqlUpdate);
                 Login.run();
                 break;
             case "N":

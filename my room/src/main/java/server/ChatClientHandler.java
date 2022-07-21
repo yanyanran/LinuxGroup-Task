@@ -20,7 +20,7 @@ public class ChatClientHandler extends SimpleChannelInboundHandler<String> {
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ctx.writeAndFlush(Unpooled.copiedBuffer("有用户上线了", CharsetUtil.UTF_8));
+        ctx.writeAndFlush(Unpooled.copiedBuffer("用户上线了", CharsetUtil.UTF_8));
     }
 
     /**

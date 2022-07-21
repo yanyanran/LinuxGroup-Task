@@ -51,6 +51,7 @@ public class ChatClient {
 
             Channel channel = channelFuture.channel();
             System.out.println("-------" + channel.localAddress().toString().substring(1) +"--------");
+
             LoginMainPage.LoginPage();
             /*
              * Future - Listener

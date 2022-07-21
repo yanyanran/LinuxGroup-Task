@@ -52,13 +52,8 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<String> {
      */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
-        System.out.println("[" + ctx.channel().remoteAddress().toString().substring(1) + "]说:" + msg);
-        Channel channel = ctx.channel();
-        for (Channel channel1 : channelList) {
-            // 排除自身通道
-            if (channel != channel1) {
-            channel1.writeAndFlush("[" + channel.remoteAddress().toString().substring(1) + "]说:" + msg);
-            }
-        }
+        System.out.println("[" + ctx.channel().remoteAddress().toString().substring(1) + "]" + msg);
+
+
     }
 }
