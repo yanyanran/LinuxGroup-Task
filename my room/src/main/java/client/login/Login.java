@@ -1,10 +1,9 @@
 package client.login;
 
 import java.sql.*;
-import java.util.Objects;
 import java.util.Scanner;
 
-public class Client {
+public class Login {
     private static String username;
     private static String password;
     private static String url = "jdbc:mysql://localhost:3306/ChatRoomClient?client=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
@@ -135,9 +134,9 @@ public class Client {
 
     // 主页面
     public static void homePage() throws Exception {
-        System.out.println("********用户界面********");
+        System.out.println("---- Welcome to MyChatRoom -----");
         System.out.println("请选择：\n 1:用户登录\n 2：用户注册\n 3：注销用户");
-        System.out.println("**********************");
+        System.out.println("--------------------------------");
 
         int i = input.nextInt();
         switch (i) {
@@ -152,8 +151,9 @@ public class Client {
                 homePage();
                 break;
             default:
-                System.out.println("!!!错误输入!!!");
-                System.exit(0);
+                System.out.println("错误输入!请输入正确的选项");
+                // System.exit(0);
+                homePage();
         }
     }
 }

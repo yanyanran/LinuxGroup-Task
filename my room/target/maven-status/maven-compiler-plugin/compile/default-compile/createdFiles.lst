@@ -1,3 +1,11 @@
-client/login/Client.class
+server/ChatClient.class
+server/ChatServerHandler.class
 messages/UserMessage.class
+server/ChatServer$2.class
+server/ChatClient$2.class
+server/ChatClientHandler.class
+client/login/Login.class
+server/ChatServer.class
 client/login/LoginMainPage.class
+server/ChatServer$1.class
+server/ChatClient$1.class

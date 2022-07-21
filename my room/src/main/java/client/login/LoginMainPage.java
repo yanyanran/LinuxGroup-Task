@@ -142,7 +142,7 @@ public class LoginMainPage {
         String i = input.nextLine();
         switch (i.toUpperCase()) {
             case "Y":
-                Client.ClientConnect();
+                Login.ClientConnect();
                 break;
             case "N":
             default:
