@@ -97,7 +97,7 @@ public class Login {
                     String sql3 = "update client set State=1 where username='"+ username +"'";
                     ptmt.executeUpdate(sql3);
 
-                    new ChatClient("127.0.0.1", 9998).setMsg();
+                    new ChatClient("127.0.0.1", 8080).setMsg();
                 }else{
                     System.out.println("-------名称或密码错误！---------\n" + "请重新登录:");
                     login();

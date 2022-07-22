@@ -4,7 +4,9 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,7 +23,12 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<String> {
         Channel channel = ctx.channel();
         //当有新的客户端连接的时候, 将通道放入集合
         channelList.add(channel);
-        System.out.println("[Server]:" + channel.remoteAddress().toString().substring(1) + "在线.");
+
+        SimpleDateFormat sdf = new SimpleDateFormat();  // 格式化时间
+        sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");  // a为am/pm的标记
+        Date date = new Date(); // 获取当前时间
+
+        System.out.println("[Server]:" + "[" + channel.remoteAddress().toString().substring(1) + "]" + " 在 " + sdf.format((date)) + "上线.");
     }
 
     /**
@@ -32,7 +39,12 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<String> {
         Channel channel = ctx.channel();
         //当有客户端断开连接的时候,就移除对应的通道
         channelList.remove(channel);
-        System.out.println("[Server]:" + channel.remoteAddress().toString().substring(1) + "离线.");
+
+        SimpleDateFormat sdf = new SimpleDateFormat();  // 格式化时间
+        sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");  // a为am/pm的标记
+        Date date = new Date(); // 获取当前时间
+
+        System.out.println("[Server]:" + "[" + channel.remoteAddress().toString().substring(1) + "]" + " 在 " + sdf.format((date)) + "离线.");
     }
 
     /**

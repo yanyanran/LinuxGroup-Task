@@ -3,7 +3,6 @@ server/ChatServerHandler.class
 messages/UserMessage.class
 server/ChatServer$2.class
 server/ChatClientHandler.class
-server/Server.class
 client/login/Login.class
 server/Client.class
 server/ChatServer.class

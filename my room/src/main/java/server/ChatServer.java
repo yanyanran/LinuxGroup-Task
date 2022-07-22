@@ -45,7 +45,7 @@ public class ChatServer {
                     });
 
             // 启动服务端 绑定端口
-            ChannelFuture future = serverBootstrap.bind(port);
+            ChannelFuture future = serverBootstrap.bind(port).sync();
             /**
              * Future - Listener
              * */
@@ -54,17 +54,21 @@ public class ChatServer {
                 public void operationComplete(ChannelFuture future) throws Exception {
                     if (future.isSuccess()) {
                         System.out.println("端口绑定成功!");
+                        System.out.println(" ~ Welcome To MyChatRoom ~ \n---- 服务端启动成功! ----\n");
                     } else {
                         System.out.println("端口绑定失败!");
                     }
                 }
             });
-            System.out.println(" ~ Welcome To MyChatRoom ~ \n---- 服务端启动成功! ----\n");
 
             future.channel().closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        new ChatServer(8080).run();
     }
 }
