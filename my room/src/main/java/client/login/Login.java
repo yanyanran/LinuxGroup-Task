@@ -1,26 +1,24 @@
 package client.login;
 
+import io.netty.channel.ChannelFuture;
 import server.ChatClient;
 
 import java.sql.*;
 import java.util.Scanner;
 
 import static client.login.LoginMainPage.LoginPage;
+import static server.ChatServer.cnTableClient;
 
 public class Login {
     private static String username;
     private static String password;
-    private static String url = "jdbc:mysql://localhost:3306/ChatRoomClient?client=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
-    private static String user = "root";
-    private static String pass = "123456";
     private static Connection con;
     static Scanner input = new Scanner(System.in);
 
     // main
     public static void run() throws Exception {
         // loading....
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        con = DriverManager.getConnection(url,user,pass);
+        con = cnTableClient(username, password);
         homePage();
     }
 
@@ -97,7 +95,9 @@ public class Login {
                     String sql3 = "update client set State=1 where username='"+ username +"'";
                     ptmt.executeUpdate(sql3);
 
-                    new ChatClient("127.0.0.1", 8080).setMsg();
+                    // chat future
+                    ChannelFuture cd = new ChatClient("127.0.0.1", 8080).clientThreadPool();
+
                 }else{
                     System.out.println("-------名称或密码错误！---------\n" + "请重新登录:");
                     login();

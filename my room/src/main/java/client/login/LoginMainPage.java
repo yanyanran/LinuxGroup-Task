@@ -4,6 +4,8 @@ import messages.UserMessage;
 
 import java.util.Scanner;
 
+import static server.Client.setMsg;
+
 
 public class LoginMainPage {
     static Scanner input = new Scanner(System.in);
@@ -105,6 +107,7 @@ public class LoginMainPage {
 
         switch (i.toUpperCase()) {
             case "A":
+                setMsg();
                 break;
             case "B":
                 break;

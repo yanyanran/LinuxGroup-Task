@@ -7,4 +7,8 @@ public class Client {
         // 用户登陆
         Login.run();
     }
+
+    public static void setMsg() {
+
+    }
 }

@@ -1,8 +1,13 @@
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/client/login/LoginMainPage.java
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/server/ChatServer.java
+/home/yanran/github/LinuxGroup-Task/my room/src/main/java/sc/ClientReceiveThread.java
+/home/yanran/github/LinuxGroup-Task/my room/src/main/java/server/ChatClient.java
+/home/yanran/github/LinuxGroup-Task/my room/src/main/java/sc/ServerThread.java
+/home/yanran/github/LinuxGroup-Task/my room/src/main/java/server/ChatClientHandler.java
+/home/yanran/github/LinuxGroup-Task/my room/src/main/java/sc/UserMessage.java
+/home/yanran/github/LinuxGroup-Task/my room/src/main/java/sc/ChatServer.java
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/server/Client.java
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/messages/UserMessage.java
-/home/yanran/github/LinuxGroup-Task/my room/src/main/java/server/ChatClient.java
+/home/yanran/github/LinuxGroup-Task/my room/src/main/java/sc/ChatClient.java
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/server/ChatServerHandler.java
-/home/yanran/github/LinuxGroup-Task/my room/src/main/java/server/ChatClientHandler.java
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/client/login/Login.java

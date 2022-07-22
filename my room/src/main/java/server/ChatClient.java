@@ -25,7 +25,18 @@ public class ChatClient {
         this.port = port;
     }
 
-    public void setMsg() throws Exception {
+    // 选择聊天调用 setMsg(channelFuture);
+    public static void setMsg(ChannelFuture ch) {
+        Channel channel  = ch.channel();
+        // 向服务端发送消息 --> 聊天
+        Scanner scanner = new Scanner(System.in);
+        while (scanner.hasNextLine()) {
+            String msg = scanner.nextLine();
+            channel.writeAndFlush(msg);
+        }
+    }
+
+    public ChannelFuture clientThreadPool() throws Exception {
         // 创建线程组
         EventLoopGroup group = null;
         ChannelFuture channelFuture = null;
@@ -51,25 +62,6 @@ public class ChatClient {
             channelFuture = bootstrap.connect(ip, port).sync();
 
             LoginMainPage.LoginPage();
-            /*
-             * Future - Listener
-            channelFuture.addListener(new ChannelFutureListener() {
-                @Override
-                public void operationComplete(ChannelFuture future) throws Exception {
-                    if (future.isSuccess()) {
-                        System.out.println("数据发送成功.");
-                    } else {
-                        System.out.println("数据发送失败.");
-                    }
-                }
-            });*/
-
-            // 向服务端发送消息 --> 聊天
-            /*Scanner scanner = new Scanner(System.in);
-            while (scanner.hasNextLine()) {
-                String msg = scanner.nextLine();
-                channel.writeAndFlush(msg);
-            }*/
 
             group.shutdownGracefully();
             Login.run();
@@ -77,5 +69,6 @@ public class ChatClient {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return channelFuture;
     }
 }
