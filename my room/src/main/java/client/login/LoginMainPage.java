@@ -149,10 +149,7 @@ public class LoginMainPage {
         String i = input.nextLine();
         switch (i.toUpperCase()) {
             case "Y":   // state --> 0
-                // String sqlUpdate = "update client set state=1 where username='y3'";
-                // ptmt.executeUpdate(sqlUpdate);
                 Login.setState();
-                Login.run();
                 break;
             case "N":
                 LoginPage();

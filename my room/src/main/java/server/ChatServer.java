@@ -67,8 +67,4 @@ public class ChatServer {
             workerGroup.shutdownGracefully();
         }
     }
-
-    public static void main(String[] args) throws InterruptedException {
-        new ChatServer(9998).run();
-    }
 }

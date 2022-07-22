@@ -25,9 +25,10 @@ public class ChatClient {
         this.port = port;
     }
 
-    public void run() throws Exception {
+    public void setMsg() throws Exception {
         // 创建线程组
         EventLoopGroup group = null;
+        ChannelFuture channelFuture = null;
         try {
             group = new NioEventLoopGroup();
 
@@ -47,15 +48,11 @@ public class ChatClient {
                     });
 
             // 启动客户端 等待连接服务端
-            ChannelFuture channelFuture = bootstrap.connect(ip, port).sync();
-
-            Channel channel = channelFuture.channel();
-            System.out.println("-------" + channel.localAddress().toString().substring(1) +"--------");
+            channelFuture = bootstrap.connect(ip, port).sync();
 
             LoginMainPage.LoginPage();
             /*
              * Future - Listener
-             *
             channelFuture.addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {
@@ -67,22 +64,18 @@ public class ChatClient {
                 }
             });*/
 
-            /*
-            // 向服务端发送消息
-            Scanner scanner = new Scanner(System.in);
+            // 向服务端发送消息 --> 聊天
+            /*Scanner scanner = new Scanner(System.in);
             while (scanner.hasNextLine()) {
                 String msg = scanner.nextLine();
                 channel.writeAndFlush(msg);
             }*/
+
+            group.shutdownGracefully();
+            Login.run();
             channelFuture.channel().closeFuture().sync();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            group.shutdownGracefully();
         }
-    }
-    public static void main(String[] args) throws Exception {
-        // 用户登陆
-        Login.run();
     }
 }
