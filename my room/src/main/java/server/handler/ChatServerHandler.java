@@ -1,4 +1,4 @@
-package server;
+package server.handler;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -28,7 +28,7 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<String> {
         sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");  // a为am/pm的标记
         Date date = new Date(); // 获取当前时间
 
-        System.out.println("[Server]:" + "[" + channel.remoteAddress().toString().substring(1) + "]" + " 在 " + sdf.format((date)) + "上线.");
+        System.out.println("[Server]:" + "[" + channel.remoteAddress().toString().substring(1) + "]" + " 在 " + sdf.format((date)) + "上线/客户端连接成功.");
     }
 
     /**
@@ -44,7 +44,7 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<String> {
         sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");  // a为am/pm的标记
         Date date = new Date(); // 获取当前时间
 
-        System.out.println("[Server]:" + "[" + channel.remoteAddress().toString().substring(1) + "]" + " 在 " + sdf.format((date)) + "离线.");
+        System.out.println("[Server]:" + "[" + channel.remoteAddress().toString().substring(1) + "]" + " 在 " + sdf.format((date)) + "离线/客户端端开连接.");
     }
 
     /**
@@ -64,6 +64,6 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<String> {
      */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
-        System.out.println("[" + ctx.channel().remoteAddress().toString().substring(1) + "]" + msg);
+        System.out.println("Server接收到客户端[" + ctx.channel().remoteAddress().toString().substring(1) + "]" +"发来的消息： "+ msg);
     }
 }

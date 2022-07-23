@@ -7,10 +7,9 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import server.handler.ChatServerHandler;
+import server.handler.ConnectSqlHandler;
+import server.handler.ServerOutputHandler;
 
 /**
  * 聊天室服务端
@@ -22,16 +21,6 @@ public class ChatServer {
         this.port = port;
     }
 
-    // 连接client表
-    public static Connection cnTableClient(String username, String password) throws ClassNotFoundException, SQLException {
-        String url = "jdbc:mysql://localhost:3306/ChatRoomClient?client=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
-        String user = "root";
-        String pass = "123456";
-        Connection con;
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        con = DriverManager.getConnection(url,user,pass);
-        return con;
-    }
 
     public void run() throws InterruptedException {
         // 处理连接事件线程组
@@ -56,7 +45,9 @@ public class ChatServer {
                             ch.pipeline().addLast(new StringEncoder());
                             /** 向pipeline中添加自定义业务处理handler */
                             ch.pipeline().addLast(new ChatServerHandler());
-                        }
+                            ch.pipeline().addFirst(new ServerOutputHandler());
+                            ch.pipeline().addLast(new ConnectSqlHandler());
+                            }
                     });
 
             // 启动服务端 绑定端口
@@ -84,6 +75,6 @@ public class ChatServer {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        new ChatServer(8080).run();
+        new ChatServer(8000).run();
     }
 }

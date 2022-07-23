@@ -1,13 +1,7 @@
-package client.login;
-
-import io.netty.channel.ChannelFuture;
-import server.ChatClient;
+package c.login;
 
 import java.sql.*;
 import java.util.Scanner;
-
-import static client.login.LoginMainPage.LoginPage;
-import static server.ChatServer.cnTableClient;
 
 public class Login {
     private static String username;
@@ -15,14 +9,7 @@ public class Login {
     private static Connection con;
     static Scanner input = new Scanner(System.in);
 
-    // main
-    public static void run() throws Exception {
-        // loading....
-        con = cnTableClient(username, password);
-        homePage();
-    }
-
-    // 注册
+    // 2 --> 注册
     public static void register() throws Exception {
         System.out.println("请输入您的用户名： ");
         username = input.next();
@@ -44,7 +31,7 @@ public class Login {
         }
 
         // 1、没有重复项，可注册
-        if(flag == 0){
+        if(flag == 0) {
             System.out.println("请输入您的密码： ");
             String p1 = input.next();
             System.out.println("请再次输入您的密码以确认密码：");
@@ -66,47 +53,19 @@ public class Login {
         }
     }
 
-    // 登陆
+    // 1 --> 登陆
     public static void login() throws Exception {
         System.out.println("请输入您的姓名： ");
         username = input.next();
         System.out.println("请输入您的密码： ");
         password = input.next();
 
-        String sql = "select id,username,password,State from client where username=? and password=?";
-        PreparedStatement ptmt = con.prepareStatement(sql);
+        // 调用
 
-        // 判断用户是否处于登陆状态，避免不同客户端重复登陆同个帐号
-        String sql2 = "select State from client where username='"+ username +"'";
-        ResultSet m = ptmt.executeQuery(sql2);
-        while(m.next()) {
-            int state = m.getInt("State");  // state判断
-            if(state == 1) {
-                System.out.println("登陆失败，此用户正处于登陆状态！请重新登陆");
-                login();
-            } else {
-                ptmt.setString(1, username);
-                ptmt.setString(2, password);
-                ResultSet rs = ptmt.executeQuery();
-                if(rs.next()){
-                    System.out.println("-------账号登录成功--------");
 
-                    // 登陆之后state立刻设为1，表示在线状态 state --> 1
-                    String sql3 = "update client set State=1 where username='"+ username +"'";
-                    ptmt.executeUpdate(sql3);
-
-                    // chat future
-                    ChannelFuture cd = new ChatClient("127.0.0.1", 8080).clientThreadPool();
-
-                }else{
-                    System.out.println("-------名称或密码错误！---------\n" + "请重新登录:");
-                    login();
-                }
-            }
-        }
     }
 
-    // 注销
+    // 3 --> 注销
     public static void logout() throws Exception {
         System.out.println("请输入您要注销的账号名称：");
         username = input.next();
@@ -141,6 +100,10 @@ public class Login {
         System.out.println("--------------------------------");
 
         int i = input.nextInt();
+
+        // setMsqlToLogin();
+        // LoginServer(con);  // 发给服务端
+
         switch (i) {
             case 1:
                 login();
@@ -161,8 +124,8 @@ public class Login {
         }
     }
 
+    // 离线：state --> 0
     public static void setState() throws Exception {
-        // 离线：state --> 0
         String sql = "update client set State=0 where username='"+ username +"'";
         PreparedStatement ptmt = con.prepareStatement(sql);
         ptmt.executeUpdate(sql);
