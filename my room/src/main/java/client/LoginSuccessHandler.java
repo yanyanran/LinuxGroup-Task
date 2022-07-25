@@ -153,7 +153,7 @@ public class LoginSuccessHandler {
                 // new LoginHandler.setState(ctx);
                 break;
             case "N":
-                LoginPage();
+                //new LoginClientHandler;
             default:
                 System.out.println("您的输入有误！请重新输入：");
                 SignOut();

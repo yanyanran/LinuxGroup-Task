@@ -5,6 +5,7 @@ import messages.settoservermsg.LoginMsg;
 import messages.settoservermsg.LogoutMsg;
 import messages.settoservermsg.OfflineMsg;
 import messages.settoservermsg.RegisterMsg;
+import server.handler.LoginConnectSqlHandler;
 
 import java.util.Scanner;
 
@@ -47,7 +48,7 @@ public class LoginClientHandler {
     }
 
     // 1 --> 登陆
-    public static void login(ChannelHandlerContext ctx) {
+    public static void login(ChannelHandlerContext ctx) throws Exception {
         System.out.println("请输入您的姓名： ");
         username = input.next();
         System.out.println("请输入您的密码： ");
@@ -57,7 +58,7 @@ public class LoginClientHandler {
         LoginMsg msg = new LoginMsg(username,password);
         ctx.writeAndFlush(msg);
 
-        // 加锁，服务端返回消息后客户端才继续
+        // lock --> 服务端返回消息后继续
         try {
             synchronized (waitMessage) {
                 waitMessage.wait();
@@ -68,7 +69,7 @@ public class LoginClientHandler {
 
         if(waitSuccess == 1) {
             System.out.println("------登陆成功-------\n");
-            // new LoginConnectSqlHandler(ctx);
+            new LoginSuccessHandler(ctx);
         }else {
             System.out.println("-------名称或密码错误！---------\\n\" + \"请重新登录:");
             login(ctx);

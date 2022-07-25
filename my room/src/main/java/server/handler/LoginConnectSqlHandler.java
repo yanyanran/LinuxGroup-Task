@@ -7,6 +7,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.CharsetUtil;
 import messages.settoclientmsg.ServerToClientMsg;
+import messages.settoservermsg.LoginMsg;
 import messages.settoservermsg.RegisterMsg;
 
 import java.sql.Connection;
@@ -14,7 +15,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<RegisterMsg> {
+public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<LoginMsg> {
     private static String url = "jdbc:mysql://localhost:3306/C hatRoomClient?client=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
     private static String user = "root";
     private static String pass = "123456";
@@ -25,7 +26,7 @@ public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<Register
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, RegisterMsg msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, LoginMsg msg) throws Exception {
         System.out.println(msg);
 
         String username = msg.getUsername();
@@ -71,4 +72,5 @@ public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<Register
             }
         }
     }
+
 }

@@ -3,13 +3,14 @@ package client;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
+import messages.MessageCode;
 
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 聊天室的客户端
@@ -48,20 +49,22 @@ public class ChatClient {
             Bootstrap bootstrap = new Bootstrap();  // 创建客户端启动助手
             bootstrap.group(group)
                     .channel(NioSocketChannel.class)
-                    .handler(new ChannelInitializer<SocketChannel>() {
+                    .handler(new ChannelInitializer<NioSocketChannel>() {
                         // 创建一个通道初始化对象
                         @Override
-                        protected void initChannel(SocketChannel ch) throws Exception {
+                        protected void initChannel(NioSocketChannel ch) throws Exception {
                             // 编解码器
+                            ch.pipeline().addLast(new MessageCode());
                             ch.pipeline().addLast(new StringDecoder());
                             ch.pipeline().addLast(new StringEncoder());
-                            // 添加自定义业务处理handler
+                            /** 添加自定义业务处理handler */
                             //ch.pipeline().addLast(new ChatClientHandler());
                             // 服务端给客户端回消息handler
+                            ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
                             ch.pipeline().addLast(new ResponseHandler());
                             ch.pipeline().addLast(new ChannelInboundHandlerAdapter(){
                                 @Override
-                                public void channelActive(ChannelHandlerContext ctx) throws Exception {
+                                public void channelActive( ChannelHandlerContext ctx) throws Exception {
                                     // 创一个线程跑界面层
                                     new Thread(()->{
                                         try {
@@ -77,15 +80,11 @@ public class ChatClient {
 
             // 启动客户端 等待连接服务端
             channelFuture = bootstrap.connect(ip, port).sync();
-
-            // 用户登陆
-            //new LoginClientHandler(ctx);
-
-            group.shutdownGracefully();
-            // Login.homePage();
             channelFuture.channel().closeFuture().sync();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            group.shutdownGracefully();
         }
     }
 

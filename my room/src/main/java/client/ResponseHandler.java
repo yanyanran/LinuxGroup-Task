@@ -11,7 +11,6 @@ import static client.ChatClient.waitSuccess;
 public class ResponseHandler extends SimpleChannelInboundHandler<ServerToClientMsg> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ServerToClientMsg msg) throws Exception {
-
         boolean success = msg.getSuccess();
         String reason = msg.getReason();
 
@@ -23,8 +22,9 @@ public class ResponseHandler extends SimpleChannelInboundHandler<ServerToClientM
             waitSuccess = 1;
         }
 
-        // 唤醒界面主线程
+        // 唤醒线程
         synchronized (waitMessage) {
+            System.out.println("111111111111111111111111");
             waitMessage.notifyAll();
         }
     }

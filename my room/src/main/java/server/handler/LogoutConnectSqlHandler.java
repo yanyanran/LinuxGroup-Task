@@ -45,7 +45,7 @@ public class LogoutConnectSqlHandler extends SimpleChannelInboundHandler<LogoutM
         // 可能还要加一个帐号与密码是否匹配的判断
 
         ServerToClientMsg msg2 = new ServerToClientMsg(true,"-------帐户已被注销--------");
-        msg2.setMessageType(UserMessage.logoutmsg);
+        msg2.setMessageType(UserMessage.logoutmsgCtoS);
         ctx.writeAndFlush(msg2);
     }
 }
