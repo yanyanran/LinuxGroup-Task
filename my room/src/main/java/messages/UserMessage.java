@@ -1,5 +1,6 @@
 package messages;
 
+import messages.settoservermsg.LoginMsg;
 import messages.settoservermsg.LogoutMsg;
 import messages.settoservermsg.RegisterMsg;
 
@@ -14,8 +15,8 @@ public abstract class UserMessage implements Serializable {
 
     // Login main page
     // register
-    private static final int registermsg = 0;
-    private static final int registermsg1 = 1;
+    private static final int registermsg = 0;  // client --> server
+    private static final int registermsg1 = 1; // server --> client
 
     // login
     private static final int loginmsg = 2;
@@ -42,13 +43,12 @@ public abstract class UserMessage implements Serializable {
     static{
         messageClass.put(0, RegisterMsg.class);
         messageClass.put(1, LogoutMsg.class);
-//        messageClasses.put(2, message.Loginmsg.class);
-//        messageClasses.put(3, message.Loginmsg1.class);
-//        messageClasses.put(4, message.Logoutmsg.class);
-//        messageClasses.put(5, message.Logoumsg1.class);
-//        messageClasses.put(6, message.Quit.class);
-//        messageClasses.put(7, message.Quit1.class);
-//        messageClasses.put(8, message.Enrollmsg.class);
+        messageClass.put(2, LoginMsg.class);
+//      messageClass.put(3, message.LoginMsg1.class);
+//      messageClass.put(4, message.LogoutMsg.class);
+//      messageClass.put(5, message.LogoutMsg1.class);
+//      messageClass.put(6, message.Quit.class);
+//      messageClass.put(7, message.Quit1.class);
     }
 
     // 展示未读消息数量

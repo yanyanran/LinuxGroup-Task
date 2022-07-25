@@ -9,16 +9,18 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 聊天室的客户端
  * 运行后用户先登陆，登陆成功后客户端再与服务器端连接，再输出上线离线内容
  */
 public class ChatClient {
+    private static int num;    // 线程数
     private static String ip;  // IP
     private static int port;   // 端口号
-    public static final Object waitMessage = new Object();    // 服务端消息返回时，notify线程 View handler
-    public static int waitSuccess;   // 1表示消息成功、0表示消息失败
+    public static final Object waitMessage = new Object();    // 服务端消息返回时，notify线程去通知
+    public static int waitSuccess;   // 1成功，0失败
 
     public ChatClient(String ip, int port) {
         this.ip = ip;
@@ -54,7 +56,7 @@ public class ChatClient {
                             ch.pipeline().addLast(new StringDecoder());
                             ch.pipeline().addLast(new StringEncoder());
                             // 添加自定义业务处理handler
-                            ch.pipeline().addLast(new ChatClientHandler());
+                            //ch.pipeline().addLast(new ChatClientHandler());
                             // 服务端给客户端回消息handler
                             ch.pipeline().addLast(new ResponseHandler());
                             ch.pipeline().addLast(new ChannelInboundHandlerAdapter(){
@@ -63,10 +65,11 @@ public class ChatClient {
                                     // 创一个线程跑界面层
                                     new Thread(()->{
                                         try {
+                                            num++;
                                             new LoginClientHandler(ctx);
                                         } catch (Exception e) {
                                             e.printStackTrace();
-                                        }},"system.in").start();
+                                        }},"线程" + num).start();
                                 }
                             });
                         }
@@ -76,7 +79,7 @@ public class ChatClient {
             channelFuture = bootstrap.connect(ip, port).sync();
 
             // 用户登陆
-            // new LoginHandler(ctx);
+            //new LoginClientHandler(ctx);
 
             group.shutdownGracefully();
             // Login.homePage();

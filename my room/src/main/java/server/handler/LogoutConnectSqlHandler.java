@@ -1,7 +1,9 @@
 package server.handler;
 
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.CharsetUtil;
 import messages.UserMessage;
 import messages.settoclientmsg.ServerToClientMsg;
 import messages.settoservermsg.LogoutMsg;
@@ -17,6 +19,11 @@ public class LogoutConnectSqlHandler extends SimpleChannelInboundHandler<LogoutM
     private static String user = "root";
     private static String pass = "123456";
     private static Connection con;
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        ctx.writeAndFlush(Unpooled.copiedBuffer("客户端想要读取数据库因为有用户在有用户在注销帐号...", CharsetUtil.UTF_8));
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LogoutMsg msg) throws Exception {

@@ -1,20 +1,20 @@
-package c.login;
+package client;
 
 import io.netty.channel.ChannelHandlerContext;
 import messages.UserMessage;
 
 import java.util.Scanner;
 
-public class LoginMainPage {
+public class LoginSuccessHandler {
     static Scanner input = new Scanner(System.in);
 
     // 登陆完成后显示页面
-    public static void LoginPage() throws Exception {
-        //public static void main(String[] args) {
+    public LoginSuccessHandler(ChannelHandlerContext ctx) throws Exception {
         int unreadMessage = 0;  // 这条代表数据库中“未读消息列表”的消息数
         if (unreadMessage > 0) {
-            UserMessage.getUnreadMessage();
+            UserMessage.getUnreadMessage();  // 主页面显示有几条未读消息
         }
+        // main page
         System.out.println("(A) 好友管理");
         System.out.println("(B) 聊天群管理");
         System.out.println("(C) 好友聊天");
@@ -46,7 +46,7 @@ public class LoginMainPage {
                 break;
             default:
                 System.out.println("输入有误!请重新选择：\n");
-                LoginPage();
+                new LoginSuccessHandler(ctx);
 
         }
     }

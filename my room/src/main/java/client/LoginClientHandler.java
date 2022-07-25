@@ -1,6 +1,7 @@
 package client;
 
 import io.netty.channel.ChannelHandlerContext;
+import messages.settoservermsg.LoginMsg;
 import messages.settoservermsg.LogoutMsg;
 import messages.settoservermsg.OfflineMsg;
 import messages.settoservermsg.RegisterMsg;
@@ -53,7 +54,25 @@ public class LoginClientHandler {
         password = input.next();
 
         // handler查询密码和帐号名是否对应
+        LoginMsg msg = new LoginMsg(username,password);
+        ctx.writeAndFlush(msg);
 
+        // 加锁，服务端返回消息后客户端才继续
+        try {
+            synchronized (waitMessage) {
+                waitMessage.wait();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        if(waitSuccess == 1) {
+            System.out.println("------登陆成功-------\n");
+            // new LoginConnectSqlHandler(ctx);
+        }else {
+            System.out.println("-------名称或密码错误！---------\\n\" + \"请重新登录:");
+            login(ctx);
+        }
     }
 
     // 2 --> 注册
@@ -69,7 +88,7 @@ public class LoginClientHandler {
         RegisterMsg msg = new RegisterMsg(username, password, password2);
         ctx.writeAndFlush(msg);
 
-        // 加锁，服务端返回消息后客户端继续
+        // lock
         try {
             synchronized (waitMessage) {
                 waitMessage.wait();

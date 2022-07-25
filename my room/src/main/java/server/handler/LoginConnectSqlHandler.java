@@ -1,9 +1,11 @@
 package server.handler;
 
-import c.login.LoginMainPage;
-import com.mysql.cj.xdevapi.Statement;
+import client.LoginClientHandler;
+import client.LoginSuccessHandler;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.CharsetUtil;
 import messages.settoclientmsg.ServerToClientMsg;
 import messages.settoservermsg.RegisterMsg;
 
@@ -12,16 +14,15 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import static client.LoginClientHandler.login;
-
 public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<RegisterMsg> {
     private static String url = "jdbc:mysql://localhost:3306/C hatRoomClient?client=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
     private static String user = "root";
     private static String pass = "123456";
-    private static Connection con;
-    static Statement stat = null;
-    static ResultSet rs = null;
-    static PreparedStatement ps =null;
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        ctx.writeAndFlush(Unpooled.copiedBuffer("客户端想要读取数据库因为有用户在登陆帐号...", CharsetUtil.UTF_8));
+    }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RegisterMsg msg) throws Exception {
@@ -46,7 +47,7 @@ public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<Register
                 ServerToClientMsg msg2 = new ServerToClientMsg(false, "登陆失败，此用户正处于登陆状态！请重新登陆");
                 System.out.println(msg2);
                 ctx.writeAndFlush(msg2);
-                login(ctx);
+                // login(ctx);
             } else {
                 ptmt.setString(1, username);
                 ptmt.setString(2, password);
@@ -61,15 +62,13 @@ public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<Register
                     ptmt.executeUpdate(sql3);
 
                     // 登陆完成 显示主页面
-                    LoginMainPage.LoginPage();
+                    new LoginClientHandler(ctx);
                 }else{
                     ServerToClientMsg msg2 = new ServerToClientMsg(false,"-------名称或密码错误！---------\\n\" + \"请重新登录:");
                     System.out.println(msg2);
                     ctx.writeAndFlush(msg2);
-                    login(ctx);
                 }
             }
         }
-
     }
 }

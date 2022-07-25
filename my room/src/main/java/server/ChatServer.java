@@ -42,12 +42,12 @@ public class ChatServer {
                             ch.pipeline().addLast(new StringDecoder());
                             ch.pipeline().addLast(new StringEncoder());
                             /** 向pipeline中添加自定义业务处理handler */
-                            ch.pipeline().addLast(new ChatServerHandler());
+                            //ch.pipeline().addLast(new ChatServerHandler());
                             ch.pipeline().addLast(new LoginConnectSqlHandler());
                             ch.pipeline().addLast(new LogoutConnectSqlHandler());
                             ch.pipeline().addLast(new OfflineConnectSqlHandler());
                             ch.pipeline().addLast(new RegisterConnectSqlHandler());
-                            }
+                        }
                     });
 
             // 启动服务端 绑定端口

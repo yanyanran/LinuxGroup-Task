@@ -62,7 +62,7 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
   
 
-  
+  通过channel发消息
 
   **问题：**
 
