@@ -12,7 +12,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import static c.login.LoginHandler.login;
+import static client.LoginClientHandler.login;
 
 public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<RegisterMsg> {
     private static String url = "jdbc:mysql://localhost:3306/C hatRoomClient?client=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";

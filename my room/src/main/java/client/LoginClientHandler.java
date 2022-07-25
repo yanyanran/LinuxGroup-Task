@@ -1,29 +1,23 @@
-package c.login;
+package client;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import messages.settoclientmsg.ServerToClientMsg;
 import messages.settoservermsg.LogoutMsg;
 import messages.settoservermsg.OfflineMsg;
 import messages.settoservermsg.RegisterMsg;
-import server.handler.LoginConnectSqlHandler;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.Scanner;
 
 import static client.ChatClient.waitMessage;
 import static client.ChatClient.waitSuccess;
 
-public class LoginHandler {
+public class LoginClientHandler {
     private static String username;
     private static String password;
     private static String password2;
     static Scanner input = new Scanner(System.in);
 
     // home page
-    public LoginHandler(ChannelHandlerContext ctx) throws Exception {
+    public LoginClientHandler(ChannelHandlerContext ctx) throws Exception {
         System.out.println("---- Welcome to MyChatRoom -----");
         System.out.println("请选择：\n 1:用户登录\n 2：用户注册\n 3：注销用户\n 4：退出");
         System.out.println("--------------------------------");
@@ -39,7 +33,7 @@ public class LoginHandler {
             case 3:
                 logout(ctx);
                 // return home page
-                new LoginHandler(ctx);
+                new LoginClientHandler(ctx);
                 break;
             case 4:
                 System.out.println("~ 886 ~");
@@ -47,7 +41,7 @@ public class LoginHandler {
             default:
                 System.out.println("错误输入!请输入正确的选项");
                 // return home page
-                new LoginHandler(ctx);
+                new LoginClientHandler(ctx);
         }
     }
 
@@ -121,7 +115,7 @@ public class LoginHandler {
                 break;
             case 2:
                 System.out.println("-------您选择保留您的帐户--------");
-                new LoginHandler(ctx);
+                new LoginClientHandler(ctx);
                 break;
             default:
                 System.out.println("!!!错误输入!!!");

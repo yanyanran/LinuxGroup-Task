@@ -1,6 +1,5 @@
 package client;
 
-import c.login.LoginHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -8,7 +7,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
-import server.handler.LoginConnectSqlHandler;
 
 import java.util.Scanner;
 
@@ -57,22 +55,19 @@ public class ChatClient {
                             ch.pipeline().addLast(new StringEncoder());
                             // 添加自定义业务处理handler
                             ch.pipeline().addLast(new ChatClientHandler());
-                            // 添加访问数据库handler
-                            ch.pipeline().addLast(new LoginConnectSqlHandler());
                             // 服务端给客户端回消息handler
                             ch.pipeline().addLast(new ResponseHandler());
                             ch.pipeline().addLast(new ChannelInboundHandlerAdapter(){
                                 @Override
                                 public void channelActive(ChannelHandlerContext ctx) throws Exception {
+                                    // 创一个线程跑界面层
                                     new Thread(()->{
                                         try {
-                                            new LoginHandler(ctx);
+                                            new LoginClientHandler(ctx);
                                         } catch (Exception e) {
                                             e.printStackTrace();
-                                        }
-                                    },"system.in").start();
+                                        }},"system.in").start();
                                 }
-
                             });
                         }
                     });
