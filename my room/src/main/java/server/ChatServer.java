@@ -8,8 +8,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import server.handler.ChatServerHandler;
-import server.handler.ConnectSqlHandler;
-import server.handler.ServerOutputHandler;
+import server.handler.LoginConnectSqlHandler;
 
 /**
  * 聊天室服务端
@@ -45,8 +44,7 @@ public class ChatServer {
                             ch.pipeline().addLast(new StringEncoder());
                             /** 向pipeline中添加自定义业务处理handler */
                             ch.pipeline().addLast(new ChatServerHandler());
-                            ch.pipeline().addFirst(new ServerOutputHandler());
-                            ch.pipeline().addLast(new ConnectSqlHandler());
+                            ch.pipeline().addLast(new LoginConnectSqlHandler());
                             }
                     });
 

@@ -1,5 +1,6 @@
 package c.login;
 
+import io.netty.channel.ChannelHandlerContext;
 import messages.UserMessage;
 
 import java.util.Scanner;
@@ -149,7 +150,7 @@ public class LoginMainPage {
         String i = input.nextLine();
         switch (i.toUpperCase()) {
             case "Y":   // state --> 0
-                Login.setState();
+                // new LoginHandler.setState(ctx);
                 break;
             case "N":
                 LoginPage();

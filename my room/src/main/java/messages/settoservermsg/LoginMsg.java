@@ -2,16 +2,14 @@ package messages.settoservermsg;
 
 import messages.UserMessage;
 
-// 注册时 客户端向服务端发的消息
-public class RegisterMsg extends UserMessage {
+// 登陆时 客户端向服务端发的消息
+public class LoginMsg extends UserMessage {
     private String username;
     private String password;
-    private String password2;
 
-    public RegisterMsg(String username, String password, String password2) {
+    public LoginMsg(String username, String password) {
         this.username = username;
         this.password = password;
-        this.password2 = password2;
     }
 
     public String getUsername() {
@@ -20,10 +18,6 @@ public class RegisterMsg extends UserMessage {
 
     public String getPassword() {
         return this.password;
-    }
-
-    public String getPassword2() {
-        return this.password2;
     }
 
     public String toString() {

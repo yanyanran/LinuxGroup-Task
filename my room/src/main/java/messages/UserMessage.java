@@ -1,5 +1,6 @@
 package messages;
 
+import messages.settoservermsg.LogoutMsg;
 import messages.settoservermsg.RegisterMsg;
 
 import java.io.Serializable;
@@ -7,9 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class UserMessage implements Serializable {
-
     private int messageType;
-    private int id;
+    private String username;
     public abstract  int getMessageType();
 
     // Login main page
@@ -22,7 +22,7 @@ public abstract class UserMessage implements Serializable {
     private static final int loginmsg1 = 3;
 
     // logout
-    private static final int logoutmsg = 4;
+    public static final int logoutmsg = 4;
     private static final int logoutmsg1 = 5;
 
     // quit
@@ -35,13 +35,13 @@ public abstract class UserMessage implements Serializable {
         return messageClass.get(messageType);
     }
 
-    public int getID() {
-        return id;
+    public String getUsername() {
+        return username;
     }
 
     static{
         messageClass.put(0, RegisterMsg.class);
-        //messageClasses.put(1, message.Enrollmsg1.class);
+        messageClass.put(1, LogoutMsg.class);
 //        messageClasses.put(2, message.Loginmsg.class);
 //        messageClasses.put(3, message.Loginmsg1.class);
 //        messageClasses.put(4, message.Logoutmsg.class);

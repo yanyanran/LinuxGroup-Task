@@ -13,8 +13,8 @@ public class ServerToClientMsg extends UserMessage {
             this.reason=reason;
         }
 
-        public void setMessageType(int MessageType){
-            this.MessageType=MessageType;
+        public void setMessageType(int msgType){
+            this.MessageType = msgType;
         }
 
         public boolean getSuccess(){

@@ -1,6 +1,6 @@
 package client;
 
-import c.login.Login;
+import c.login.LoginHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -8,7 +8,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
-import server.handler.ConnectSqlHandler;
+import server.handler.LoginConnectSqlHandler;
 
 import java.util.Scanner;
 
@@ -19,6 +19,8 @@ import java.util.Scanner;
 public class ChatClient {
     private static String ip;  // IP
     private static int port;   // 端口号
+    public static final Object waitMessage = new Object();    // 服务端消息返回时，notify线程 View handler
+    public static int waitSuccess;   // 1表示消息成功、0表示消息失败
 
     public ChatClient(String ip, int port) {
         this.ip = ip;
@@ -56,7 +58,22 @@ public class ChatClient {
                             // 添加自定义业务处理handler
                             ch.pipeline().addLast(new ChatClientHandler());
                             // 添加访问数据库handler
-                            ch.pipeline().addLast(new ConnectSqlHandler());
+                            ch.pipeline().addLast(new LoginConnectSqlHandler());
+                            // 服务端给客户端回消息handler
+                            ch.pipeline().addLast(new ResponseHandler());
+                            ch.pipeline().addLast(new ChannelInboundHandlerAdapter(){
+                                @Override
+                                public void channelActive(ChannelHandlerContext ctx) throws Exception {
+                                    new Thread(()->{
+                                        try {
+                                            new LoginHandler(ctx);
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    },"system.in").start();
+                                }
+
+                            });
                         }
                     });
 
@@ -64,7 +81,7 @@ public class ChatClient {
             channelFuture = bootstrap.connect(ip, port).sync();
 
             // 用户登陆
-            Login.homePage();
+            // new LoginHandler(ctx);
 
             group.shutdownGracefully();
             // Login.homePage();
