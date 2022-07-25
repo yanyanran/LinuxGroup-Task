@@ -15,7 +15,7 @@ import static client.ChatClient.waitMessage;
 import static client.ChatClient.waitSuccess;
 
 public class LogoutConnectSqlHandler extends SimpleChannelInboundHandler<LogoutMsg> {
-    private static String url = "jdbc:mysql://localhost:3306/C hatRoomClient?client=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
+    private static final String url = "jdbc:mysql://localhost:3306/ChatRoomClient?useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
     private static String user = "root";
     private static String pass = "123456";
     private static Connection con;
@@ -29,7 +29,6 @@ public class LogoutConnectSqlHandler extends SimpleChannelInboundHandler<LogoutM
     protected void channelRead0(ChannelHandlerContext ctx, LogoutMsg msg) throws Exception {
         // 连接MySQL
         Class.forName("com.mysql.cj.jdbc.Driver");
-        System.out.println(url);
         con = DriverManager.getConnection(url, user, pass);
 
         String username = msg.getUsername();

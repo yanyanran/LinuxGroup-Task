@@ -146,6 +146,7 @@ public class LoginClientHandler {
     // 离线：state --> 0
     public static void setState(ChannelHandlerContext ctx) throws Exception {
         OfflineMsg msg = new OfflineMsg(username);
+        System.out.println("setStateMsg: " + msg);
         ctx.writeAndFlush(msg);
 
         // lock
@@ -159,7 +160,7 @@ public class LoginClientHandler {
 
         if(waitSuccess == 1) {
             System.out.println("-------您已退出登陆--------");
-            // new login ######
+            new LoginClientHandler(ctx);
             login(ctx);
         }
     }

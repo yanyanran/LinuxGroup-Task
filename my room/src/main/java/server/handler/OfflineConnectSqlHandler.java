@@ -13,7 +13,7 @@ import java.sql.PreparedStatement;
 
 // MySQL离线设置状态为0
 public class OfflineConnectSqlHandler extends SimpleChannelInboundHandler<OfflineMsg> {
-    private static String url = "jdbc:mysql://localhost:3306/C hatRoomClient?client=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
+    private static final String url = "jdbc:mysql://localhost:3306/ChatRoomClient?useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
     private static String user = "root";
     private static String pass = "123456";
     private static Connection con;

@@ -26,33 +26,32 @@ public class LoginSuccessHandler {
 
         switch (i.toUpperCase()) {
             case "A":
-                FriendManage();
+                FriendManage(ctx);
                 break;
             case "B":
-                GroupManage();
+                GroupManage(ctx);
                 break;
             case "C":
-                FriendsChat();
+                FriendsChat(ctx);
                 break;
             case "D":
-                GroupChat();
+                GroupChat(ctx);
                 break;
             case "E":
-                MesManagement();
+                MesManagement(ctx);
                 break;
             case "F":
                 System.out.println("您确定退出登录吗? (Y) 确定 (N) 取消\n请输入：");
-                SignOut();
+                SignOut(ctx);
                 break;
             default:
                 System.out.println("输入有误!请重新选择：\n");
                 new LoginSuccessHandler(ctx);
-
         }
     }
 
     // 好友管理页面
-    public static void FriendManage() {
+    public static void FriendManage(ChannelHandlerContext ctx) {
         System.out.println("(A) 查看好友列表");
         System.out.println("(B) 查看黑名单");
         System.out.println("(C) 添加好友");
@@ -76,7 +75,7 @@ public class LoginSuccessHandler {
     }
 
     // 群管理页面
-    public static void GroupManage() {
+    public static void GroupManage(ChannelHandlerContext ctx) {
         System.out.println("(A) 查看我加入的群列表");  // 我加入的群、我创建的群、我创建的群
         System.out.println("(B) 创建新的群聊");
         System.out.println("(C) 申请加入群聊");
@@ -97,7 +96,7 @@ public class LoginSuccessHandler {
     }
 
     // 好友聊天页面
-    public static void FriendsChat() {
+    public static void FriendsChat(ChannelHandlerContext ctx) {
         System.out.println("(A) 发起聊天");
         System.out.println("(B) 查看聊天记录");
         System.out.println("请输入您的选择:");
@@ -113,7 +112,7 @@ public class LoginSuccessHandler {
     }
 
     // 群聊天页面
-    public static void GroupChat() {
+    public static void GroupChat(ChannelHandlerContext ctx) {
         System.out.println("(A) 发起聊天");
         System.out.println("(B) 查看聊天记录");
         System.out.println("请输入您的选择:");
@@ -128,7 +127,7 @@ public class LoginSuccessHandler {
     }
 
     // 消息管理页面
-    public static void MesManagement() {
+    public static void MesManagement(ChannelHandlerContext ctx) {
         System.out.println("(A) 未读消息");
         System.out.println("(B) 查看好友请求");
         System.out.println("(C) 查看群通知");
@@ -146,17 +145,17 @@ public class LoginSuccessHandler {
     }
 
     // 退出登录
-    public static void SignOut() throws Exception {
+    public static void SignOut(ChannelHandlerContext ctx) throws Exception {
         String i = input.nextLine();
         switch (i.toUpperCase()) {
             case "Y":   // state --> 0
-                // new LoginHandler.setState(ctx);
+                LoginClientHandler.setState(ctx);
                 break;
             case "N":
-                //new LoginClientHandler;
+                new LoginClientHandler(ctx);
             default:
                 System.out.println("您的输入有误！请重新输入：");
-                SignOut();
+                SignOut(ctx);
         }
     }
 }

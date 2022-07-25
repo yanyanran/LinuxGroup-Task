@@ -11,7 +11,7 @@ import messages.settoservermsg.RegisterMsg;
 import java.sql.*;
 
 public class RegisterConnectSqlHandler extends SimpleChannelInboundHandler<RegisterMsg> {
-    private static String url = "jdbc:mysql://localhost:3306/C hatRoomClient?client=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
+    private static final String url = "jdbc:mysql://localhost:3306/ChatRoomClient?useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
     private static String user = "root";
     private static String pass = "123456";
     private static Connection con;

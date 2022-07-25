@@ -64,8 +64,7 @@ public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<LoginMsg
                     String sql3 = "update client set State=1 where username='"+ username +"'";
                     ptmt.executeUpdate(sql3);
 
-                    // 登陆完成 显示主页面
-                    new LoginClientHandler(ctx);
+                    // 登陆完成
                 }else{
                     ServerToClientMsg msg2 = new ServerToClientMsg(false,"-------名称或密码错误！---------\\n\" + \"请重新登录:");
                     System.out.println(msg2);
