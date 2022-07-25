@@ -21,7 +21,7 @@ public class LoginMsg extends UserMessage {
     }
 
     public String toString() {
-        return "username = " + username + "password = " + password;
+        return "username = " + username + " password = " + password;
     }
 
     @Override

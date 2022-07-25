@@ -16,24 +16,25 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<LoginMsg> {
-    private static String url = "jdbc:mysql://localhost:3306/C hatRoomClient?client=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
+    private static String url = "jdbc:mysql://localhost:8000/C hatRoomClient?client=utf8&useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
     private static String user = "root";
     private static String pass = "123456";
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    public void channelActive(ChannelHandlerContext ctx) {
         ctx.writeAndFlush(Unpooled.copiedBuffer("客户端想要读取数据库因为有用户在登陆帐号...", CharsetUtil.UTF_8));
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, LoginMsg msg) throws Exception {
         System.out.println(msg);
+        //System.out.println("11111111111111111");
+
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection con = DriverManager.getConnection(url,user,pass);
 
         String username = msg.getUsername();
         String password = msg.getPassword();
-
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection con = DriverManager.getConnection(url, user, pass);
 
         String sql = "select id,username,password,State from client where username=? and password=?";
         PreparedStatement ptmt = con.prepareStatement(sql);
@@ -41,6 +42,7 @@ public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<LoginMsg
         // 判断用户是否处于登陆状态，避免不同客户端重复登陆同个帐号
         String sql2 = "select State from client where username='"+ username +"'";
         ResultSet m = ptmt.executeQuery(sql2);
+
         while(m.next()) {
             int state = m.getInt("State");
             // state判断---用户是否在线（不能同时登陆相同帐号）

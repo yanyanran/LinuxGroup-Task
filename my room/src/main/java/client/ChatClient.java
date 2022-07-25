@@ -55,8 +55,8 @@ public class ChatClient {
                         protected void initChannel(NioSocketChannel ch) throws Exception {
                             // 编解码器
                             ch.pipeline().addLast(new MessageCode());
-                            ch.pipeline().addLast(new StringDecoder());
-                            ch.pipeline().addLast(new StringEncoder());
+                            //ch.pipeline().addLast(new StringDecoder());
+                            //ch.pipeline().addLast(new StringEncoder());
                             /** 添加自定义业务处理handler */
                             //ch.pipeline().addLast(new ChatClientHandler());
                             // 服务端给客户端回消息handler

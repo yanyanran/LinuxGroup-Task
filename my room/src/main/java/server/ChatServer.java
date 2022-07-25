@@ -43,8 +43,8 @@ public class ChatServer {
                         @Override
                         protected void initChannel(NioSocketChannel ch) throws Exception {
                             //添加编解码器
-                            ch.pipeline().addLast(new StringDecoder());
-                            ch.pipeline().addLast(new StringEncoder());
+                            //ch.pipeline().addLast(new StringDecoder());
+                            //ch.pipeline().addLast(new StringEncoder());
                             ch.pipeline().addLast(new MessageCode());
                             /** 向pipeline中添加自定义业务处理handler */
                             ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));

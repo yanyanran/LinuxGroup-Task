@@ -12,7 +12,7 @@ public abstract class UserMessage implements Serializable {
     private int messageType;
     private String username;
     private int sequenceId;
-    public abstract  int getMessageType();
+    public abstract int getMessageType();
 
     // Login main page
     // register
@@ -36,9 +36,11 @@ public abstract class UserMessage implements Serializable {
     public String getUsername() {
         return username;
     }
+
     public int getSequenceId(){
         return sequenceId;
     }
+
     // 展示未读消息数量
     public static int getUnreadMessage(){
         int unread = UserMessage.getUnreadMessage();
