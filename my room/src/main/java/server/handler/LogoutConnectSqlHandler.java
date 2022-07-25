@@ -29,6 +29,7 @@ public class LogoutConnectSqlHandler extends SimpleChannelInboundHandler<LogoutM
     protected void channelRead0(ChannelHandlerContext ctx, LogoutMsg msg) throws Exception {
         // 连接MySQL
         Class.forName("com.mysql.cj.jdbc.Driver");
+        System.out.println(url);
         con = DriverManager.getConnection(url, user, pass);
 
         String username = msg.getUsername();

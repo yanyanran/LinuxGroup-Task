@@ -15,7 +15,7 @@ public class RegisterConnectSqlHandler extends SimpleChannelInboundHandler<Regis
     private static String user = "root";
     private static String pass = "123456";
     private static Connection con;
-    static ResultSet resultSet = null;
+
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -73,7 +73,6 @@ public class RegisterConnectSqlHandler extends SimpleChannelInboundHandler<Regis
                 ctx.writeAndFlush(ctx);
             }
         } finally {
-            resultSet.close();
             con.close();
         }
     }
