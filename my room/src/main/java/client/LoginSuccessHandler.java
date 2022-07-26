@@ -1,35 +1,39 @@
 package client;
 
+import client.function.FriendManageHandler;
+import client.function.GroupManageHandler;
 import io.netty.channel.ChannelHandlerContext;
 import messages.UserMessage;
 
 import java.util.Scanner;
+
 
 public class LoginSuccessHandler {
     static Scanner input = new Scanner(System.in);
 
     // 登陆完成后显示页面
     public LoginSuccessHandler(ChannelHandlerContext ctx) throws Exception {
-        int unreadMessage = 0;  // 这条代表数据库中“未读消息列表”的消息数
+        int unreadMessage = 0;  // 这条代表数据库中“未读消息列表”的消息数( ????未完成?????? )
         if (unreadMessage > 0) {
             UserMessage.getUnreadMessage();  // 主页面显示有几条未读消息
         }
-        // main page
+        // main page 实现五大板块
         System.out.println("(A) 好友管理");
         System.out.println("(B) 聊天群管理");
         System.out.println("(C) 好友聊天");
         System.out.println("(D) 群聊天");
         System.out.println("(E) 消息管理");
+
         System.out.println("(F) 退出登陆");
         System.out.println("请输入您的选择:");
         String i = input.nextLine();
 
         switch (i.toUpperCase()) {
             case "A":
-                FriendManage(ctx);
+                new FriendManageHandler(ctx);
                 break;
             case "B":
-                GroupManage(ctx);
+                new GroupManageHandler(ctx);
                 break;
             case "C":
                 FriendsChat(ctx);
@@ -47,51 +51,6 @@ public class LoginSuccessHandler {
             default:
                 System.out.println("输入有误!请重新选择：\n");
                 new LoginSuccessHandler(ctx);
-        }
-    }
-
-    // 好友管理页面
-    public static void FriendManage(ChannelHandlerContext ctx) {
-        System.out.println("(A) 查看好友列表");
-        System.out.println("(B) 查看黑名单");
-        System.out.println("(C) 添加好友");
-        System.out.println("(D) 删除好友");
-        System.out.println("(E) 返回");
-        System.out.println("请输入您的选择:");
-        String i = input.nextLine();
-
-        switch (i.toUpperCase()) {
-            case "A":
-                break;
-            case "B":
-                break;
-            case "C":
-                break;
-            case "D":
-                break;
-            case "E":
-                break;
-        }
-    }
-
-    // 群管理页面
-    public static void GroupManage(ChannelHandlerContext ctx) {
-        System.out.println("(A) 查看我加入的群列表");  // 我加入的群、我创建的群、我创建的群
-        System.out.println("(B) 创建新的群聊");
-        System.out.println("(C) 申请加入群聊");
-        System.out.println("(D) 退出群聊");
-        System.out.println("请输入您的选择:");
-        String i = input.nextLine();
-
-        switch (i.toUpperCase()) {
-            case "A":
-                break;
-            case "B":
-                break;
-            case "C":
-                break;
-            case "D":
-                break;
         }
     }
 
