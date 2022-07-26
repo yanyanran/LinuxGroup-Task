@@ -14,6 +14,12 @@ public class ServerToClientMsg extends UserMessage {
             this.reason = reason;
         }
 
+        public ServerToClientMsg(boolean success,String reason,String username) {
+            this.success = success;
+            this.reason = reason;
+            this.username = username;
+        }
+
         public void setMessageType(int msgType) {
             this.MessageType = msgType;
         }
@@ -26,11 +32,15 @@ public class ServerToClientMsg extends UserMessage {
             return this.reason;
         }
 
+        public static String getMe() {
+            return username;
+        }
+
         public int getMessageType() {
             return this.MessageType;
         }
 
         public String toString() {
-            return "success = "+success+", reason = "+reason;
+            return "success = " + success + ", reason = " + reason + "me = " + username;
         }
 }

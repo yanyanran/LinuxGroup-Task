@@ -53,6 +53,7 @@ public class ChatServer {
                             ch.pipeline().addLast("logout-handler",new LogoutConnectSqlHandler());
                             ch.pipeline().addLast("offline-handler",new OfflineConnectSqlHandler());
                             ch.pipeline().addLast("register-handler",new RegisterConnectSqlHandler());
+                            ch.pipeline().addLast("friend-handler", new FriendConnectSqlHandler());
                         }
                     });
 

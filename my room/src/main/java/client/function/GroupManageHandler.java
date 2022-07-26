@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class GroupManageHandler {
     static Scanner input = new Scanner(System.in);
     // 都对数据库 group_list 操作
-    public GroupManageHandler(ChannelHandlerContext ctx) throws Exception {
+    public GroupManageHandler(ChannelHandlerContext ctx, String me) throws Exception {
         System.out.println("(A) 查看我加入的群列表");  // 我加入的群、我创建的群、我管理的群
         System.out.println("(B) 创建新的群聊");
         System.out.println("(C) 申请加入群聊");
@@ -35,7 +35,7 @@ public class GroupManageHandler {
                 break;
             case "E":
                 // return login success main page
-                new LoginSuccessHandler(ctx);
+                new LoginSuccessHandler(ctx,me);
                 break;
         }
     }

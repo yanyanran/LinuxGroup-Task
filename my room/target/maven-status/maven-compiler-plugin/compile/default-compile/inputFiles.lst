@@ -1,9 +1,11 @@
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/server/ChatServer.java
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/client/ChatClient.java
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/messages/settoservermsg/OfflineMsg.java
+/home/yanran/github/LinuxGroup-Task/my room/src/main/java/client/function/GroupManageHandler.java
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/server/handler/ChatServerHandler.java
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/messages/settoclientmsg/ServerToClientMsg.java
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/client/LoginClientHandler.java
+/home/yanran/github/LinuxGroup-Task/my room/src/main/java/messages/settoservermsg/FriendMsg.java
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/client/ChatClientHandler.java
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/messages/UserMessage.java
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/server/handler/LogoutConnectSqlHandler.java
@@ -13,6 +15,8 @@
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/server/handler/RegisterConnectSqlHandler.java
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/messages/settoservermsg/LoginMsg.java
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/messages/MessageCode.java
+/home/yanran/github/LinuxGroup-Task/my room/src/main/java/server/handler/FriendConnectSqlHandler.java
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/server/handler/OfflineConnectSqlHandler.java
+/home/yanran/github/LinuxGroup-Task/my room/src/main/java/client/function/FriendManageHandler.java
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/client/ResponseHandler.java
 /home/yanran/github/LinuxGroup-Task/my room/src/main/java/messages/settoservermsg/RegisterMsg.java

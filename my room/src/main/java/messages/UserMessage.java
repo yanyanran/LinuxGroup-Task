@@ -10,7 +10,7 @@ import java.util.Map;
 
 public abstract class UserMessage implements Serializable {
     private int messageType;
-    private String username;
+    protected static String username;
     private int sequenceId;
     public abstract int getMessageType();
 

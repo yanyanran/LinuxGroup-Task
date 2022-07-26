@@ -55,7 +55,8 @@ public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<LoginMsg
                 ptmt.setString(2, password);
                 ResultSet rs = ptmt.executeQuery();
                 if(rs.next()){
-                    ServerToClientMsg msg2 = new ServerToClientMsg(true, "客户端账号登录成功！\n");
+                    // 登陆成功把username传过去
+                    ServerToClientMsg msg2 = new ServerToClientMsg(true, "客户端账号登录成功！\n",username);
                     System.out.println(msg2);
                     ctx.writeAndFlush(msg2);
 
@@ -64,6 +65,7 @@ public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<LoginMsg
                     ptmt.executeUpdate(sql3);
 
                     // 登陆完成
+                    System.out.println(" Server: 帐号" +  username +"上线");
                 }else{
                     ServerToClientMsg msg2 = new ServerToClientMsg(false,"客户端登陆时名称或密码错误！\\n\" + \"请重新登录:");
                     System.out.println(msg2);

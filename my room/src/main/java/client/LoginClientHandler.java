@@ -69,9 +69,9 @@ public class LoginClientHandler {
 
         if(waitSuccess == 1) {
             System.out.println("------登陆成功-------\n");
-            new LoginSuccessHandler(ctx);
+            new LoginSuccessHandler(ctx,username);
         }else {
-            System.out.println("-------名称或密码错误！---------\\n\" + \"请重新登录:");
+            System.out.println("-------名称或密码错误！---------\n" + "请重新登录:");
             login(ctx);
         }
     }
