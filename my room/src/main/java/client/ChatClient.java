@@ -50,7 +50,7 @@ public class ChatClient {
             bootstrap.group(group)
                     .channel(NioSocketChannel.class)
                     .handler(new ChannelInitializer<NioSocketChannel>() {
-                        // 创建一个通道初始化对象
+                        // 创建一个channel初始化对象
                         @Override
                         protected void initChannel(NioSocketChannel ch) throws Exception {
                             // 编解码器
@@ -58,9 +58,9 @@ public class ChatClient {
                             //ch.pipeline().addLast(new StringDecoder());
                             //ch.pipeline().addLast(new StringEncoder());
                             /** 添加自定义业务处理handler */
-                            //ch.pipeline().addLast(new ChatClientHandler());
+                            ch.pipeline().addLast(new ChatClientHandler());
+                            //ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
                             // 服务端给客户端回消息handler
-                            ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
                             ch.pipeline().addLast(new ResponseHandler());
                             ch.pipeline().addLast(new ChannelInboundHandlerAdapter(){
                                 @Override

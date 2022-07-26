@@ -91,7 +91,7 @@ public class FriendConnectSqlHandler extends SimpleChannelInboundHandler<FriendM
                         System.out.println("Failure");
                     }
                     // 发送好友申请
-
+                    // .................................
 
                     System.out.println("好友申请发送成功！等待对方验证");
                 }

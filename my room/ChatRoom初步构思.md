@@ -56,6 +56,8 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 - [ ] 未读消息列表 (离线状态时，没接收的信息存到另一个表里OffLineMessage。接着当用户再次登陆时，主页面显示有几条未读消息，查看之后此表中删除) --> time、me、user、infor
 
+- [ ] ![image-20220726151436641](/home/yanran/.config/Typora/typora-user-images/image-20220726151436641.png)
+
 ------
 
 
@@ -72,12 +74,12 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 - [x] **不可以同时登陆两个帐号**（已解决：数据库中用户表的state，输入用户名之后遍历state值为1的name，如果有重复就显示在线不能重复登陆）
 - [ ] （直接关闭程序进程后退出不会i导致state还原为0，会影响下次登陆）
-- [ ] 登陆成功后拿到当前登陆帐号的username
+- [x] 登陆成功后拿到当前登陆帐号的username
 - [ ] 黑名单
 - [ ] 数据库连接池
 - [ ] 枚举 密码加密
 
-- [ ] 数据库连接应该在服务端
+- [x] 数据库连接应该在服务端
 
   客户端向服务器端发出申请
 
@@ -85,7 +87,23 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 - [ ] 私聊、群聊、文件传输的实现都是**由客户端发到服务器，再由服务器发送到目标客户端**
 
-  登陆的时候一个帐号名绑定一个channel，发送消息时通过帐号名查找到对应的channel，然后通过服务器发送消息
+- [ ] **关于发消息：**登陆的时候一个帐号名绑定一个channel，发送消息时通过帐号名查找到对应的channel，然后通过服务器发送消息
+
+  ```java
+  // 启动客户端,等待连接服务端,同时将异步改为同步
+  ChannelFuture channelFuture = bootstrap.connect(ip,port).sync();
+  Channel channel = channelFuture.channel();
+  System.out.println("-------" +nchannel.localAddress().toString().substring(1) + "--------");
+  
+  // 输入
+  Scanner input = new Scanner(System.in);
+  
+  while (input.hasNextLine()) {
+  	String msg = input.nextLine();
+  	//向服务端发送消息
+  	channel.writeAndFlush(msg);
+  }
+  ```
 
 ------
 
@@ -97,7 +115,7 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 ​					**查看黑名单**
 
-​					**添加好友**：【请输入您想要添加的好友名字】 --- 【是否确定添加为好友？】--- **（是）**发给服务端判断client中是否存在此人 ---> 再判断此人是否在自己的好友列表中 ---> 给对方发送好友请求【发送成功，等待对方验证中】、**（否）**【您已取消操作】
+​					**添加好友**：【请输入您想要添加的好友名字】 --- 【是否确定添加为好友？】--- **（是）**发给服务端判断client中是否存在此人 ---> 再判断此人是否在自己的好友列表中 ---> 给对方*发送好友请求*【发送成功，等待对方验证中】、**（否）**【您已取消操作】
 
 
 

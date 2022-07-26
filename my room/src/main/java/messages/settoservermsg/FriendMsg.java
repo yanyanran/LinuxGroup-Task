@@ -20,7 +20,7 @@ public class FriendMsg extends UserMessage {
     }
 
     public String toString() {
-        return "friendName = " + friendName;
+        return "friendName = " + friendName + "meName: " + me;
     }
 
     @Override
