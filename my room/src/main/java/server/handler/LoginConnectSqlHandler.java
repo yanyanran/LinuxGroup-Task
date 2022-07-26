@@ -31,7 +31,6 @@ public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<LoginMsg
         System.out.println(msg);
 
         Class.forName(JDBC_DRIVER);
-        System.out.println(url);
         Connection con = DriverManager.getConnection(url,user,pass);
 
         String username = msg.getUsername();
@@ -56,7 +55,7 @@ public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<LoginMsg
                 ptmt.setString(2, password);
                 ResultSet rs = ptmt.executeQuery();
                 if(rs.next()){
-                    ServerToClientMsg msg2 = new ServerToClientMsg(true, "-------账号登录成功--------");
+                    ServerToClientMsg msg2 = new ServerToClientMsg(true, "客户端账号登录成功！\n");
                     System.out.println(msg2);
                     ctx.writeAndFlush(msg2);
 
@@ -66,7 +65,7 @@ public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<LoginMsg
 
                     // 登陆完成
                 }else{
-                    ServerToClientMsg msg2 = new ServerToClientMsg(false,"-------名称或密码错误！---------\\n\" + \"请重新登录:");
+                    ServerToClientMsg msg2 = new ServerToClientMsg(false,"客户端登陆时名称或密码错误！\\n\" + \"请重新登录:");
                     System.out.println(msg2);
                     ctx.writeAndFlush(msg2);
                 }

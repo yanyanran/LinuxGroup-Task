@@ -15,16 +15,15 @@ public class ResponseHandler extends SimpleChannelInboundHandler<ServerToClientM
         String reason = msg.getReason();
 
         if(!success) {
-            System.out.print("操作失败 " + reason);
+            System.out.print("操作失败 " + reason + "\n");
             waitSuccess = 0;
         }else {
-            System.out.print("操作成功 " + reason);
+            System.out.print("操作成功 " + reason + "\n");
             waitSuccess = 1;
         }
 
         // 唤醒线程
         synchronized (waitMessage) {
-            System.out.println("111111111111111111111111");
             waitMessage.notifyAll();
         }
     }

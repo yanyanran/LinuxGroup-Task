@@ -28,7 +28,7 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<String> {
         sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");  // a为am/pm的标记
         Date date = new Date(); // 获取当前时间
 
-        System.out.println("[Server]:" + "[" + channel.remoteAddress().toString().substring(1) + "]" + " 在 " + sdf.format((date)) + "上线/客户端连接成功.");
+        System.out.println("[Server]: " + "客户端[" + channel.remoteAddress().toString().substring(1) + "]" + " 在 " + sdf.format((date)) + "上线/客户端连接成功.");
     }
 
     /**
@@ -44,7 +44,7 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<String> {
         sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");  // a为am/pm的标记
         Date date = new Date(); // 获取当前时间
 
-        System.out.println("[Server]:" + "[" + channel.remoteAddress().toString().substring(1) + "]" + " 在 " + sdf.format((date)) + "离线/客户端断开连接.");
+        System.out.println("[Server]: " + "客户端[" + channel.remoteAddress().toString().substring(1) + "]" + " 在 " + sdf.format((date)) + "离线/客户端断开连接.");
     }
 
     /**

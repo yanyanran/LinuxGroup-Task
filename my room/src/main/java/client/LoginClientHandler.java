@@ -77,7 +77,7 @@ public class LoginClientHandler {
     }
 
     // 2 --> 注册
-    public void register(ChannelHandlerContext ctx) {
+    public void register(ChannelHandlerContext ctx) throws Exception {
         System.out.println("请输入您的姓名： ");
         username = input.next();
         System.out.println("请输入您的密码： ");
@@ -100,7 +100,16 @@ public class LoginClientHandler {
 
         if(waitSuccess == 1) {
             System.out.println("------注册成功，请登录-------\n");
-            // new LoginConnectSqlHandler(ctx);
+            new LoginClientHandler(ctx);
+        }else {
+            System.out.println("您是否还要继续注册帐号？  1----是   2----退出\n");
+            int i = input.nextInt();
+            switch (i) {
+                case 1:
+                    register(ctx);
+                case 2:
+                    new LoginClientHandler(ctx);
+            }
         }
     }
 
@@ -130,7 +139,16 @@ public class LoginClientHandler {
                 if(waitSuccess == 1) {
                     System.out.println("-------帐户已被注销--------");
                     // new login ######
-                    login(ctx);
+                    new LoginClientHandler(ctx);
+                }else {
+                    System.out.println("您是否还要继续注销操作？ 1----继续 2----退出\n");
+                    int j = input.nextInt();
+                    switch (j) {
+                        case 1:
+                            logout(ctx);
+                        case 2:
+                            new LoginClientHandler(ctx);
+                    }
                 }
                 break;
             case 2:

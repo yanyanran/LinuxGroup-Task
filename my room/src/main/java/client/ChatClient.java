@@ -20,7 +20,7 @@ public class ChatClient {
     private static int num;    // 线程数
     private static String ip;  // IP
     private static int port;   // 端口号
-    public static final Object waitMessage = new Object();    // 服务端消息返回时，notify线程去通知
+    public static final Object waitMessage = new Object();    // 服务端消息返回 --> notify唤醒
     public static int waitSuccess;   // 1成功，0失败
 
     public ChatClient(String ip, int port) {

@@ -17,31 +17,28 @@ import java.util.Map;
 
 
 public class MessageCode extends ByteToMessageCodec<UserMessage> {
-
     private int messageType;
     private int sequenceId;
-    //public  int getMessageType();
     @Override
     protected void encode(ChannelHandlerContext channelHandlerContext, UserMessage message, ByteBuf byteBuf) throws Exception {
-        //1.4 字节,魔数
+        // 魔数
         byteBuf.writeBytes(new byte[]{9,2,6,4});
-        //2.1 字节,序列化算法方式 0-->jdk ，1-->json
+        // 序列化算法方式 0-->jdk ，1-->json
         byteBuf.writeByte(0);
-        //3.1 字节,指令类型
-        //byteBuf.writeByte(message.getMessageType());
-        //4.4 字节,请求序号（为了双工通信，提高异步能力）
+        // 指令类型
+        // 请求序号
         byteBuf.writeInt(message.getSequenceId());
 
         ByteArrayOutputStream bos=new ByteArrayOutputStream();
         ObjectOutputStream oos=new ObjectOutputStream(bos);
         oos.writeObject(message);
         byte[] bytes=bos.toByteArray();
-        //5.4 字节，消息长度
+        // 消息长度
         byteBuf.writeInt(bytes.length);
         //System.out.println(bytes.length);
-        //6.2字节，备用位
+        // 对齐
         byteBuf.writeShort(0xffff);
-        //6.获取内容的字节数组
+        // 获取内容的字节数组
         byteBuf.writeBytes(bytes);
     }
 
@@ -49,7 +46,6 @@ public class MessageCode extends ByteToMessageCodec<UserMessage> {
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {
         int magicNum=byteBuf.readInt();
         byte serializerType=byteBuf.readByte();
-        // byte messageType=byteBuf.readByte();
         int sequenceId=byteBuf.readInt();
         int length=byteBuf.readInt();
         // System.out.println(length);
@@ -59,11 +55,9 @@ public class MessageCode extends ByteToMessageCodec<UserMessage> {
         byteBuf.readBytes(bytes,0,length);
 
         if(serializerType==0){
-            //使用jdk序列化
+            // jdk序列化
             ObjectInputStream ois=new ObjectInputStream(new ByteArrayInputStream(bytes));
             UserMessage message=(UserMessage) ois.readObject();
-            /*log.info("{}, {}, {}, {}, {}",magicNum,serializerType,messageType,sequenceId,length);
-            log.info("{}",message);*/
             list.add(message);
         }
 

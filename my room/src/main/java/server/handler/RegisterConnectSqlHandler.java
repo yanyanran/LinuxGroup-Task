@@ -25,6 +25,7 @@ public class RegisterConnectSqlHandler extends SimpleChannelInboundHandler<Regis
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RegisterMsg msg) throws Exception {
         try {
+            System.out.println("用户尝试注册帐号中...\n");
             ServerToClientMsg setMsg;
             boolean flag = false; // 判断用户名是否存在的flag
 
@@ -57,20 +58,24 @@ public class RegisterConnectSqlHandler extends SimpleChannelInboundHandler<Regis
                 // 两次密码输入一样 ，成功注册写入数据库
                 if ((p1).equals(p2)) {
                     String password = p1;
-                    String sql = "insert into client (username,password) values(?,?)";
+                    String sql = "insert into client (username,password,State) values(?,?,0)";
                     PreparedStatement ptmt = con.prepareStatement(sql);
                     ptmt.setString(1, username);
                     ptmt.setString(2, password);
                     ptmt.execute();
-                    setMsg = new ServerToClientMsg(true, "------注册成功，请登录-------");
+                    setMsg = new ServerToClientMsg(true, "用户注册成功！\n");
                     System.out.println(setMsg);
-                    ctx.writeAndFlush(ctx);
+                    ctx.writeAndFlush(setMsg);
+                }else {
+                    setMsg = new ServerToClientMsg(false, "两次输入的密码不一致，请重新操作!\n");
+                    System.out.println("注册中止，因为客户端输入的两次密码不一致！\n");
+                    ctx.writeAndFlush(setMsg);
                 }
             } else {
                 // 2、用户名已存在，重来
-                setMsg = new ServerToClientMsg(false, "-----错误：用户名已存在-----");
+                setMsg = new ServerToClientMsg(false, "客户端注册帐号终止，因为帐号名已存在\n");
                 System.out.println(setMsg);
-                ctx.writeAndFlush(ctx);
+                ctx.writeAndFlush(setMsg);
             }
         } finally {
             con.close();
