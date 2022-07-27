@@ -144,13 +144,11 @@ public class ChatManageHandler {
 
     // 查看历史消息
     public static void showHistoryMsg(ChannelHandlerContext ctx, String me) throws Exception {
-        // 开头打印好友列表
+        // 开头打印好友列表和好友状态
         // .....
         Integer maxKey = 0;
         System.out.println("您想查看与哪个好友的聊天记录？请输入对方用户名：");
         String friend = input.next();
-
-        // 判断好友是否存在
 
         HistoryMsg msg = new HistoryMsg(me, friend);
         ctx.writeAndFlush(msg);
@@ -194,9 +192,9 @@ public class ChatManageHandler {
                 System.out.println(entry.getValue());
             }
         }else {
-            System.out.println("------ 查询记录为空 ------");
-            System.out.println("您是否还要继续查询？ Y---继续查询 N---退出查询");
-            if(input.next() == "Y") {
+            System.out.println("------ 查询失败 ------");
+            System.out.println("您是否还要继续查询？ （Y---继续查询；除Y任意键---退出查询）");
+            if(input.next().toUpperCase() == "Y") {
                 showHistoryMsg(ctx,me);
             }else {
                 new ChatManageHandler(ctx,me);

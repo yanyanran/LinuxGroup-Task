@@ -6,6 +6,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import messages.MessageCode;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -21,6 +22,7 @@ public class ChatClient {
     public static final Object waitMessage = new Object();    // 服务端消息返回 --> notify唤醒
     public static int waitSuccess;   // 1成功，0失败
     public static Map<Integer,String> msgMap = new HashMap<>(); //  存消息记录的map
+    public static ArrayList<String> userList = new ArrayList<>();  //  存用户列表的list
 
     public ChatClient(String ip, int port) {
         this.ip = ip;

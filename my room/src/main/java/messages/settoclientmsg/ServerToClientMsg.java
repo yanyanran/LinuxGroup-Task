@@ -2,6 +2,7 @@ package messages.settoclientmsg;
 
 import messages.UserMessage;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 // server --> client
@@ -11,6 +12,7 @@ public class ServerToClientMsg extends UserMessage {
         private int ServerToClientMsg;
         int MessageType = ServerToClientMsg;
         Map<Integer,String> msgMap;
+        ArrayList<String> list;
 
         public ServerToClientMsg(boolean success,String reason) {
             this.success = success;
@@ -28,6 +30,11 @@ public class ServerToClientMsg extends UserMessage {
             this.msgMap = msgMap;
          }
 
+        public ServerToClientMsg(boolean success, ArrayList<String> list) {
+            this.success = success;
+            this.list = list;
+        }
+
         public void setMessageType(int msgType) {
                 this.MessageType = msgType;
         }
@@ -42,6 +49,10 @@ public class ServerToClientMsg extends UserMessage {
 
         public Map<Integer,String> getMsgMap() {
             return this.msgMap;
+        }
+
+        public ArrayList<String> getList() {
+            return this.list;
         }
 
         public static String getMe() {
