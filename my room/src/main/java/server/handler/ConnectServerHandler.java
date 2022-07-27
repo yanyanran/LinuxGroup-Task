@@ -28,7 +28,7 @@ public class ConnectServerHandler extends SimpleChannelInboundHandler<String> {
         sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");  // a为am/pm的标记
         Date date = new Date(); // 获取当前时间
 
-        new ServerThread(channel,"线程").start();
+        //new ServerThread(channel,"线程").start();
         System.out.println("[Server]: " + "客户端[" + channel.remoteAddress().toString().substring(1) + "]" + " 在 " + sdf.format((date)) + "客户端连接成功.");
 
     }

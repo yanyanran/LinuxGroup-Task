@@ -67,12 +67,11 @@ public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<LoginMsg
                     // 登陆完成
                     System.out.println(" Server: 帐号" +  username +"上线");
                 }else{
-                    ServerToClientMsg msg2 = new ServerToClientMsg(false,"客户端登陆时名称或密码错误！\\n\" + \"请重新登录:");
+                    ServerToClientMsg msg2 = new ServerToClientMsg(false,"客户端登陆时名称或密码错误！\n" + "请重新登录:");
                     System.out.println(msg2);
                     ctx.writeAndFlush(msg2);
                 }
             }
         }
     }
-
 }
