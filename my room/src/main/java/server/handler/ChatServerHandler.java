@@ -83,7 +83,10 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<ChatMsg> {
                     // online
                     System.out.println("用户[" + to + "]在线");
                     // 写入历史消息中
-                    // ...
+                    String sql2 = "insert into history_msg (fromc, toc,msg_type, msg, state) values(?,?,?,?,0)";
+                    PreparedStatement stmt2 = con.prepareStatement(sql2);
+                    stmt.setString(1,from);
+                    stmt.setString(2,to);
 
                     ServerToClientMsg msg2 = new ServerToClientMsg(true,"消息发送成功！");
                     ctx.writeAndFlush(msg2);
