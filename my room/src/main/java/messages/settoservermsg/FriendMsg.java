@@ -17,6 +17,12 @@ public class FriendMsg extends UserMessage {
         this.num = num;
     }
 
+    public FriendMsg(String me,String friendName,int num) {
+        this.friendName = friendName;
+        this.me = me;
+        this.num = num;
+    }
+
     public String getFriendName() {
         return this.friendName;
     }

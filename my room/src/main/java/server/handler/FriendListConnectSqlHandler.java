@@ -8,7 +8,11 @@ import messages.settoservermsg.FriendMsg;
 import java.sql.*;
 import java.util.ArrayList;
 
-// 共享FriendMsg试试
+/**
+ * 连接数据库
+ * 列出XX列表Handler
+ * */
+// 共享FriendMsg试试 --> 可以共享
 public class FriendListConnectSqlHandler extends SimpleChannelInboundHandler<FriendMsg> {
     private static final String url = "jdbc:mysql://localhost:3306/ChatRoomClient?useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
     private static final String user = "root";
@@ -48,8 +52,8 @@ public class FriendListConnectSqlHandler extends SimpleChannelInboundHandler<Fri
                 String friend = rs.getString("user1");
                 list.add(friend);
             }
-
             System.out.println("数据库查找好友完毕...");
+
             if(flag == 0) {
                 System.out.println("用户["+ me +"]的好友列表是空的！");
                 ServerToClientMsg msg2 = new ServerToClientMsg(false, "无好友!");

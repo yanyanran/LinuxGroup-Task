@@ -9,6 +9,10 @@ import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 连接数据库
+ * 列出XX聊天记录Handler
+ * */
 public class HistoryConnectSqlHandler extends SimpleChannelInboundHandler<HistoryMsg> {
     private static final String url = "jdbc:mysql://localhost:3306/ChatRoomClient?useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
     private static final String user = "root";

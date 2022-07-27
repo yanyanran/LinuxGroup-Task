@@ -102,8 +102,6 @@ public class FriendManageHandler {
         }
 
         if(waitSuccess == 1) {
-            System.out.println("----* 您无法向黑名单好友发消息 - 也无法接收黑名单好友给你发消息 *----");
-            System.out.println("-----------------------* 拉黑请谨慎 *-----------------------");
             System.out.println("以下是您的黑名单好友列表：");
             // 循环输出list内容
             for(int i = 0; i < userList.size(); i++) {
@@ -111,9 +109,35 @@ public class FriendManageHandler {
             }
             System.out.println("您想操作：\n【1】 添加黑名单好友\n【2】删除黑名单好友\n* 输入除1、2外任意键即可退出当前页面* \n请输入您的选择：");
             int i = input.nextInt();
-            if(i == 1) {
 
-            }else if(i ==2) {
+            // 添加黑名单好友
+            if(i == 1) {
+                System.out.println("----* 您无法向黑名单好友发消息 - 也无法接收黑名单好友给你发消息 *----");
+                System.out.println("-----------------------* 拉黑请谨慎 *-----------------------");
+                System.out.println("请输入您想要拉黑的好友名：");
+                String user = input.next();
+                System.out.println("是否确定拉黑好友[" + user + "]？\n Y--确定  N--取消\n【请输入您的选择】:");
+                switch (user.toUpperCase()) {
+                    case "Y":
+                        addBlackList(ctx,me,user);
+                        break;
+                    case "N":
+                        new FriendManageHandler(ctx, me);
+                        break;
+                }
+            }else // 删除黑名单好友
+                if(i ==2) {
+                System.out.println("请输入您想要取消黑名单状态的好友名：");
+                String user = input.next();
+                System.out.println("是否确定取消好友[" + user + "]的黑名单状态？\n Y--确定  N--取消\n【请输入您的选择】:");
+                switch (user.toUpperCase()) {
+                    case "Y":
+                        deleteBlackList(ctx,me,user);
+                        break;
+                    case "N":
+                        new FriendManageHandler(ctx, me);
+                        break;
+                }
 
             } else {
                 new FriendManageHandler(ctx, me);
@@ -124,6 +148,49 @@ public class FriendManageHandler {
             new FriendManageHandler(ctx, me);
         }
 
+    }
+
+    // 添加黑名单好友
+    public void addBlackList(ChannelHandlerContext ctx, String me,String addWho) {
+        FriendMsg msg = new FriendMsg(me, addWho, 1);
+        ctx.writeAndFlush(msg);
+
+        // lock and wait
+        try {
+            synchronized (waitMessage) {
+                waitMessage.wait();
+            }
+        }catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        if(waitSuccess == 1) {
+            System.out.println("已成功将好友" + addWho + "拉黑");
+
+        }else {
+            System.out.println("拉黑失败！用户不是您的好友！");
+        }
+    }
+
+    // 删除黑名单好友
+    public void deleteBlackList(ChannelHandlerContext ctx, String me,String deleteWho) {
+        FriendMsg msg = new FriendMsg(me, deleteWho, 2);
+        ctx.writeAndFlush(msg);
+
+        // lock and wait
+        try {
+            synchronized (waitMessage) {
+                waitMessage.wait();
+            }
+        }catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        if(waitSuccess == 1) {
+
+        }else {
+
+        }
     }
 
     // 添加好友
