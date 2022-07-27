@@ -82,7 +82,7 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<ChatMsg> {
                 if(state == 1) {
                     // online
                     System.out.println("用户[" + to + "]在线");
-                    // 写入历史消息中
+                    // 写入历史消息中，state --> 0
                     String sql2 = "insert into history_msg (fromc, toc,msg_type, msg, state) values(?,?,?,?,0)";
                     PreparedStatement stmt2 = con.prepareStatement(sql2);
                     stmt.setString(1,from);

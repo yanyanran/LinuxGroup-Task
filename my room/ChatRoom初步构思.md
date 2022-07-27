@@ -44,23 +44,29 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 - [x] 用户数据表 （注册后放到这里面）**client**--> id、username、password、state（初始0为离线，1为在线）
 
-- [ ] 好友列表 （*互为好友关系*时两人放到此表的同一行里）**friend_list** -->  user1（用户1），user2（用户2），type（属性：0普通好友，1为消息屏蔽(黑名单)好友），send（发送方），yes（接受方）
+- [ ] 好友列表 （*互为好友关系*时两人放到此表的同一行里）**friend_list** -->  user1（用户1），user2（用户2），type（属性：0普通好友，1为消息屏蔽(黑名单)好友），send（发送申请方），yes（接收申请方）
 
 - [ ] 群聊列表 **group_list** -->  groupname、users、type（身份属性：群主为0，管理员为2，群众为1）
 
   一个对应一个群聊名对应一个群内身份，需要调用时直接使用共性查找 
 
-- [ ] 聊天记录的存储用一个表来记录（输入好友名发起聊天） --> time、from_user、end_user、infor
+- [ ] 聊天记录的存储用一个表来记录（输入好友名发起聊天）**history_msg** -->   id，fromc（发送方），toc（接收方），msg_type（消息类型），msg（消息内容），time（发送时间），
+
+  state --> 消息状态，0：对方在线已发送；1对方离线，可用于1登陆主页面显示未读消息数量2选择查看页面，显示未读消息内容
 
 - [ ] 群聊记录：一个群一个id，然后所有群记录放在同个表里，按照id区分，调用查看id即可（索引） --> GroupMsg
 
-- [ ] 未读消息列表 (离线状态时，没接收的信息存到另一个表里OffLineMessage。接着当用户再次登陆时，主页面显示有几条未读消息，查看之后此表中删除) --> time、me、user、infor
-
-- [ ] ![image-20220726151436641](/home/yanran/.config/Typora/typora-user-images/image-20220726151436641.png)
-
 ------
 
+!(/home/yanran/.config/Typora/typora-user-images/image-20220727121617068.png)
 
+![image-20220727121020667](/home/yanran/.config/Typora/typora-user-images/image-20220727121020667.png)
+
+![image-20220727110424181](/home/yanran/.config/Typora/typora-user-images/image-20220727110424181.png)
+
+![image-20220727110440188](/home/yanran/.config/Typora/typora-user-images/image-20220727110440188.png)
+
+![image-20220727110507738](/home/yanran/.config/Typora/typora-user-images/image-20220727110507738.png)
 
 - 框架以及页面选项设计（7.20设计-----7.25完成账户页面功能-----）
 
@@ -117,8 +123,6 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 ​					**添加好友**：【请输入您想要添加的好友名字】 --- 【是否确定添加为好友？】--- **（是）**发给服务端判断client中是否存在此人 ---> 再判断此人是否在自己的好友列表中 ---> 给对方*发送好友请求*【发送成功，等待对方验证中】、**（否）**【您已取消操作】
 
-
-
 ​					**删除好友**
 
 **（B）聊天群管理**
@@ -155,6 +159,12 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 再选择想要聊天的对象（输入对方名字）
 显示（打印）与对方的历史记录：名字 发送时间 发送内容
 打印完开始发送消息（发给服务端，服务端进行转发）
+
+用户1...给用户2...发送消息中
+
+
+
+判断用户2是否在线 --> 不在线（数据存入历史消息表和离线消息表中）在线（仅存入历史消息表中，然后给用户2发送【收到好友1的一条消息：msg】）
 
 ​					**查看聊天记录**
 
