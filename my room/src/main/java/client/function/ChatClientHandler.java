@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 import static client.ChatClient.waitMessage;
@@ -18,11 +20,10 @@ import static client.ChatClient.waitSuccess;
 // set ChatMsg
 public class ChatClientHandler {
     private static boolean startFlag = true;  // 后加，用于处理客户端下线时的通信报错问题
-
-    public ChatClientHandler(ChannelHandlerContext ctx) {
+    // 传from to
+    public ChatClientHandler(ChannelHandlerContext ctx, String from, String to){
         Channel client = null;
         Scanner input = new Scanner(System.in);
-        ObjectOutputStream oos = null;
 
         try {
             // 2、为该客户端启动一个消息接收线程
@@ -43,9 +44,16 @@ public class ChatClientHandler {
                         startFlag = false; // 执行完本次消息发送后，退出循环，关闭
                     }
 
+                    // time
+                    SimpleDateFormat sdf = new SimpleDateFormat();  // 格式化时间
+                    sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");  // a为am/pm的标记
+                    Date date = new Date(); // 获取当前时间
+                    String time = sdf.format((date));
+
                     // 发给服务端
-                    ChatMsg msg = new ChatMsg("String", msgBody);
+                    ChatMsg msg = new ChatMsg(from, to,"String", msgBody,time);
                     ctx.writeAndFlush(msg);
+
                     // lock and wait
                     try {
                         synchronized (waitMessage) {
@@ -76,6 +84,7 @@ public class ChatClientHandler {
                     // 发给服务端
                     ChatMsg msg = new ChatMsg("File", filePath);
                     ctx.writeAndFlush(msg);
+
                     // lock and wait
                     try {
                         synchronized (waitMessage) {
@@ -100,7 +109,7 @@ public class ChatClientHandler {
             }
         } finally {
             // 释放资源
-            if(null != oos){
+            if(null != client){
                 client.close(); // 此关闭流方式是单方面关闭输出流，client的输入流可以继续使用，不会导致client关闭
             }
             input.close();

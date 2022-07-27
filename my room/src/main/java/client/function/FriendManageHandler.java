@@ -75,7 +75,7 @@ public class FriendManageHandler {
                     synchronized (waitMessage) {
                         waitMessage.wait();
                     }
-                } catch (InterruptedException e) {
+                }catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 

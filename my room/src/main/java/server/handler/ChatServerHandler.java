@@ -40,8 +40,9 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<ChatMsg> {
         String to = msg.getTo();
         String type = msg.getMsgType();
         String message = msg.getMsgBody();
+        String time = msg.getTime();
 
-        System.out.println("用户[" + from +"]给用户[" + to + "]发送消息中");
+        System.out.println("time: "+ time + " 用户[" + from +"]给用户[" + to + "]发送消息中...");
 
         // 判断是否为黑名单好友
         int flag = 0;
@@ -83,13 +84,18 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<ChatMsg> {
                     // online
                     System.out.println("用户[" + to + "]在线");
                     // 写入历史消息中，state --> 0
-                    String sql2 = "insert into history_msg (fromc, toc,msg_type, msg, state) values(?,?,?,?,0)";
+                    String sql2 = "insert into history_msg (fromc, toc,msg_type, msg, time, state) values(?,?,?,?,?,0)";
                     PreparedStatement stmt2 = con.prepareStatement(sql2);
-                    stmt.setString(1,from);
-                    stmt.setString(2,to);
-
-                    ServerToClientMsg msg2 = new ServerToClientMsg(true,"消息发送成功！");
-                    ctx.writeAndFlush(msg2);
+                    stmt2.setString(1,from);
+                    stmt2.setString(2,to);
+                    stmt2.setString(3,type);
+                    stmt2.setString(4,message);
+                    stmt2.setString(5,time);
+                    ResultSet rs3 = stmt.executeQuery();
+                    if(rs3.next()){
+                        ServerToClientMsg msg2 = new ServerToClientMsg(true,"消息发送成功！\n");
+                        ctx.writeAndFlush(msg2);
+                    }
 
                     // 需要显示消息给to方
                     // ...
@@ -97,10 +103,19 @@ public class ChatServerHandler extends SimpleChannelInboundHandler<ChatMsg> {
                 }else {
                     // offline
                     System.out.println("用户[" + to + "]不在线");
-                    // 写入离线消息中和历史消息中（2）
-                    ServerToClientMsg msg2 = new ServerToClientMsg(false,"对方处于离线状态");
-                    ctx.writeAndFlush(msg2);
-
+                    // state --> 1
+                    String sql2 = "insert into history_msg (fromc, toc,msg_type, msg, time, state) values(?,?,?,?,?,1)";
+                    PreparedStatement stmt2 = con.prepareStatement(sql2);
+                    stmt2.setString(1,from);
+                    stmt2.setString(2,to);
+                    stmt2.setString(3,type);
+                    stmt2.setString(4,message);
+                    stmt2.setString(5,time);
+                    ResultSet rs3 = stmt.executeQuery();
+                    if(rs3.next()) {
+                        ServerToClientMsg msg2 = new ServerToClientMsg(false,"消息发送成功！(对方处于离线状态)\n");
+                        ctx.writeAndFlush(msg2);
+                    }
 
                 }
             }
