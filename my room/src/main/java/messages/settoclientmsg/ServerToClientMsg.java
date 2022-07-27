@@ -2,12 +2,15 @@ package messages.settoclientmsg;
 
 import messages.UserMessage;
 
+import java.util.Map;
+
 // server --> client
 public class ServerToClientMsg extends UserMessage {
         private boolean success;
         private String reason;
         private int ServerToClientMsg;
         int MessageType = ServerToClientMsg;
+        Map<Integer,String> msgMap;
 
         public ServerToClientMsg(boolean success,String reason) {
             this.success = success;
@@ -20,8 +23,13 @@ public class ServerToClientMsg extends UserMessage {
             this.username = username;
         }
 
+        public ServerToClientMsg(boolean success, Map<Integer, String> msgMap) {
+            this.success = success;
+            this.msgMap = msgMap;
+         }
+
         public void setMessageType(int msgType) {
-            this.MessageType = msgType;
+                this.MessageType = msgType;
         }
 
         public boolean getSuccess() {
@@ -30,6 +38,10 @@ public class ServerToClientMsg extends UserMessage {
 
         public String getReason() {
             return this.reason;
+        }
+
+        public Map<Integer,String> getMsgMap() {
+            return this.msgMap;
         }
 
         public static String getMe() {

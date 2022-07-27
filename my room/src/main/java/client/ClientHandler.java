@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * 聊天室处理类
  */
-public class ChatClientHandler extends ChannelInboundHandlerAdapter {
+public class ClientHandler extends ChannelInboundHandlerAdapter {
     public static List<Channel> channelList = new ArrayList<>();
 
     /**

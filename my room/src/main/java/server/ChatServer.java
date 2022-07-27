@@ -1,6 +1,5 @@
 package server;
 
-import client.LoginClientHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -10,10 +9,6 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import messages.MessageCode;
 import server.handler.*;
-
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 聊天室服务端
@@ -56,7 +51,7 @@ public class ChatServer {
                             ch.pipeline().addLast("logout-handler",new LogoutConnectSqlHandler());
                             ch.pipeline().addLast("offline-handler",new OfflineConnectSqlHandler());
                             ch.pipeline().addLast("register-handler",new RegisterConnectSqlHandler());
-                            ch.pipeline().addLast("friend-handler", new FriendConnectSqlHandler());
+                            ch.pipeline().addLast("friend-handler", new AddFriendConnectSqlHandler());
                             // chat handler
                             ch.pipeline().addLast(new ChatServerHandler());
                         }

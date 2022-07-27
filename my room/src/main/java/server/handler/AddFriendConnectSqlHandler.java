@@ -7,7 +7,7 @@ import messages.settoservermsg.FriendMsg;
 
 import java.sql.*;
 
-public class FriendConnectSqlHandler extends SimpleChannelInboundHandler<FriendMsg> {
+public class AddFriendConnectSqlHandler extends SimpleChannelInboundHandler<FriendMsg> {
     private static final String url = "jdbc:mysql://localhost:3306/ChatRoomClient?useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
     private static final String user = "root";
     private static final String pass = "123456";

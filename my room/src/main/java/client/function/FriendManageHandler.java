@@ -78,7 +78,7 @@ public class FriendManageHandler {
                 }catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
+                // ......
                 break;
             case "N":
                 System.out.println("【您已取消操作】\n");

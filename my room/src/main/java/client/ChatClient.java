@@ -4,12 +4,10 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import messages.MessageCode;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -22,6 +20,7 @@ public class ChatClient {
     private static int port;   // 端口号
     public static final Object waitMessage = new Object();    // 服务端消息返回 --> notify唤醒
     public static int waitSuccess;   // 1成功，0失败
+    public static Map<Integer,String> msgMap = new HashMap<>(); //  存消息记录的map
 
     public ChatClient(String ip, int port) {
         this.ip = ip;
@@ -58,7 +57,7 @@ public class ChatClient {
                             //ch.pipeline().addLast(new StringDecoder());
                             //ch.pipeline().addLast(new StringEncoder());
                             /** 添加自定义业务处理handler */
-                            ch.pipeline().addLast(new ChatClientHandler());
+                            ch.pipeline().addLast(new ClientHandler());
                             //ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
                             // 服务端给客户端回消息handler
                             ch.pipeline().addLast(new ResponseHandler());

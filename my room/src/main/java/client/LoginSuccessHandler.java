@@ -1,5 +1,6 @@
 package client;
 
+import client.function.ChatManageHandler;
 import client.function.FriendManageHandler;
 import client.function.GroupManageHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -37,7 +38,7 @@ public class LoginSuccessHandler {
                 new GroupManageHandler(ctx, me);
                 break;
             case "C":
-                FriendsChat(ctx, me);
+                new ChatManageHandler(ctx,me);
                 break;
             case "D":
                 GroupChat(ctx, me);
@@ -52,22 +53,6 @@ public class LoginSuccessHandler {
             default:
                 System.out.println("输入有误!请重新选择：\n");
                 new LoginSuccessHandler(ctx,me);
-        }
-    }
-
-    // 好友聊天页面
-    public static void FriendsChat(ChannelHandlerContext ctx,String me) {
-        System.out.println("(A) 发起聊天");
-        System.out.println("(B) 查看聊天记录");
-        System.out.println("【请输入您的选择】:");
-        String i = input.nextLine();
-
-        switch (i.toUpperCase()) {
-            case "A":
-                // setMsg();
-                break;
-            case "B":
-                break;
         }
     }
 
