@@ -151,7 +151,7 @@ public class FriendManageHandler {
     }
 
     // 添加黑名单好友
-    public void addBlackList(ChannelHandlerContext ctx, String me,String addWho) {
+    public void addBlackList(ChannelHandlerContext ctx, String me,String addWho) throws Exception {
         FriendMsg msg = new FriendMsg(me, addWho, 1);
         ctx.writeAndFlush(msg);
 
@@ -166,14 +166,19 @@ public class FriendManageHandler {
 
         if(waitSuccess == 1) {
             System.out.println("已成功将好友" + addWho + "拉黑");
-
+            new FriendManageHandler(ctx, me);
         }else {
-            System.out.println("拉黑失败！用户不是您的好友！");
+            System.out.print("拉黑失败！\n您是否需要继续此操作？：【Y】继续 【除Y任意键】退出\n请输入您的选择：");
+            if(input.next() == "Y") {
+                setBlackList(ctx,me);
+            }else {
+                new FriendManageHandler(ctx,me);
+            }
         }
     }
 
     // 删除黑名单好友
-    public void deleteBlackList(ChannelHandlerContext ctx, String me,String deleteWho) {
+    public void deleteBlackList(ChannelHandlerContext ctx, String me,String deleteWho) throws Exception {
         FriendMsg msg = new FriendMsg(me, deleteWho, 2);
         ctx.writeAndFlush(msg);
 
@@ -187,9 +192,15 @@ public class FriendManageHandler {
         }
 
         if(waitSuccess == 1) {
-
+            System.out.println("已成功将好友" + deleteWho + "解除拉黑");
+            new FriendManageHandler(ctx, me);
         }else {
-
+            System.out.print("解除拉黑失败！\n您是否需要继续此操作？：【Y】继续 【除Y任意键】退出\n请输入您的选择：");
+            if(input.next() == "Y") {
+                setBlackList(ctx,me);
+            }else {
+                new FriendManageHandler(ctx,me);
+            }
         }
     }
 
