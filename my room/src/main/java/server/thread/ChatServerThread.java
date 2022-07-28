@@ -1,7 +1,7 @@
 package server.thread;
 import io.netty.channel.Channel;
 import messages.settoservermsg.ChatMsg;
-import server.handler.ChatServerHandler;
+import server.handler.ChatConnectSqlHandler;
 
 import java.io.*;
 import java.util.HashMap;
@@ -89,15 +89,15 @@ public class ChatServerThread extends Thread{
                 System.out.println("【消息转发成功】转发端口" + client.getPort() + "的客户端：  " + message );
             }*/
             //改为普通for循环，解决迭代器或者增强for循环时报的ConcurrentModificationException异常，不允许循环中修改集合的元素
-            for (int i = 0; i < ChatServerHandler.clients.size(); i++) {
-                oosMap.get(ChatServerHandler.clients.get(i)).writeObject(message);
-                System.out.println("【消息转发成功】转发端口" + ChatServerHandler.clients.get(i).remoteAddress().toString().substring(1) + "的客户端：  " + message );
+            for (int i = 0; i < ChatConnectSqlHandler.clients.size(); i++) {
+                oosMap.get(ChatConnectSqlHandler.clients.get(i)).writeObject(message);
+                System.out.println("【消息转发成功】转发端口" + ChatConnectSqlHandler.clients.get(i).remoteAddress().toString().substring(1) + "的客户端：  " + message );
             }
             System.out.println("------ " + Thread.currentThread().getName() + "群发客户端end ------");
             String str = "客户端" + client.remoteAddress().toString().substring(1) +"发送消息：bye";
             if(str.equals(message.getMsgBody())){
                 startFlag = false;
-                ChatServerHandler.clients.remove(client);
+                ChatConnectSqlHandler.clients.remove(client);
             }
         } catch (IOException e) {
             e.printStackTrace();

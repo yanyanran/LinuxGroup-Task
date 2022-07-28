@@ -4,6 +4,7 @@ import client.LoginSuccessHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import messages.settoservermsg.ChatMsg;
+import messages.settoservermsg.FriendMsg;
 import messages.settoservermsg.HistoryMsg;
 
 import java.io.File;
@@ -42,103 +43,116 @@ public class ChatManageHandler {
     }
 
     // 聊天
-    public static void FriendsChat(ChannelHandlerContext ctx,String from) {
+    public static void FriendsChat(ChannelHandlerContext ctx,String from) throws Exception {
         Channel client = null;
 
         // 开头打印好友列表
-        // .....
-
-        System.out.println("您想对哪个好友发起会话？请输入对方用户名：");
-        String to = input.next();
-        // 查找是否存在此好友
-        // .....
-
+        FriendMsg msg = new FriendMsg(from,1);
+        ctx.writeAndFlush(msg);
         try {
-            // 2、为该客户端启动一个消息接收线程
-            //ChatClientThread receiveThread = new ChatClientThread(client);
-            //receiveThread.start();
+            synchronized (waitMessage) {
+                waitMessage.wait();
+            }
+        }catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if(waitSuccess == 1) {
+            System.out.println("以下是您的好友列表：");
+            // 循环输出list内容
+            for (int i = 0; i < userList.size(); i++) {
+                System.out.println(userList.get(i));
+            }
+            System.out.println("您想对哪个好友发起会话？请输入对方用户名：");
+            String to = input.next();
 
-            // 3、主线程无限循环，来做该客户端的消息发送线程
-            while (startFlag) {
-                System.out.println("------ 请输入要发送的消息类型（0:文本内容 1:文件）------");
-                // choose
-                String type = input.next();
-                // MESSAGE
-                if("0".equals(type)){
-                    System.out.println("------ 请输入要发送的消息内容 ------\n如想退出当前会话 请输入bye");
-                    // input
-                    String msgBody = input.next();
-                    if("bye".equals(msgBody)){
-                        startFlag = false; // 执行完本次消息发送后，退出循环，关闭
-                    }
-
-                    // time
-                    SimpleDateFormat sdf = new SimpleDateFormat();  // 格式化时间
-                    sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");  // a为am/pm的标记
-                    Date date = new Date(); // 获取当前时间
-                    String time = sdf.format((date));
-
-                    // 发给服务端
-                    ChatMsg msg = new ChatMsg(from, to,"String", msgBody,time);
-                    ctx.writeAndFlush(msg);
-
-                    // lock and wait
-                    try {
-                        synchronized (waitMessage) {
-                            waitMessage.wait();
+            try {
+                // 该客户端的消息发送线程，无限循环
+                while (startFlag) {
+                    System.out.println("------ 请输入要发送的消息类型（0:文本内容 1:文件）------");
+                    // choose
+                    String type = input.next();
+                    // 发文本
+                    if("0".equals(type)){
+                        System.out.println("------ 请输入要发送的消息内容 ------\n如想退出当前会话 请输入bye");
+                        // input
+                        String msgBody = input.next();
+                        if("bye".equals(msgBody)){
+                            startFlag = false;
+                            // 执行完本次消息发送后，退出循环，关闭
                         }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
 
-                    if(waitSuccess == 1) {
-                        System.out.println("消息发送成功!");
-                        // ....
+                        // 获取发送时间
+                        SimpleDateFormat sdf = new SimpleDateFormat();
+                        sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");
+                        Date date = new Date();
+                        String time = sdf.format((date));
 
-                    }else {
-                        System.out.println("拉黑好友无法发送消息");
-                        // ....
-                    }
-                    // FILE
-                }else if("1".equals(type)){
-                    System.out.println("请输入要发送的本地文件路径：");
-                    String filePath = new Scanner(System.in).nextLine();
-                    // 校验文件路径是否正确,是否为文件
-                    File file = new File(filePath);
-                    if(!file.exists() || !file.isFile()){
-                        System.out.println("输入路径不存在或者该路径不是文件！");
+                        // 发给服务端
+                        ChatMsg msg2 = new ChatMsg(from, to,"String", msgBody,time);
+                        ctx.writeAndFlush(msg2);
+
+                        // lock and wait
+                        try {
+                            synchronized (waitMessage) {
+                                waitMessage.wait();
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        if(waitSuccess == 1) {
+                            System.out.println("消息发送成功!");
+                            // 继续循环直到用户输入bye退出会话
+                        }else {
+                            System.out.println("消息发送失败！");
+                            // 继续循环直到用户输入bye退出会话
+                        }
+
+                        // 发文件
+                    }else if("1".equals(type)){
+                        System.out.println("请输入要发送的本地文件路径：");
+                        String filePath = new Scanner(System.in).nextLine();
+                        // 校验文件路径是否正确,是否为文件
+                        File file = new File(filePath);
+                        if(!file.exists() || !file.isFile()){
+                            System.out.println("输入路径不存在或者该路径不是文件！");
+                            continue;
+                        }
+                        // 发给服务端
+                        ChatMsg msg2 = new ChatMsg("File", filePath);
+                        ctx.writeAndFlush(msg2);
+
+                        // lock and wait
+                        try {
+                            synchronized (waitMessage) {
+                                waitMessage.wait();
+                            }
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        if(waitSuccess == 1) {
+                            System.out.println("文件发送成功!");
+                            // ....
+                        }else {
+                            System.out.println("文件发送失败！");
+                            // ....
+                        }
+                    }else{
+                        System.out.println("输入消息类型不存在！请重新输入...");
                         continue;
                     }
-                    // 发给服务端
-                    ChatMsg msg = new ChatMsg("File", filePath);
-                    ctx.writeAndFlush(msg);
-
-                    // lock and wait
-                    try {
-                        synchronized (waitMessage) {
-                            waitMessage.wait();
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if(waitSuccess == 1) {
-                        System.out.println("文件发送成功!");
-                        // ....
-                    }else {
-                        System.out.println("拉黑好友无法发送消息");
-                        // ....
-                    }
-                }else{
-                    System.out.println("输入消息类型不存在！请重新输入...");
-                    continue;
                 }
+            } finally {
+                // 释放资源
+                if(null != client){
+                    client.close(); // 此关闭流方式是单方面关闭输出流，client的输入流可以继续使用，不会导致client关闭
+                }
+                input.close();
             }
-        } finally {
-            // 释放资源
-            if(null != client){
-                client.close(); // 此关闭流方式是单方面关闭输出流，client的输入流可以继续使用，不会导致client关闭
-            }
-            input.close();
+        }else {
+            System.out.println("---------- *您的好友列表为空* ----------");
+            System.out.println("---- *想要发起会话 请先从添加好友开始* ----");
+            new FriendManageHandler(ctx, from);
         }
     }
 

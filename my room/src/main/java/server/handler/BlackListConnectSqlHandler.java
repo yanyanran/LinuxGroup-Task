@@ -27,15 +27,28 @@ public class BlackListConnectSqlHandler extends SimpleChannelInboundHandler<Frie
         System.out.println(" 正在判断拉黑目标帐号" + friend +"是否为用户" + me + "的好友....");
         Class.forName(JDBC_DRIVER);
         Connection con = DriverManager.getConnection(url, user, pass);
+
         // 查询 friend_list --> state:0
         String sql = "select user2,type from friend_list where user1=send and user2=yes and user1=?";
+        String sql2 = "select user1 from friend_list where user1=send and user2=yes and user2=?";
         PreparedStatement stm = con.prepareStatement(sql);
+        PreparedStatement stm2 = con.prepareStatement(sql2);
         stm.setString(1,me);
+        stm2.setString(1,me);
         ResultSet rs = stm.executeQuery(sql);
+        ResultSet rs2 = stm.executeQuery(sql2);
+
         // 检查type --> 是否已是黑名单好友
         while (rs.next()) {
             flag = 1;
             int t = rs.getInt("type");
+            if(t == 1) {
+                flag2 = 1;
+            }
+        }
+        while (rs2.next()) {
+            flag = 1;
+            int t = rs2.getInt("type");
             if(t == 1) {
                 flag2 = 1;
             }
@@ -57,11 +70,14 @@ public class BlackListConnectSqlHandler extends SimpleChannelInboundHandler<Frie
                 // 添加黑名单好友
                 if(num == 1) {
                     System.out.println("向数据库申请添加黑名单好友中...");
-                    String sql2 = "update friend_list set type=1 where (user1=? and user2=?) or (user2=? and user1=?) ";
-                    PreparedStatement stm2 = con.prepareStatement(sql2);
-                    stm2.setString(1,me);
-                    stm2.setString(2,friend);
-                    stm.executeUpdate(sql2);
+                    String sql3 = "update friend_list set type=1 where (user1=? and user2=?) or (user2=? and user1=?) ";
+                    PreparedStatement stm3 = con.prepareStatement(sql3);
+                    stm3.setString(1,me);
+                    stm3.setString(2,friend);
+                    stm3.setString(3,me);
+                    stm3.setString(4,friend);
+                    stm.executeUpdate(sql3);
+
                     System.out.println("已成功添加"+ friend +"到用户"+ me +"的黑名单！");
                     ServerToClientMsg msg2 = new ServerToClientMsg(true,"拉黑好友操作成功！");
                     ctx.writeAndFlush(msg2);
@@ -72,16 +88,15 @@ public class BlackListConnectSqlHandler extends SimpleChannelInboundHandler<Frie
                         PreparedStatement stm3 = con.prepareStatement(sql3);
                         stm3.setString(1,me);
                         stm3.setString(2,friend);
+                        stm3.setString(3,me);
+                        stm3.setString(4,friend);
                         stm.executeUpdate(sql3);
+
                         System.out.println("已成功解除"+ friend +"的屏蔽！");
                         ServerToClientMsg msg3 = new ServerToClientMsg(true,"解除拉黑关系成功！");
                         ctx.writeAndFlush(msg3);
                     }
             }
-
-
-
         }
-
     }
 }

@@ -53,7 +53,7 @@ public class ChatServer {
                             ch.pipeline().addLast("register-handler",new RegisterConnectSqlHandler());
                             ch.pipeline().addLast("friend-handler", new AddFriendConnectSqlHandler());
                             // chat handler
-                            ch.pipeline().addLast(new ChatServerHandler());
+                            ch.pipeline().addLast(new ChatConnectSqlHandler());
                         }
                     });
 
