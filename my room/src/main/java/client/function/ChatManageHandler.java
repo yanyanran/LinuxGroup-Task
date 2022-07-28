@@ -214,6 +214,5 @@ public class ChatManageHandler {
                 new ChatManageHandler(ctx,me);
             }
         }
-
     }
 }

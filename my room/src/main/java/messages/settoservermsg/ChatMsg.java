@@ -2,15 +2,13 @@ package messages.settoservermsg;
 
 import messages.UserMessage;
 
-import java.io.Serializable;
-
 /**
  * 群聊和单聊的消息对象类（common）
  *  客户端聊天handler new时记得传入from和to
  * */
-public class ChatMsg extends UserMessage implements Serializable {
+public class ChatMsg extends UserMessage {
     // 实现serializable接口后必须指定序列化版本号，用于序列化与反序列化时验证对象
-    private static final long serialVersionUID = -7815896088464512553L;
+//    private static final long serialVersionUID = -7815896088464512553L;
 
     private String from;   // 发送方
     private String to;     // 接收方

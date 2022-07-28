@@ -1,9 +1,12 @@
 package client;
 
+import client.thread.ChatReceiveHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.DecoderException;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import messages.MessageCode;
 
 import java.util.ArrayList;
@@ -19,10 +22,12 @@ public class ChatClient {
     private static int num;    // 线程数
     private static String ip;  // IP
     private static int port;   // 端口号
-    public static final Object waitMessage = new Object();    // 服务端消息返回 --> notify唤醒
-    public static int waitSuccess;   // 1成功，0失败
-    public static Map<Integer,String> msgMap = new HashMap<>(); //  存消息记录的map
-    public static ArrayList<String> userList = new ArrayList<>();  //  存用户列表的list
+    public static volatile Object waitMessage = new Object();    // 服务端消息返回 --> notify唤醒
+    public static volatile int waitSuccess;   // 1成功，0失败
+    public static volatile Map<Integer,String> msgMap = new HashMap<>(); //  存消息记录的map
+    public static volatile ArrayList<String> userList = new ArrayList<>();  //  存用户列表的list
+    public static volatile boolean unreadMsg = false;// 未读消息提醒
+    public static volatile boolean is = false; // 好友发消息提醒
 
     public ChatClient(String ip, int port) {
         this.ip = ip;
@@ -54,6 +59,8 @@ public class ChatClient {
                         // 创建一个channel初始化对象
                         @Override
                         protected void initChannel(NioSocketChannel ch) throws Exception {
+                            // 长度协议解码器
+                            ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(20*1024, 9, 4, 2, 0));
                             // 编解码器
                             ch.pipeline().addLast(new MessageCode());
                             //ch.pipeline().addLast(new StringDecoder());
@@ -63,10 +70,11 @@ public class ChatClient {
                             //ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
                             // 服务端给客户端回消息handler
                             ch.pipeline().addLast(new ResponseHandler());
+                            ch.pipeline().addLast(new ChatReceiveHandler());
                             ch.pipeline().addLast(new ChannelInboundHandlerAdapter(){
                                 @Override
                                 public void channelActive( ChannelHandlerContext ctx) throws Exception {
-                                    // 创一个线程跑界面层
+                                    // 创一个线程跑界面
                                     new Thread(()->{
                                         try {
                                             num++;

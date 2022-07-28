@@ -5,6 +5,9 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import messages.MessageCode;
@@ -41,19 +44,22 @@ public class ChatServer {
                         @Override
                         protected void initChannel(NioSocketChannel ch) throws Exception {
                             //添加编解码器
-                            //ch.pipeline().addLast(new StringDecoder());
-                            //ch.pipeline().addLast(new StringEncoder());
+//                            ch.pipeline().addLast(new StringDecoder());
+//                            ch.pipeline().addLast(new StringEncoder());
+                            ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(20*1024, 9, 4, 2, 0));
                             ch.pipeline().addLast(new MessageCode());
-                            /** 向pipeline中添加自定义业务处理handler */
                             ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
+                            /** 向pipeline中添加自定义业务处理handler */
                             ch.pipeline().addLast("connect-handler",new ConnectServerHandler());
                             ch.pipeline().addLast("login-handler",new LoginConnectSqlHandler());
                             ch.pipeline().addLast("logout-handler",new LogoutConnectSqlHandler());
                             ch.pipeline().addLast("offline-handler",new OfflineConnectSqlHandler());
                             ch.pipeline().addLast("register-handler",new RegisterConnectSqlHandler());
                             ch.pipeline().addLast("friend-handler", new AddFriendConnectSqlHandler());
-                            // chat handler
-                            ch.pipeline().addLast(new ChatConnectSqlHandler());
+                            ch.pipeline().addLast("chat-handler",new ChatConnectSqlHandler());
+                            ch.pipeline().addLast("black-list-handler",new BlackListConnectSqlHandler());
+                            ch.pipeline().addLast("friend-list-handler",new FriendListConnectSqlHandler());
+                            ch.pipeline().addLast("history-handler",new HistoryConnectSqlHandler());
                         }
                     });
 
@@ -67,7 +73,7 @@ public class ChatServer {
                 public void operationComplete(ChannelFuture future) throws Exception {
                     if (future.isSuccess()) {
                         System.out.println("端口绑定成功!");
-                        System.out.println(" ~ Welcome To MyChatRoom ~ \n---- 服务端启动成功! ----\n");
+                        System.out.println(" ~ Welcome To MyChatRoom ~ \n---- 服务端启动成功! ----");
                     } else {
                         System.out.println("端口绑定失败!");
                     }

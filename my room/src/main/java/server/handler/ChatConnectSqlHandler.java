@@ -62,7 +62,7 @@ public class ChatConnectSqlHandler extends SimpleChannelInboundHandler<ChatMsg> 
         if(flag1 == 0) {
             System.out.println("非好友关系!");
             ServerToClientMsg msg2 = new ServerToClientMsg(false,"对方不是您的好友！");
-            ctx.writeAndFlush(ctx);
+            ctx.writeAndFlush(msg2);
         } else {
             System.out.println("是好友关系!");
             // 判断是否为黑名单好友
@@ -122,8 +122,8 @@ public class ChatConnectSqlHandler extends SimpleChannelInboundHandler<ChatMsg> 
                         stmt2.executeUpdate();
 
                         System.out.println("【" + time + "】" + "用户" + from + "成功给用户" + to + "发送消息" + "：" + msg);
-                        ServerToClientMsg msg2 = new ServerToClientMsg(true, "【" + time + "】" + from + "：" + msg + "已发送\n");
-                        ctx.writeAndFlush(msg2);
+//                        ServerToClientMsg msg2 = new ServerToClientMsg(true, "【" + time + "】" + from + "：" + msg + "已发送\n");
+//                        ctx.writeAndFlush(msg2);
                     }else {
                         // offline
                         System.out.println("用户[" + to + "]不在线");
