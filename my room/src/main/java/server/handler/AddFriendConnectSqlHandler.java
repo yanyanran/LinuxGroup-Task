@@ -29,7 +29,7 @@ public class AddFriendConnectSqlHandler extends SimpleChannelInboundHandler<Frie
 
             boolean flag = false;
             int flag2 = 0;
-            System.out.println("有用户正在申请添加帐号【" + friendName + "】为好友....");
+            System.out.println("用户" + me + "正在申请添加帐号【" + friendName + "】为好友....");
 
             // 1、判断client中是否存在此帐号(flag)
             System.out.println("正在查询是否存在此帐号...");

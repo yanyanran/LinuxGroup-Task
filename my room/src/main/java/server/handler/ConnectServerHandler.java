@@ -54,6 +54,8 @@ public class ConnectServerHandler extends SimpleChannelInboundHandler<String> {
      */
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        System.out.print("输出异常：");
+        // 输出异常内容
         cause.printStackTrace();
         Channel channel = ctx.channel();
         //移除集合

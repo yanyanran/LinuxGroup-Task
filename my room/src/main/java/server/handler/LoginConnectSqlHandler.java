@@ -40,7 +40,8 @@ public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<LoginMsg
         PreparedStatement ptmt = con.prepareStatement(sql);
         // 判断用户是否处于登陆状态，避免不同客户端重复登陆同个帐号
         String sql2 = "select State from client where username='"+ username +"'";
-        ResultSet m = ptmt.executeQuery(sql2);
+        PreparedStatement ptmt2 = con.prepareStatement(sql2);
+        ResultSet m = ptmt2.executeQuery(sql2);
 
         while(m.next()) {
             int state = m.getInt("State");
@@ -56,7 +57,7 @@ public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<LoginMsg
                 ResultSet rs = ptmt.executeQuery();
                 if(rs.next()){
                     // 登陆成功把username传过去
-                    ServerToClientMsg msg2 = new ServerToClientMsg(true, "客户端账号登录成功！\n",username);
+                    ServerToClientMsg msg2 = new ServerToClientMsg(true, "------登陆成功-------",username);
                     System.out.println(msg2);
                     ctx.writeAndFlush(msg2);
 
@@ -67,7 +68,7 @@ public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<LoginMsg
                     // 登陆完成
                     System.out.println(" Server: 帐号" +  username +"上线");
                 }else{
-                    ServerToClientMsg msg2 = new ServerToClientMsg(false,"客户端登陆时名称或密码错误！\n" + "请重新登录:");
+                    ServerToClientMsg msg2 = new ServerToClientMsg(false,"-------名称或密码错误！---------\n" + "请重新登录:");
                     System.out.println(msg2);
                     ctx.writeAndFlush(msg2);
                 }

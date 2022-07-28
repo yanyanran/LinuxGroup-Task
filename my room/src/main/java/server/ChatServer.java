@@ -43,11 +43,7 @@ public class ChatServer {
                     .childHandler(new ChannelInitializer<NioSocketChannel>() {
                         @Override
                         protected void initChannel(NioSocketChannel ch) throws Exception {
-                            //添加编解码器
-//                            ch.pipeline().addLast(new StringDecoder());
-//                            ch.pipeline().addLast(new StringEncoder());
-                            ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(20*1024, 9, 4, 2, 0));
-                            ch.pipeline().addLast(new MessageCode());
+                            // handler在pipeline中的添加位置很有讲究！！！一定注意！！！编码器如果放在最后是无法识别各大msg的！！！（走大坑）
                             ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
                             /** 向pipeline中添加自定义业务处理handler */
                             ch.pipeline().addLast("connect-handler",new ConnectServerHandler());
@@ -60,6 +56,10 @@ public class ChatServer {
                             ch.pipeline().addLast("black-list-handler",new BlackListConnectSqlHandler());
                             ch.pipeline().addLast("friend-list-handler",new FriendListConnectSqlHandler());
                             ch.pipeline().addLast("history-handler",new HistoryConnectSqlHandler());
+                            // 长度协议解码器
+                            ch.pipeline().addFirst(new LengthFieldBasedFrameDecoder(1024*1024*1024, 9, 4, 2, 0));
+                            // //添加编解码器
+                            ch.pipeline().addFirst(new MessageCode());
                         }
                     });
 

@@ -8,7 +8,7 @@ import java.util.Map;
 // server --> client
 public class ServerToClientMsg extends UserMessage {
         private boolean success;
-        private String reason;
+        private String result;
         private int ServerToClientMsg;
         int MessageType = ServerToClientMsg;
         Map<Integer,String> msgMap;
@@ -16,12 +16,12 @@ public class ServerToClientMsg extends UserMessage {
 
         public ServerToClientMsg(boolean success,String reason) {
             this.success = success;
-            this.reason = reason;
+            this.result = reason;
         }
 
         public ServerToClientMsg(boolean success,String reason,String username) {
             this.success = success;
-            this.reason = reason;
+            this.result = reason;
             this.username = username;
         }
 
@@ -43,8 +43,8 @@ public class ServerToClientMsg extends UserMessage {
             return this.success;
         }
 
-        public String getReason() {
-            return this.reason;
+        public String getresult() {
+            return this.result;
         }
 
         public Map<Integer,String> getMsgMap() {
@@ -64,6 +64,6 @@ public class ServerToClientMsg extends UserMessage {
         }
 
         public String toString() {
-            return "success = " + success + ", reason = " + reason + "me = " + username;
+            return "success = " + success + ", reason = " + result + "me = " + username;
         }
 }

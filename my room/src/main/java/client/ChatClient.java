@@ -59,21 +59,16 @@ public class ChatClient {
                         // 创建一个channel初始化对象
                         @Override
                         protected void initChannel(NioSocketChannel ch) throws Exception {
-                            // 长度协议解码器
-                            ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(20*1024, 9, 4, 2, 0));
-                            // 编解码器
-                            ch.pipeline().addLast(new MessageCode());
-                            //ch.pipeline().addLast(new StringDecoder());
-                            //ch.pipeline().addLast(new StringEncoder());
+                            // handler在pipeline中的添加位置很有讲究！！！一定注意！！！编码器如果放在最后是无法识别各大msg的！！！（走大坑）
                             /** 添加自定义业务处理handler */
                             ch.pipeline().addLast(new ClientHandler());
                             //ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
                             // 服务端给客户端回消息handler
-                            ch.pipeline().addLast(new ResponseHandler());
+                            ch.pipeline().addFirst(new ResponseHandler());
                             ch.pipeline().addLast(new ChatReceiveHandler());
-                            ch.pipeline().addLast(new ChannelInboundHandlerAdapter(){
+                            ch.pipeline().addFirst(new ChannelInboundHandlerAdapter() {
                                 @Override
-                                public void channelActive( ChannelHandlerContext ctx) throws Exception {
+                                public void channelActive(ChannelHandlerContext ctx) throws Exception {
                                     // 创一个线程跑界面
                                     new Thread(()->{
                                         try {
@@ -84,6 +79,10 @@ public class ChatClient {
                                         }},"线程" + num).start();
                                 }
                             });
+                            // 长度协议解码器
+                            ch.pipeline().addFirst(new LengthFieldBasedFrameDecoder(1024*1024*1024, 9, 4, 2, 0));
+                            // 编解码器
+                            ch.pipeline().addFirst(new MessageCode());
                         }
                     });
 
