@@ -32,6 +32,7 @@ public class LoginSuccessHandler {
 
         switch (i.toUpperCase()) {
             case "A":
+                //System.out.println(me);     // 当前用户名传进来了
                 new FriendManageHandler(ctx, me);
                 break;
             case "B":

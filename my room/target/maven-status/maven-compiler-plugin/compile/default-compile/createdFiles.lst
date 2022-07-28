@@ -16,10 +16,12 @@ messages/settoservermsg/FriendMsg.class
 messages/settoclientmsg/ChatHandlerMap.class
 client/function/GroupManageHandler.class
 client/LoginSuccessHandler.class
+messages/settoservermsg/BlacklistMsg.class
 client/function/ChatManageHandler.class
 client/ClientHandler.class
 server/ChatServer.class
 client/function/FriendManageHandler.class
+messages/settoservermsg/ListMsg.class
 server/handler/BlackListConnectSqlHandler.class
 server/handler/HistoryConnectSqlHandler.class
 client/ChatClient$1$1.class

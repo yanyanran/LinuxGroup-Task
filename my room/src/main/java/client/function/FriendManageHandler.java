@@ -3,7 +3,9 @@ package client.function;
 import client.LoginSuccessHandler;
 import io.netty.channel.ChannelHandlerContext;
 import messages.settoclientmsg.ServerToClientMsg;
+import messages.settoservermsg.BlacklistMsg;
 import messages.settoservermsg.FriendMsg;
+import messages.settoservermsg.ListMsg;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -21,6 +23,7 @@ public class FriendManageHandler {
 
     // 都对数据库 friend_list 操作
     public FriendManageHandler(ChannelHandlerContext ctx, String me) throws Exception {
+        System.out.println(me);
         System.out.println("(A) 查看好友列表");
         System.out.println("(B) 查看黑名单");
         System.out.println("(C) 添加好友");
@@ -52,8 +55,9 @@ public class FriendManageHandler {
 
     // 查看好友列表 --> show friend_list.type=0
     public void setFriendList(ChannelHandlerContext ctx, String me) throws Exception {
+        System.out.println(me);
         // send to server
-        FriendMsg msg = new FriendMsg(me,1);
+        ListMsg msg = new ListMsg(me,1);
         ctx.writeAndFlush(msg);
 
         // lock and wait
@@ -89,7 +93,7 @@ public class FriendManageHandler {
 
     // 查看黑名单 --> show friend_list.type=1
     public void setBlackList(ChannelHandlerContext ctx,String me) throws Exception {
-        FriendMsg msg = new FriendMsg(me,2);
+        ListMsg msg = new ListMsg(me,2);
         ctx.writeAndFlush(msg);
 
         // lock and wait
@@ -152,7 +156,7 @@ public class FriendManageHandler {
 
     // 添加黑名单好友
     public void addBlackList(ChannelHandlerContext ctx, String me,String addWho) throws Exception {
-        FriendMsg msg = new FriendMsg(me, addWho, 1);
+        BlacklistMsg msg = new BlacklistMsg(me, addWho, 1);
         ctx.writeAndFlush(msg);
 
         // lock and wait
@@ -179,7 +183,7 @@ public class FriendManageHandler {
 
     // 删除黑名单好友
     public void deleteBlackList(ChannelHandlerContext ctx, String me,String deleteWho) throws Exception {
-        FriendMsg msg = new FriendMsg(me, deleteWho, 2);
+        BlacklistMsg msg = new BlacklistMsg(me, deleteWho, 2);
         ctx.writeAndFlush(msg);
 
         // lock and wait

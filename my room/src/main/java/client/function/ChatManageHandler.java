@@ -6,6 +6,7 @@ import io.netty.channel.ChannelHandlerContext;
 import messages.settoservermsg.ChatMsg;
 import messages.settoservermsg.FriendMsg;
 import messages.settoservermsg.HistoryMsg;
+import messages.settoservermsg.ListMsg;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -47,7 +48,7 @@ public class ChatManageHandler {
         Channel client = null;
 
         // 开头打印好友列表
-        FriendMsg msg = new FriendMsg(from,1);
+        ListMsg msg = new ListMsg(from,1);
         ctx.writeAndFlush(msg);
         try {
             synchronized (waitMessage) {

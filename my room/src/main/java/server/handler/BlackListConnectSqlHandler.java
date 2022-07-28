@@ -3,6 +3,7 @@ package server.handler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import messages.settoclientmsg.ServerToClientMsg;
+import messages.settoservermsg.BlacklistMsg;
 import messages.settoservermsg.FriendMsg;
 
 import java.sql.Connection;
@@ -10,14 +11,18 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class BlackListConnectSqlHandler extends SimpleChannelInboundHandler<FriendMsg> {
+/**
+ * 连接数据库
+ * 黑名单好友的添加和删除Handler
+ * */
+public class BlackListConnectSqlHandler extends SimpleChannelInboundHandler<BlacklistMsg> {
     private static final String url = "jdbc:mysql://localhost:3306/ChatRoomClient?useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
     private static final String user = "root";
     private static final String pass = "123456";
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, FriendMsg msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, BlacklistMsg msg) throws Exception {
         String me = msg.getMe();
         String friend = msg.getFriendName();
         int num = msg.getNum();
