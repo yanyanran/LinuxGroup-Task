@@ -41,10 +41,11 @@ public class HistoryConnectSqlHandler extends SimpleChannelInboundHandler<Histor
             System.out.println("正在判断查询记录帐号是否是用户好友...");
             // 查询
             Statement stm2 = con.createStatement();
-            String sql2 = "select type from firend_list where user1='" + friend + "'and user2='" + me + "'";
+            String sql2 = "select type from friend_list where user1='" + friend + "'and user2='" + me + "'";
             ResultSet rs1 = stm2.executeQuery(sql2);
-            String sql3 = "select type from firend_list where user1='" + me + "'and user2='" + friend + "'";
-            ResultSet rs2 = stm2.executeQuery(sql3);
+            Statement stm3 = con.createStatement();
+            String sql3 = "select type from friend_list where user1='" + me + "'and user2='" + friend + "'";
+            ResultSet rs2 = stm3.executeQuery(sql3);
 
             // 遍历
             if (rs1.next()) {
@@ -53,7 +54,7 @@ public class HistoryConnectSqlHandler extends SimpleChannelInboundHandler<Histor
             if (rs2.next()) {
                 flag2++;
             }
-            System.out.println("flag2: " + flag2);
+            //System.out.println("flag2: " + flag2);
 
             if (flag2 == 0) {
                 // 查询消息的对象不是自己的好友
@@ -62,13 +63,8 @@ public class HistoryConnectSqlHandler extends SimpleChannelInboundHandler<Histor
                 ctx.writeAndFlush(msg2);
             }else {
                 System.out.println("是用户好友，开始查询聊天记录...");
-                String sql = "select id,fromc,toc,sendtime,msg from history_msg where (fromc=? and toc=?) or (fromc=? and toc=?)";
-                PreparedStatement stmt = con.prepareStatement(sql);
-                stmt.setString(1,me);
-                stmt.setString(2,friend);
-                stmt.setString(3,friend);
-                stmt.setString(4,me);
-                // 结果集
+                String sql = "select id,fromc,toc,sendtime,msg from history_msg where (fromc='" + me + "' and toc='" + friend + "') or (fromc='" + friend + "' and toc='" + me + "')";
+                Statement stmt = con.createStatement();
                 ResultSet rs = stmt.executeQuery(sql);
 
                 // 消息按照id大小排序输出（先小后大）
@@ -88,10 +84,12 @@ public class HistoryConnectSqlHandler extends SimpleChannelInboundHandler<Histor
                 if(flag == 0) {
                     System.out.println("两用户间记录查询结果：无聊天记录!");
                     ServerToClientMsg msg2 = new ServerToClientMsg(false," 聊天记录为空！\n");
+                    ctx.writeAndFlush(msg2);
                 }else {
                     System.out.println("两用户间记录查询结果：有聊天记录！");
                     //  把map传给客户端
                     ServerToClientMsg msg2 = new ServerToClientMsg(true, msgMap);
+                    ctx.writeAndFlush(msg2);
                 }
             }
         } catch (Exception e) {

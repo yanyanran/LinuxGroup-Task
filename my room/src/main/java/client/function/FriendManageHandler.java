@@ -75,13 +75,14 @@ public class FriendManageHandler {
             for(int i = 0; i < userList.size(); i++) {
                 System.out.println(userList.get(i));
             }
-            System.out.println("您想操作：\n【1】向好友发起会话\n【2】查看好友聊天记录\n* 输入除1、2外任意键即可退出当前页面* \n请输入您的选择：");
+            System.out.println("您想操作：\n【1】向好友发起会话\n【2】查看好友聊天记录（* 输入除1、2外任意键即可退出当前页面 *） \n请输入您的选择：");
             int i = input.nextInt();
             if(i == 1) {
                 FriendsChat(ctx,me);
-            }else if(i ==2) {
+            }else if(i == 2) {
                 showHistoryMsg(ctx,me);
             } else {
+                // 这里有问题：可以new 但不可以操作
                 new FriendManageHandler(ctx, me);
             }
         }else {

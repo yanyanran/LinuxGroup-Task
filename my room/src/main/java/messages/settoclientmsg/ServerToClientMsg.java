@@ -43,7 +43,7 @@ public class ServerToClientMsg extends UserMessage {
             return this.success;
         }
 
-        public String getresult() {
+        public String getResult() {
             return this.result;
         }
 

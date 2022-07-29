@@ -96,6 +96,10 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 - [x] 添加黑名单好友的时候多一个“退出”操作（后面再补）
 
+- [ ] FriendManageHandler中的setFriendList在展示完好友列表后用户选择退出，跳到上一层的页面不可操作 
+
+- [x] 展示好友列表的lsit在add有问题 
+
 - [ ] 数据库连接池 
 
 - [ ] 枚举 密码加密
@@ -113,7 +117,7 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 - [ ] **关于发消息：**登陆的时候一个帐号名绑定一个channel，发送消息时通过帐号名查找到对应的channel，然后通过服务器发送消息
 
 - [ ] ```java
-  String sql = "select user2 from friend_list where user1=send and user2=yes and type=0 and user1='" + me + "'";
+  String sql = "select user2 from friend_list where user1=send and user2=yes and type=0 and user1='" + from + "'";
   Statement stm = con.createStatement();
   ResultSet rs = stm.executeQuery(sql);
   while (rs.next())

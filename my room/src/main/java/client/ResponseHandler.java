@@ -15,12 +15,13 @@ public class ResponseHandler extends SimpleChannelInboundHandler<ServerToClientM
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ServerToClientMsg msg) throws Exception {
         boolean success = msg.getSuccess();
-        String result = msg.getresult();
+        String result = msg.getResult();
         Map<Integer,String> map = msg.getMsgMap();
         ArrayList<String> list = msg.getList();
 
-
-        System.out.println(result);
+        if(result != null) {
+            System.out.println(result);
+        }
         // 操作失败
         if(!success) {
             waitSuccess = 0;

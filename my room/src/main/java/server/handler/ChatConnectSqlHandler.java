@@ -43,14 +43,12 @@ public class ChatConnectSqlHandler extends SimpleChannelInboundHandler<ChatMsg> 
 
         System.out.println(" 正在判断帐号" + to +"是否为用户" + from + "的好友....");
         // 查询 friend_list
-        String sql = "select user2 from friend_list where user1=send and user2=yes and user1=?";
-        String sql2 = "select user1 from friend_list where user1=send and user2=yes and user2=?";
-        PreparedStatement stm = con.prepareStatement(sql);
-        PreparedStatement stm2 = con.prepareStatement(sql2);
-        stm.setString(1,from);
-        stm2.setString(1,from);
+        String sql = "select user2 from friend_list where user1=send and user2=yes and user1='" + from + "'and user2='" + to +"'";
+        String sql2 = "select user1 from friend_list where user1=send and user2=yes and user2='" + from + "' and user1='"+ to +"'";
+        Statement stm = con.createStatement();
+        Statement stm2 = con.createStatement();
         ResultSet rs = stm.executeQuery(sql);
-        ResultSet rs2 = stm.executeQuery(sql2);
+        ResultSet rs2 = stm2.executeQuery(sql2);
         if(rs.next()) {
             flag1 = 1;
         }
@@ -67,14 +65,12 @@ public class ChatConnectSqlHandler extends SimpleChannelInboundHandler<ChatMsg> 
             System.out.println("是好友关系!");
             // 判断是否为黑名单好友
             System.out.println(" 正在判断帐号" + to +"是否为用户" + from + "的黑名单好友....");
-            String sql3 = "select type from firend_list where user1=? and user2=?";
-            PreparedStatement stmt = con.prepareStatement(sql3);
-            stmt.setString(1,from);
-            stmt.setString(2,to);
-            ResultSet rs3 = stmt.executeQuery();
-            stmt.setString(1,to);
-            stmt.setString(2,from);
-            ResultSet rs4 = stmt.executeQuery();
+            String sql3 = "select type from friend_list where user1='" + from + "' and user2='" + to + "'";
+            Statement stmt = con.createStatement();
+            ResultSet rs3 = stmt.executeQuery(sql3);
+            String sql7 = "select type from friend_list where user1='" + to + "' and user2='" + from + "'";
+            Statement stmt3 = con.createStatement();
+            ResultSet rs4 = stmt3.executeQuery(sql7);
 
             if(rs3.next()) {
                 int t = rs3.getInt("type");
@@ -98,7 +94,7 @@ public class ChatConnectSqlHandler extends SimpleChannelInboundHandler<ChatMsg> 
                 System.out.println(" 好友关系验证成功！");
                 // 判断to是否在线
                 String sql4 = "select State from client where username='"+ to +"'";
-                PreparedStatement ptmt = con.prepareStatement(sql4);
+                Statement ptmt = con.createStatement();
                 ResultSet m = ptmt.executeQuery(sql4);
                 while(m.next()) {
                     int state = m.getInt("State");
@@ -112,7 +108,7 @@ public class ChatConnectSqlHandler extends SimpleChannelInboundHandler<ChatMsg> 
                         channel.writeAndFlush(msg);
 
                         // 写入历史消息中，state --> 0
-                        String sql5 = "insert into history_msg (fromc, toc,msg_type, msg, time, state) values(?,?,?,?,?,0)";
+                        String sql5 = "insert into history_msg (fromc, toc,msg_type, msg, sendtime, state) values(?,?,?,?,?,0)";
                         PreparedStatement stmt2 = con.prepareStatement(sql5);
                         stmt2.setString(1,from);
                         stmt2.setString(2,to);
@@ -132,7 +128,7 @@ public class ChatConnectSqlHandler extends SimpleChannelInboundHandler<ChatMsg> 
                         // 消息存到数据库，但不能发出去
 
                         // 写入历史消息中，state --> 1
-                        String sql6 = "insert into history_msg (fromc, toc,msg_type, msg, time, state) values(?,?,?,?,?,1)";
+                        String sql6 = "insert into history_msg (fromc, toc,msg_type, msg, sendtime, state) values(?,?,?,?,?,1)";
                         PreparedStatement stmt2 = con.prepareStatement(sql6);
                         stmt2.setString(1,from);
                         stmt2.setString(2,to);

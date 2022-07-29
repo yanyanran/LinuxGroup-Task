@@ -63,23 +63,23 @@ public class ChatManageHandler {
             for (int i = 0; i < userList.size(); i++) {
                 System.out.println(userList.get(i));
             }
-            System.out.println("您想对哪个好友发起会话？请输入对方用户名：");
-            String to = input.next();
 
             try {
                 // 该客户端的消息发送线程，无限循环
                 while (startFlag) {
+                    System.out.println("您想对哪个好友发起会话？请输入对方用户名：");
+                    String to = input.next();
                     System.out.println("------ 请输入要发送的消息类型（0:文本内容 1:文件）------");
                     // choose
                     String type = input.next();
                     // 发文本
                     if("0".equals(type)){
-                        System.out.println("------ 请输入要发送的消息内容 ------\n如想退出当前会话 请输入bye");
+                        System.out.println("------ 请输入要发送的消息内容 （退出当前会话请输入bye） ------");
                         // input
                         String msgBody = input.next();
                         if("bye".equals(msgBody)){
                             startFlag = false;
-                            // 执行完本次消息发送后，退出循环，关闭
+                            // 执行完本次消息给对方发送bye后，退出聊天循环
                         }
 
                         // 获取发送时间
@@ -143,6 +143,7 @@ public class ChatManageHandler {
                         continue;
                     }
                 }
+                new ChatManageHandler(ctx, from);
             } finally {
                 // 释放资源
                 if(null != client){
@@ -207,7 +208,6 @@ public class ChatManageHandler {
                 System.out.println(entry.getValue());
             }
         }else {
-            System.out.println("------ 查询失败 ------");
             System.out.println("您是否还要继续查询？ （Y---继续查询；除Y任意键---退出查询）");
             if(input.next().toUpperCase() == "Y") {
                 showHistoryMsg(ctx,me);
