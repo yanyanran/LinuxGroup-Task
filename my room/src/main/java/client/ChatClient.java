@@ -80,10 +80,11 @@ public class ChatClient {
                                         }},"线程" + num).start();
                                 }
                             });
-                            // 长度协议解码器
-                            ch.pipeline().addFirst(new LengthFieldBasedFrameDecoder(1024*1024*1024, 9, 4, 2, 0));
                             // 编解码器
                             ch.pipeline().addFirst(new MessageCode());
+                            // 长度协议解码器
+                            ch.pipeline().addFirst(new LengthFieldBasedFrameDecoder(1024*1024*1024, 9, 4, 2, 0));
+
                         }
                     });
 

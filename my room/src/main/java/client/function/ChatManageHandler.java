@@ -80,7 +80,7 @@ public class ChatManageHandler {
                     if("0".equals(type)){
                         System.out.println("------ 请输入要发送的消息内容 （退出当前会话请输入bye） ------");
                         // input
-                        String msgBody = input.nextLine();
+                        String msgBody = input.next();
                         if("bye".equals(msgBody)){
                             startFlag = false;
                             // 执行完本次消息给对方发送bye后，退出聊天循环
