@@ -56,13 +56,13 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 - [ ] 群聊记录：一个群一个id，然后所有群记录放在同个表里，按照id区分，调用查看id即可（索引） --> GroupMsg 
 
-  
+- [ ] TCP半关闭 find（告诉对端不发了） 那读关闭如何实现？
 
-------
+- [ ] TCP快速重传
 
-!(/home/yanran/.config/Typora/typora-user-images/image-20220727121617068.png)
+  ------
 
-![image-20220727121020667](/home/yanran/.config/Typora/typora-user-images/image-20220727121020667.png)
+  ![image-20220727121020667](/home/yanran/.config/Typora/typora-user-images/image-20220727121020667.png)
 
 ![image-20220727110424181](/home/yanran/.config/Typora/typora-user-images/image-20220727110424181.png)
 
@@ -81,12 +81,23 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 - [x] 先启动服务端再启动客户端，两边成功连接后在客户端启动Logn.run()调出用户登陆页面。登陆成功后给服务器端发送XXX上线，**退出登陆同样给服务端发XXX离线，但现在是需要完全退出系统关闭通道，服务端才会报“离线”**。（已解决：将shutdownGracefully放到closeFuture前面去就OK）
 
 - [x] **不可以同时登陆两个帐号**（已解决：数据库中用户表的state，输入用户名之后遍历state值为1的name，如果有重复就显示在线不能重复登陆）
+
 - [ ] （直接关闭程序进程后退出不会i导致state还原为0，会影响下次登陆）
+
 - [x] 登陆成功后拿到当前登陆帐号的username
+
 - [x] 黑名单 
+
+- [ ] 聊天过程中对方退出了，消息何去何从
+
+- [ ] 单聊中文件的发送（对方不在线能否发送？存哪儿？）
+
 - [ ] 输出好友列表的时候顺带输出它的状态（需要连接两个表查询，后面再补充吧）
+
 - [x] 添加黑名单好友的时候多一个“退出”操作（后面再补）
-- [ ] 数据库连接池
+
+- [ ] 数据库连接池 
+
 - [ ] 枚举 密码加密
 
 - [ ] ctrl D和ctrl C的屏蔽
@@ -100,6 +111,15 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 - [ ] 私聊、群聊、文件传输的实现都是**由客户端发到服务器，再由服务器发送到目标客户端**
 
 - [ ] **关于发消息：**登陆的时候一个帐号名绑定一个channel，发送消息时通过帐号名查找到对应的channel，然后通过服务器发送消息
+
+- [ ] ```java
+  String sql = "select user2 from friend_list where user1=send and user2=yes and type=0 and user1='" + me + "'";
+  Statement stm = con.createStatement();
+  ResultSet rs = stm.executeQuery(sql);
+  while (rs.next())
+  ```
+
+  
 
   ```java
   // 启动客户端,等待连接服务端,同时将异步改为同步
