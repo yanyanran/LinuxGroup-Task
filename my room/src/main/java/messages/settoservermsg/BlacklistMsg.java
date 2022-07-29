@@ -4,7 +4,7 @@ import messages.UserMessage;
 
 public class BlacklistMsg extends UserMessage {
     private String friendName;
-    private static String me;
+    private String me;
     private int num;
 
     public BlacklistMsg(String me,String friendName,int num) {

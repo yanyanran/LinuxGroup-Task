@@ -36,26 +36,20 @@ public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<LoginMsg
         String username = msg.getUsername();
         String password = msg.getPassword();
 
-        String sql = "select id,username,password,State from client where username=? and password=?";
+        String sql = "select id,username,password,State from client where username='"+ username +"' and password='"+ password +"'";
         PreparedStatement ptmt = con.prepareStatement(sql);
-        // 判断用户是否处于登陆状态，避免不同客户端重复登陆同个帐号
-        String sql2 = "select State from client where username='"+ username +"'";
-        PreparedStatement ptmt2 = con.prepareStatement(sql2);
-        ResultSet m = ptmt2.executeQuery(sql2);
+        ResultSet m = ptmt.executeQuery(sql);
 
-        while(m.next()) {
+        if (m.next()) {
             int state = m.getInt("State");
-            // state判断---用户是否在线（不能同时登陆相同帐号）
+            // 判断用户是否处于登陆状态，避免不同客户端重复登陆同个帐号
+            // state判断---用户是否在线
             if(state == 1) {
                 ServerToClientMsg msg2 = new ServerToClientMsg(false, "登陆失败，此用户正处于登陆状态！请重新登陆");
                 System.out.println(msg2);
                 ctx.writeAndFlush(msg2);
                 // login(ctx);
             } else {
-                ptmt.setString(1, username);
-                ptmt.setString(2, password);
-                ResultSet rs = ptmt.executeQuery();
-                if(rs.next()){
                     // 登陆成功把username传过去
                     ServerToClientMsg msg2 = new ServerToClientMsg(true, "------登陆成功-------",username);
                     System.out.println(msg2);
@@ -67,12 +61,11 @@ public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<LoginMsg
 
                     // 登陆完成
                     System.out.println(" Server: 帐号" +  username +"上线");
-                }else{
-                    ServerToClientMsg msg2 = new ServerToClientMsg(false,"-------名称或密码错误！---------\n" + "请重新登录:");
-                    System.out.println(msg2);
-                    ctx.writeAndFlush(msg2);
-                }
             }
+        }else {
+            ServerToClientMsg msg2 = new ServerToClientMsg(false,"-------名称或密码错误！---------\n" + "请重新登录:");
+            System.out.println(msg2);
+            ctx.writeAndFlush(msg2);
         }
     }
 }

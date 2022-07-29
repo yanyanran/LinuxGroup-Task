@@ -4,7 +4,7 @@ import messages.UserMessage;
 
 public class FriendMsg extends UserMessage {
     private String friendName;
-    private static String me;
+    private String me;
 
     public FriendMsg(String friendName,String me) {
         this.friendName = friendName;

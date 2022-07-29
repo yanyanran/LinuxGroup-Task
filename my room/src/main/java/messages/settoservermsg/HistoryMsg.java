@@ -4,10 +4,9 @@ import messages.UserMessage;
 
 import java.io.File;
 
-//   和friendMsg一样吼
 public class HistoryMsg extends UserMessage {
-    private static String friend;
-    private static String me;
+    private String friend;
+    private String me;
 
     public HistoryMsg(String me, String friend) {
         this.friend = friend;

@@ -3,7 +3,8 @@ package messages.settoservermsg;
 import messages.UserMessage;
 
 public class ListMsg extends UserMessage {
-    private static String me;
+    // 不能设为static!!!
+    private String me;
     private int num;
 
     public ListMsg(String me,int num) {
