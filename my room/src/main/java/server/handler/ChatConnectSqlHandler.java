@@ -35,7 +35,7 @@ public class ChatConnectSqlHandler extends SimpleChannelInboundHandler<ChatMsg> 
         // 传发送方from、接收方to、消息类型type、消息体message、发送时间time
         String from = msg.getFrom();
         String to = msg.getTo();
-        String type = msg.getMsgType();
+        int type = msg.getMsgType();
         String message = msg.getMsgBody();
         String time = msg.getTime();
         int flag = 0;   // 判断是否为黑名单好友
@@ -103,23 +103,24 @@ public class ChatConnectSqlHandler extends SimpleChannelInboundHandler<ChatMsg> 
                         System.out.println("用户[" + to + "]在线");
                         System.out.println("time: "+ time + " 用户[" + from +"]给用户[" + to + "]发送消息中...");
 
-                        // 显示消息给to方
+                        // !!!!!!send!!!!!!
+                        // 利用channel显示消息给to方
                         Channel channel = ChatHandlerMap.getChannel(to);
                         channel.writeAndFlush(msg);
 
                         // 写入历史消息中，state --> 0
-                        String sql5 = "insert into history_msg (fromc, toc,msg_type, msg, sendtime, state) values(?,?,?,?,?,0)";
+                        String sql5 = "insert into history_msg (fromc, toc, msg_type, msg, sendtime, state) values(?,?,?,?,?,0)";
                         PreparedStatement stmt2 = con.prepareStatement(sql5);
                         stmt2.setString(1,from);
                         stmt2.setString(2,to);
-                        stmt2.setString(3,type);
+                        stmt2.setInt(3,type);
                         stmt2.setString(4,message);
                         stmt2.setString(5,time);
                         stmt2.executeUpdate();
 
                         System.out.println("【" + time + "】" + "用户" + from + "成功给用户" + to + "发送消息" + "：" + msg);
-//                        ServerToClientMsg msg2 = new ServerToClientMsg(true, "【" + time + "】" + from + "：" + msg + "已发送\n");
-//                        ctx.writeAndFlush(msg2);
+                        ServerToClientMsg msg2 = new ServerToClientMsg(true, "");
+                        ctx.writeAndFlush(msg2);
                     }else {
                         // offline
                         System.out.println("用户[" + to + "]不在线");
@@ -132,7 +133,7 @@ public class ChatConnectSqlHandler extends SimpleChannelInboundHandler<ChatMsg> 
                         PreparedStatement stmt2 = con.prepareStatement(sql6);
                         stmt2.setString(1,from);
                         stmt2.setString(2,to);
-                        stmt2.setString(3,type);
+                        stmt2.setInt(3,type);
                         stmt2.setString(4,message);
                         stmt2.setString(5,time);
                         stmt2.executeUpdate();

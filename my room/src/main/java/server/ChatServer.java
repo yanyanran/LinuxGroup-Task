@@ -45,7 +45,7 @@ public class ChatServer {
                         protected void initChannel(NioSocketChannel ch) throws Exception {
                             // handler在pipeline中的添加位置很有讲究！！！一定注意！！！编码器如果放在最后是无法识别各大msg的！！！（走大坑）
                             ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
-                            /** 向pipeline中添加自定义业务处理handler */
+                            /** 向pipeline中添加自定义业务处理handler  */
                             ch.pipeline().addLast("connect-handler",new ConnectServerHandler());
                             ch.pipeline().addLast("login-handler",new LoginConnectSqlHandler());
                             ch.pipeline().addLast("logout-handler",new LogoutConnectSqlHandler());
@@ -64,7 +64,9 @@ public class ChatServer {
                     });
 
             // 启动服务端 绑定端口
-            future = serverBootstrap.bind(port).sync();
+            future = serverBootstrap.bind(port);
+            Channel channel = future.sync().channel();
+
             /**
              * Future - Listener
              * */
@@ -80,7 +82,7 @@ public class ChatServer {
                 }
             });
 
-            future.channel().closeFuture().sync();
+            channel.closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();

@@ -36,32 +36,19 @@ public class FriendListConnectSqlHandler extends SimpleChannelInboundHandler<Lis
             Connection con = DriverManager.getConnection(url, user, pass);
 
             // 查询 friend_list --> type:0
-            String sql = "select user2 from friend_list where user1=send and user2=yes and type=0 and user1='" + me + "'";
+            String sql = "select user1,user2 from friend_list where user1=send and user2=yes and type=0 and (user1='" + me + "' or user2='" + me + "')";
             Statement stm = con.createStatement();
             ResultSet rs = stm.executeQuery(sql);
             while (rs.next()) {
                 flag = 1;
-                String friend = rs.getString("user2");
-//                // 遍历list看是否有一样的，不一样就添加
-//                for(int i = 0; i < list.size(); i++) {
-//                    if(list.get(i) != friend) {
-//                        list.add(friend);
-//                    }
-//                }
-                list.add(friend);
-            }
-            String sql2 = "select user1 from friend_list where user1=send and user2=yes and type=0 and user2='" + me + "'";
-            Statement stm2 = con.createStatement();
-            ResultSet rs2 = stm2.executeQuery(sql2);
-            while (rs2.next()) {
-                flag = 1;
-                String friend = rs.getString("user1");
-                // 遍历list看是否有一样的，不一样就添加
-//                for(int i = 0; i < list.size(); i++) {
-//                    if(list.get(i) != friend) {
-//                        list.add(friend);
-//                    }
-//                }
+                String some1 = rs.getString("user1");
+                String some2 = rs.getString("user2");
+                String friend = null;
+                if (some1.equals(me) == true) {
+                    friend = some2;
+                } else if (some2.equals(me) == true) {
+                    friend = some1;
+                }
                 list.add(friend);
             }
             System.out.println("数据库查找好友完毕...");
@@ -87,36 +74,23 @@ public class FriendListConnectSqlHandler extends SimpleChannelInboundHandler<Lis
                 Connection con = DriverManager.getConnection(url, user, pass);
 
                 // 查询 friend_list --> type:0
-                String sql = "select user2 from friend_list where user1=send and user2=yes and type=1 and user1='" + me + "'";
+                String sql = "select user2,user1 from friend_list where user1=send and user2=yes and type=1 and (user1='" + me + "' or user2='" + me + "')";
                 Statement stm = con.createStatement();
                 ResultSet rs = stm.executeQuery(sql);
                 while (rs.next()) {
                     flag = 1;
-                    String friend = rs.getString("user2");
-                    // 遍历list看是否有一样的，不一样就添加
-//                    for(int i = 0; i < list.size(); i++) {
-//                        if(list.get(i) != friend) {
-//                            list.add(friend);
-//                        }
-//                    }
+                    String some1 = rs.getString("user1");
+                    String some2 = rs.getString("user2");
+                    String friend = null;
+                    if (some1.equals(me) == true) {
+                        friend = some2;
+                    } else if (some2.equals(me) == true) {
+                        friend = some1;
+                    }
                     list.add(friend);
                 }
-                String sql2 = "select user1 from friend_list where user1=send and user2=yes and type=1 and user2='" + me + "'";
-                Statement stm2 = con.createStatement();
-                ResultSet rs2 = stm2.executeQuery(sql2);
-                while (rs2.next()) {
-                    flag = 1;
-                    String friend = rs.getString("user1");
-                    // 遍历list看是否有一样的，不一样就添加
-//                    for(int i = 0; i < list.size(); i++) {
-//                        if(list.get(i) != friend) {
-//                            list.add(friend);
-//                        }
-//                    }
-                    list.add(friend);
-                }
-
                 System.out.println("数据库查找黑名单好友完毕...");
+
                 if(flag == 0) {
                     System.out.println("用户["+ me +"]的黑名单好友列表是空的！");
                     ServerToClientMsg msg2 = new ServerToClientMsg(false, "无黑名单好友!");

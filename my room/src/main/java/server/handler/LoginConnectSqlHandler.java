@@ -6,6 +6,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.CharsetUtil;
+import messages.settoclientmsg.ChatHandlerMap;
 import messages.settoclientmsg.ServerToClientMsg;
 import messages.settoservermsg.LoginMsg;
 import messages.settoservermsg.RegisterMsg;
@@ -55,6 +56,8 @@ public class LoginConnectSqlHandler extends SimpleChannelInboundHandler<LoginMsg
                     System.out.println(msg2);
                     ctx.writeAndFlush(msg2);
 
+                    // 通信channel建立起来
+                    ChatHandlerMap.add(username,ctx.channel());
                     // 登陆之后state立刻设为1，表示在线状态 state --> 1
                     String sql3 = "update client set State=1 where username='"+ username +"'";
                     ptmt.executeUpdate(sql3);

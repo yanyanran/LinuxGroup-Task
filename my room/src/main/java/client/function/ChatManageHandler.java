@@ -67,8 +67,12 @@ public class ChatManageHandler {
             try {
                 // 该客户端的消息发送线程，无限循环
                 while (startFlag) {
-                    System.out.println("您想对哪个好友发起会话？请输入对方用户名：");
+                    System.out.println("您想对哪个好友发起会话？请输入对方用户名【输入E退出】：");
                     String to = input.next();
+                    if(to.equals("E") == true) {
+                        startFlag = false;
+                        break;
+                    }
                     System.out.println("------ 请输入要发送的消息类型（0:文本内容 1:文件）------");
                     // choose
                     String type = input.next();
@@ -76,7 +80,7 @@ public class ChatManageHandler {
                     if("0".equals(type)){
                         System.out.println("------ 请输入要发送的消息内容 （退出当前会话请输入bye） ------");
                         // input
-                        String msgBody = input.next();
+                        String msgBody = input.nextLine();
                         if("bye".equals(msgBody)){
                             startFlag = false;
                             // 执行完本次消息给对方发送bye后，退出聊天循环
@@ -89,7 +93,7 @@ public class ChatManageHandler {
                         String time = sdf.format((date));
 
                         // 发给服务端
-                        ChatMsg msg2 = new ChatMsg(from, to,"String", msgBody,time);
+                        ChatMsg msg2 = new ChatMsg(from, to,0, msgBody,time);
                         ctx.writeAndFlush(msg2);
 
                         // lock and wait
@@ -120,7 +124,7 @@ public class ChatManageHandler {
                             continue;
                         }
                         // 发给服务端
-                        ChatMsg msg2 = new ChatMsg("File", filePath);
+                        ChatMsg msg2 = new ChatMsg(1, filePath);
                         ctx.writeAndFlush(msg2);
 
                         // lock and wait

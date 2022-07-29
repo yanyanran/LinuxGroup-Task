@@ -12,16 +12,16 @@ public class ChatMsg extends UserMessage {
 
     private String from;   // 发送方
     private String to;     // 接收方
-    private String msgType;    // 消息类型:File---文件 String---普通字符串文本
+    private int msgType;    // 消息类型:0--文本内容 1--文件
     private String msgBody;    // 消息内容:文件路径 普通文本内容
     private String time;       // 发送时间
 
-    public ChatMsg(String msgType, String msgBody) {
+    public ChatMsg(int msgType, String msgBody) {
         this.msgType = msgType;
         this.msgBody = msgBody;
     }
 
-    public ChatMsg(String from, String to, String msgType, String msgBody,String time) {
+    public ChatMsg(String from, String to, int msgType, String msgBody,String time) {
         this.from = from;
         this.to = to;
         this.msgType = msgType;
@@ -29,11 +29,11 @@ public class ChatMsg extends UserMessage {
         this.time = time;
     }
 
-    public String getMsgType() {
+    public int getMsgType() {
         return msgType;
     }
 
-    public void setMsgType(String msgType) {
+    public void setMsgType(int msgType) {
         this.msgType = msgType;
     }
 
@@ -71,7 +71,7 @@ public class ChatMsg extends UserMessage {
 
     @Override
     public String toString() {
-        return "from = " + from + " to = " + to + " msgType = " + msgType + " msgBody = " + msgBody + "send time = " + time;
+        return " 发送时间： " + time + " 发送方： " + from + " 接收方： " + to + " 消息类型（0:文本 1:文件）： = " + msgType + " 消息内容： " + msgBody;
     }
 
     @Override

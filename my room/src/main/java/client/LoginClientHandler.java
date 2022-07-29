@@ -21,7 +21,6 @@ public class LoginClientHandler {
 
     // home page
     public LoginClientHandler(ChannelHandlerContext ctx) throws Exception {
-        Channel userChannel = new Channel()
         System.out.println("---- Welcome to MyChatRoom -----");
         System.out.println("请选择：\n 1:用户登录\n 2：用户注册\n 3：注销用户\n 4：退出");
         System.out.println("--------------------------------");

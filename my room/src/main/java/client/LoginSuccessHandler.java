@@ -5,6 +5,7 @@ import client.function.FriendManageHandler;
 import client.function.GroupManageHandler;
 import io.netty.channel.ChannelHandlerContext;
 import messages.UserMessage;
+import messages.settoclientmsg.ChatHandlerMap;
 
 import java.util.Scanner;
 
