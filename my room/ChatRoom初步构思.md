@@ -60,9 +60,13 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 - [ ] TCP快速重传 
 
-- [ ] ​      /home/yanran/Downloads  
+- [ ] ​      /home/yanran/Downloads
 
-  ![image-20220727121020667](/home/yanran/.config/Typora/typora-user-images/image-20220727121020667.png)
+- [ ] 是否需要一个表来存放好友申请？ （不需要）
+
+- [ ] 
+
+- [ ] ![image-20220727121020667](/home/yanran/.config/Typora/typora-user-images/image-20220727121020667.png)
 
 ![image-20220727110424181](/home/yanran/.config/Typora/typora-user-images/image-20220727110424181.png)
 

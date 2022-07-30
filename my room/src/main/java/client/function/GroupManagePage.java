@@ -1,6 +1,5 @@
 package client.function;
 
-import client.LoginSuccessPage;
 import io.netty.channel.ChannelHandlerContext;
 
 import java.util.Scanner;

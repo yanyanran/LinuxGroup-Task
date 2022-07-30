@@ -3,9 +3,11 @@ package client.function;
 import io.netty.channel.ChannelHandlerContext;
 import messages.settoservermsg.BlacklistMsg;
 import messages.settoservermsg.FriendMsg;
-import messages.settoservermsg.FriendRequestsMsg;
+import messages.settoservermsg.FriendApplyMsg;
 import messages.settoservermsg.ListMsg;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 import static client.ChatClient.*;
@@ -230,9 +232,14 @@ public class FriendManagePage {
                     e.printStackTrace();
                 }
 
-                if(waitSuccess == 1) {
-                    // 可添加
-                    FriendRequestsMsg msg2 = new FriendRequestsMsg(me,friendName,0);
+                if(waitSuccess == 1) {  // 可添加
+                    // 获取发送时间
+                    SimpleDateFormat sdf = new SimpleDateFormat();
+                    sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");
+                    Date date = new Date();
+                    String time = sdf.format((date));
+
+                    FriendApplyMsg msg2 = new FriendApplyMsg(me,friendName,time);
                     ctx.writeAndFlush(msg2);
                     try {
                         synchronized (waitMessage) {

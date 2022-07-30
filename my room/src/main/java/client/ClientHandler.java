@@ -14,7 +14,7 @@ import java.util.List;
  * 收到消息立即提醒handler
  */
 public class ClientHandler extends ChannelInboundHandlerAdapter {
-    public static List<Channel> channelList = new ArrayList<>();
+    //public static List<Channel> channelList = new ArrayList<>();
     /**
      * 通道读取就绪事件
      */

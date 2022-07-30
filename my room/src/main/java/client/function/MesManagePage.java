@@ -39,13 +39,13 @@ public class MesManagePage {
         }
     }
 
-    // 查看未读消息
+    // 查看未读消息 --> 展示history_msg中state=1，toc=me的消息，展示完将state设为0
     public static void CheckUnreadMsg(ChannelHandlerContext ctx, String me) {
 
     }
 
     // 查看好友请求
-    public static void CheckFriendApply(ChannelHandlerContext ctx, String me) {
+    public static void CheckFriendApply(ChannelHandlerContext ctx, String me){
 
     }
 

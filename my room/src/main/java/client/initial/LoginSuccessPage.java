@@ -1,4 +1,4 @@
-package client;
+package client.initial;
 
 import client.function.*;
 import io.netty.channel.ChannelHandlerContext;
@@ -16,10 +16,8 @@ public class LoginSuccessPage {
     // 登陆完成后显示页面
     public LoginSuccessPage(ChannelHandlerContext ctx, String me) throws Exception {
         while(true) {
-            int unreadMessage = 0;  // 这条代表数据库中“未读消息列表”的消息数( ????未完成?????? )
-            if (unreadMessage > 0) {
-                UserMessage.getUnreadMessage();  // 主页面显示有几条未读消息
-            }
+            // 主页面显示有几条未读消息
+
 
             // main page 实现主要五大板块
             System.out.println("(A) 好友管理");
@@ -59,10 +57,6 @@ public class LoginSuccessPage {
             }
         }
     }
-
-
-
-
 
     // 退出登录
     public static void SignOut(ChannelHandlerContext ctx) throws Exception {

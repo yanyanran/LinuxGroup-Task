@@ -4,17 +4,16 @@ import messages.UserMessage;
 
 /**
  * 好友申请消息类型
- * （0申请、1回复）
  * */
-public class FriendRequestsMsg extends UserMessage {
+public class FriendApplyMsg extends UserMessage {
     private String fromUser;
     private String toUser;
-    private int num;
+    private String time;
 
-    public FriendRequestsMsg(String fromUser, String toUser, int num) {
+    public FriendApplyMsg(String fromUser, String toUser, String time) {
         this.fromUser = fromUser;
         this.toUser = toUser;
-        this.num = num;
+        this.time = time;
     }
 
     public String getFromUser() {
@@ -25,13 +24,13 @@ public class FriendRequestsMsg extends UserMessage {
         return this.toUser;
     }
 
-    public int getNum() {
-        return this.num;
+    public String getTime() {
+        return this.time;
     }
 
     @Override
     public String toString() {
-        return fromUser + "向" + toUser + "发送好友申请";
+        return time + " " + fromUser + "申请添加您为好友";
     }
 
     @Override

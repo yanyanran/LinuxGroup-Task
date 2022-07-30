@@ -1,6 +1,5 @@
 package client.function;
 
-import client.LoginSuccessPage;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import messages.settoservermsg.ChatMsg;
@@ -150,7 +149,7 @@ public class ChatFriendManagePage {
                         continue;
                     }
                 }
-                new ChatFriendManagePage(ctx, from);
+                return;
             } finally {
                 // 释放资源
                 if(null != client){
@@ -161,7 +160,7 @@ public class ChatFriendManagePage {
         }else {
             System.out.println("---------- *您的好友列表为空* ----------");
             System.out.println("---- *想要发起会话 请先从添加好友开始* ----");
-            new FriendManagePage(ctx, from);
+            return;
         }
     }
 
@@ -219,7 +218,7 @@ public class ChatFriendManagePage {
             if(input.next().toUpperCase() == "Y") {
                 showHistoryMsg(ctx,me);
             }else {
-                new ChatFriendManagePage(ctx,me);
+                return;
             }
         }
     }

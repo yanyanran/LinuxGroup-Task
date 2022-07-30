@@ -85,11 +85,12 @@ public class AddFriendConnectSqlHandler extends SimpleChannelInboundHandler<Frie
                     } else {
                         System.out.println("不是好友 转战添加好友...");
                         ServerToClientMsg msg2 = new ServerToClientMsg(true,"");
+                        ctx.writeAndFlush(msg2);
                     }
-                } else {
-                    ServerToClientMsg setMsg = new ServerToClientMsg(false, "不存在帐号" + friendName + "!");
-                    System.out.println(setMsg);
-                    ctx.writeAndFlush(ctx);
+                } else {  // 帐号不存在
+                    System.out.println("添加失败，不存在此帐号！");
+                    ServerToClientMsg msg2 = new ServerToClientMsg(false, "用户添加失败，因为不存在此帐号" + friendName + "!");
+                    ctx.writeAndFlush(msg2);
                 }
             } else if(num == 1) {  // delete friend
                 System.out.println("用户" + me + "正在申请删除好友【" + friendName + "】....");
@@ -124,7 +125,6 @@ public class AddFriendConnectSqlHandler extends SimpleChannelInboundHandler<Frie
                     ServerToClientMsg msg2 = new ServerToClientMsg(false, "此人不是您的好友，无权删除！");
                     ctx.writeAndFlush(msg2);
                 }
-
             }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();

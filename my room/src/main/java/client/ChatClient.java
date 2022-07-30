@@ -1,5 +1,6 @@
 package client;
 
+import client.initial.LoginClientPage;
 import client.thread.ChatReceiveHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -25,9 +26,6 @@ public class ChatClient {
     public static volatile int waitSuccess;   // 1成功，0失败
     public static volatile Map<Integer,String> msgMap = new HashMap<>(); //  存消息记录的map
     public static volatile ArrayList<String> userList = new ArrayList<>();  //  存用户列表的list
-    public static volatile Map<String,Channel> channelMap = new HashMap<>(); //
-    public static volatile boolean unreadMsg = false;// 未读消息提醒
-    public static volatile boolean is = false; // 好友发消息提醒
 
     public ChatClient(String ip, int port) {
         this.ip = ip;

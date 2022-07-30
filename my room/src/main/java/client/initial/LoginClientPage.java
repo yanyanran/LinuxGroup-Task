@@ -1,4 +1,4 @@
-package client;
+package client.initial;
 
 import io.netty.channel.ChannelHandlerContext;
 import messages.settoservermsg.LoginMsg;
