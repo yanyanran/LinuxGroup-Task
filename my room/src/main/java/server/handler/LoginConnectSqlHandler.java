@@ -1,7 +1,5 @@
 package server.handler;
 
-import client.LoginClientHandler;
-import client.LoginSuccessHandler;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -9,7 +7,6 @@ import io.netty.util.CharsetUtil;
 import messages.settoclientmsg.ChatHandlerMap;
 import messages.settoclientmsg.ServerToClientMsg;
 import messages.settoservermsg.LoginMsg;
-import messages.settoservermsg.RegisterMsg;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

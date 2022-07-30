@@ -5,7 +5,6 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.DecoderException;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import messages.MessageCode;
 
@@ -74,7 +73,7 @@ public class ChatClient {
                                     new Thread(()->{
                                         try {
                                             num++;
-                                            new LoginClientHandler(ctx);
+                                            new LoginClientPage(ctx);
                                         } catch (Exception e) {
                                             e.printStackTrace();
                                         }},"线程" + num).start();

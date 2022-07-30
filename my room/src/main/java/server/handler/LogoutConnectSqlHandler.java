@@ -4,16 +4,10 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.CharsetUtil;
-import messages.UserMessage;
 import messages.settoclientmsg.ServerToClientMsg;
 import messages.settoservermsg.LogoutMsg;
 
 import java.sql.*;
-import java.util.Scanner;
-
-import static client.ChatClient.waitMessage;
-import static client.ChatClient.waitSuccess;
-import static client.LoginClientHandler.logout;
 
 public class LogoutConnectSqlHandler extends SimpleChannelInboundHandler<LogoutMsg> {
     private static final String url = "jdbc:mysql://localhost:3306/ChatRoomClient?useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";

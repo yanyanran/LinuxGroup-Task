@@ -1,10 +1,9 @@
 package client.function;
 
-import client.LoginSuccessHandler;
+import client.LoginSuccessPage;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import messages.settoservermsg.ChatMsg;
-import messages.settoservermsg.FriendMsg;
 import messages.settoservermsg.HistoryMsg;
 import messages.settoservermsg.ListMsg;
 
@@ -15,31 +14,35 @@ import java.util.*;
 import static client.ChatClient.*;
 
 /**
- *  好友聊天页面Client
+ * Client Page
+ *  （C）好友聊天页面
  *  */
-public class ChatManageHandler {
+public class ChatFriendManagePage {
     static Scanner input = new Scanner(System.in);
     private static boolean startFlag = true;  // 后加，用于处理客户端下线时的通信报错问题
 
     // 传from to
-    public ChatManageHandler(ChannelHandlerContext ctx, String me) throws Exception {
-        System.out.println("(A) 发起聊天");
-        System.out.println("(B) 查看聊天记录");
-        System.out.println("(C) 退出");
-        System.out.println("【请输入您的选择】:");
-        String i = input.nextLine();
+    public ChatFriendManagePage(ChannelHandlerContext ctx, String me) throws Exception {
+        boolean s = true;
+        while (s) {
+            System.out.println("(A) 发起聊天");
+            System.out.println("(B) 查看聊天记录");
+            System.out.println("(C) 退出");
+            System.out.println("【请输入您的选择】:");
+            String i = input.nextLine();
 
-        switch (i.toUpperCase()) {
-            case "A":
-                FriendsChat(ctx,me);
-                break;
-            case "B":
-                showHistoryMsg(ctx,me);
-                break;
-            case "C":
-                // return login success main page
-                new LoginSuccessHandler(ctx,me);
-                break;
+            switch (i.toUpperCase()) {
+                case "A":
+                    FriendsChat(ctx, me);
+                    break;
+                case "B":
+                    showHistoryMsg(ctx, me);
+                    break;
+                case "C":
+                    // return login success main page
+                    s = false;
+                    break;
+            }
         }
     }
 
@@ -147,7 +150,7 @@ public class ChatManageHandler {
                         continue;
                     }
                 }
-                new ChatManageHandler(ctx, from);
+                new ChatFriendManagePage(ctx, from);
             } finally {
                 // 释放资源
                 if(null != client){
@@ -158,7 +161,7 @@ public class ChatManageHandler {
         }else {
             System.out.println("---------- *您的好友列表为空* ----------");
             System.out.println("---- *想要发起会话 请先从添加好友开始* ----");
-            new FriendManageHandler(ctx, from);
+            new FriendManagePage(ctx, from);
         }
     }
 
@@ -216,7 +219,7 @@ public class ChatManageHandler {
             if(input.next().toUpperCase() == "Y") {
                 showHistoryMsg(ctx,me);
             }else {
-                new ChatManageHandler(ctx,me);
+                new ChatFriendManagePage(ctx,me);
             }
         }
     }

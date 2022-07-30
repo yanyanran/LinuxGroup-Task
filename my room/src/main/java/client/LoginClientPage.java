@@ -1,26 +1,28 @@
 package client;
 
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import messages.settoservermsg.LoginMsg;
 import messages.settoservermsg.LogoutMsg;
 import messages.settoservermsg.OfflineMsg;
 import messages.settoservermsg.RegisterMsg;
-import server.handler.LoginConnectSqlHandler;
 
 import java.util.Scanner;
 
 import static client.ChatClient.waitMessage;
 import static client.ChatClient.waitSuccess;
 
-public class LoginClientHandler {
+/**
+ * Client Page
+ *  用户登陆页面
+ *  */
+public class LoginClientPage {
     private static String username;
     private static String password;
     private static String password2;
     static Scanner input = new Scanner(System.in);
 
     // home page
-    public LoginClientHandler(ChannelHandlerContext ctx) throws Exception {
+    public LoginClientPage(ChannelHandlerContext ctx) throws Exception {
         while(true){
             System.out.println("---- Welcome to MyChatRoom -----");
             System.out.println("请选择：\n 1:用户登录\n 2：用户注册\n 3：注销用户\n 4：退出");
@@ -69,7 +71,7 @@ public class LoginClientHandler {
         }
 
         if(waitSuccess == 1) {
-            new LoginSuccessHandler(ctx,username);
+            new LoginSuccessPage(ctx,username);
         }else {
             login(ctx);
         }
@@ -99,7 +101,7 @@ public class LoginClientHandler {
 
         if(waitSuccess == 1) {
             System.out.println("------注册成功，请登录-------\n");
-            new LoginClientHandler(ctx);
+            new LoginClientPage(ctx);
         }else {
             System.out.println("您是否还要继续注册帐号？  1----是   2----退出\n");
             int i = input.nextInt();
@@ -107,7 +109,7 @@ public class LoginClientHandler {
                 case 1:
                     register(ctx);
                 case 2:
-                    new LoginClientHandler(ctx);
+                    new LoginClientPage(ctx);
             }
         }
     }
@@ -138,7 +140,7 @@ public class LoginClientHandler {
                 if(waitSuccess == 1) {
                     System.out.println("-------帐户已被注销--------");
                     // new login ######
-                    new LoginClientHandler(ctx);
+                    new LoginClientPage(ctx);
                 }else {
                     System.out.println("您是否还要继续注销操作？ 1----继续 2----退出\n");
                     int j = input.nextInt();
@@ -146,13 +148,13 @@ public class LoginClientHandler {
                         case 1:
                             logout(ctx);
                         case 2:
-                            new LoginClientHandler(ctx);
+                            new LoginClientPage(ctx);
                     }
                 }
                 break;
             case 2:
                 System.out.println("-------您选择保留您的帐户--------");
-                new LoginClientHandler(ctx);
+                new LoginClientPage(ctx);
                 break;
             default:
                 System.out.println("!!!错误输入!!!");
@@ -177,7 +179,7 @@ public class LoginClientHandler {
 
         if(waitSuccess == 1) {
             System.out.println("-------您已退出登陆--------");
-            new LoginClientHandler(ctx);
+            new LoginClientPage(ctx);
             login(ctx);
         }
     }

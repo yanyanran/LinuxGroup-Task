@@ -45,7 +45,7 @@ public class ApplyConnectSqlHandler extends SimpleChannelInboundHandler<FriendRe
                 if (rs > 0) {
                     // 插入成功
                     System.out.println("数据表插入成功!好友申请发送成功！");
-                    ServerToClientMsg msg2 = new ServerToClientMsg(true,"好友申请发送成功！等待对方验证...\n");
+                    ServerToClientMsg msg2 = new ServerToClientMsg(true,"好友申请发送成功！");
                     ctx.writeAndFlush(msg2);
                 } else {
                     // 插入失败

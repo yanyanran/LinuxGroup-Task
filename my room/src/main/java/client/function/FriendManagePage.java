@@ -1,29 +1,27 @@
 package client.function;
 
-import client.LoginSuccessHandler;
 import io.netty.channel.ChannelHandlerContext;
-import messages.settoclientmsg.ServerToClientMsg;
 import messages.settoservermsg.BlacklistMsg;
 import messages.settoservermsg.FriendMsg;
 import messages.settoservermsg.FriendRequestsMsg;
 import messages.settoservermsg.ListMsg;
 
-import java.util.ArrayList;
 import java.util.Scanner;
 
 import static client.ChatClient.*;
-import static client.function.ChatManageHandler.FriendsChat;
-import static client.function.ChatManageHandler.showHistoryMsg;
+import static client.function.ChatFriendManagePage.FriendsChat;
+import static client.function.ChatFriendManagePage.showHistoryMsg;
 
 /**
+ * Client Page
  * （A）好友管理页面
  * */
-public class FriendManageHandler {
+public class FriendManagePage {
     static Scanner input = new Scanner(System.in);
     static String friendName;
 
     // 都对数据库 friend_list 操作
-    public FriendManageHandler(ChannelHandlerContext ctx, String me) throws Exception {
+    public FriendManagePage(ChannelHandlerContext ctx, String me) throws Exception {
         boolean s = true;
         while(s) {
             //System.out.println(me);
@@ -87,7 +85,7 @@ public class FriendManageHandler {
                 showHistoryMsg(ctx,me);
             } else {
                 // 这里有问题：可以new 但不可以操作
-                new FriendManageHandler(ctx, me);
+                new FriendManagePage(ctx, me);
             }
         }else {
             System.out.println("您的好友列表为空！");
@@ -130,7 +128,7 @@ public class FriendManageHandler {
                         addBlackList(ctx,me,user);
                         break;
                     case "N":
-                        new FriendManageHandler(ctx, me);
+                        new FriendManagePage(ctx, me);
                         break;
                 }
             }else // 删除黑名单好友
@@ -143,12 +141,12 @@ public class FriendManageHandler {
                         deleteBlackList(ctx,me,user);
                         break;
                     case "N":
-                        new FriendManageHandler(ctx, me);
+                        new FriendManagePage(ctx, me);
                         break;
                 }
 
             } else {
-                new FriendManageHandler(ctx, me);
+                new FriendManagePage(ctx, me);
             }
         }else {
             System.out.println("您的黑名单好友列表为空！");
@@ -173,7 +171,7 @@ public class FriendManageHandler {
 
         if(waitSuccess == 1) {
             System.out.println("已成功将好友" + addWho + "拉黑");
-            new FriendManageHandler(ctx, me);
+            new FriendManagePage(ctx, me);
         }else {
             System.out.print("拉黑失败！\n您是否需要继续此操作？：【Y】继续 【除Y任意键】退出\n请输入您的选择：");
             if(input.next() == "Y") {
@@ -200,7 +198,7 @@ public class FriendManageHandler {
 
         if(waitSuccess == 1) {
             System.out.println("已成功将好友" + deleteWho + "解除拉黑");
-            new FriendManageHandler(ctx, me);
+            new FriendManagePage(ctx, me);
         }else {
             System.out.print("解除拉黑失败！\n您是否需要继续此操作？：【Y】继续 【除Y任意键】退出\n请输入您的选择：");
             if(input.next() == "Y") {
@@ -245,15 +243,16 @@ public class FriendManageHandler {
                     }
 
                     if(waitSuccess == 1) {
-                        // ...
+                        System.out.println("等待对方验证...");
+                        return;
                     }else {
-                        // ...
+                        System.out.println("请重新操作！");
+                        return;
                     }
                 } else {
                     System.out.println("添加操作失败！");
                     return;
                 }
-                break;
             case "N":
                 System.out.println("您已取消操作，正在跳转页面...");
                 // return previous page
