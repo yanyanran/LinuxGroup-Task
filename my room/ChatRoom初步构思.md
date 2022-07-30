@@ -58,9 +58,9 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 - [ ] TCP半关闭 find（告诉对端不发了） 那读关闭如何实现？
 
-- [ ] TCP快速重传
+- [ ] TCP快速重传 
 
-- [ ] ​      /home/yanran/Downloads   
+- [ ] ​      /home/yanran/Downloads  
 
   ![image-20220727121020667](/home/yanran/.config/Typora/typora-user-images/image-20220727121020667.png)
 
@@ -70,7 +70,7 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 ![image-20220727110507738](/home/yanran/.config/Typora/typora-user-images/image-20220727110507738.png)
 
-- 框架以及页面选项设计（7.20设计-----7.25完成账户页面功能-----）
+- [ ] 框架以及页面选项设计（7.20设计-----7.25完成账户页面功能-----）
 
   
 
@@ -82,13 +82,13 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 - [x] **不可以同时登陆两个帐号**（已解决：数据库中用户表的state，输入用户名之后遍历state值为1的name，如果有重复就显示在线不能重复登陆）
 
-- [ ] （直接关闭程序进程后退出不会i导致state还原为0，会影响下次登陆）
+- [ ] 直接关闭程序进程后退出不会i导致state还原为0，会影响下次登陆
 
 - [x] 登陆成功后拿到当前登陆帐号的username
 
 - [x] 黑名单 
 
-- [ ] 聊天过程中对方退出了，消息何去何从
+- [x] 聊天过程中对方退出了，消息何去何从（发一次消息监测一次对方状态即可）
 
 - [ ] 单聊中文件的发送（对方不在线能否发送？存哪儿？）
 
@@ -96,7 +96,7 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 - [x] 添加黑名单好友的时候多一个“退出”操作（后面再补）
 
-- [ ] FriendManageHandler中的setFriendList在展示完好友列表后用户选择退出，跳到上一层的页面不可操作 
+- [ ] FriendManageHandler中的setFriendList在展示完好友列表后用户选择退出，跳到上一层的页面不可操作 （半解决：不用new，直接原本基础上将所有页面用while(true)无限循环，跳出当前操作直接用rreturn跳出）
 
 - [x] 展示好友列表的lsit在add有问题 
 
@@ -110,14 +110,14 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
   客户端向服务器端发出申请
 
-- [ ] 用户登陆后页面显示（登陆成功后将状态改为在线，接收消息只存入“消息历史记录”表中）
+- [x] 用户登陆后页面显示（登陆成功后将状态改为在线，接收消息只存入“消息历史记录”表中）
 
-- [ ] 私聊、群聊、文件传输的实现都是**由客户端发到服务器，再由服务器发送到目标客户端**
+- [x] 私聊、群聊、文件传输的实现都是**由客户端发到服务器，再由服务器发送到目标客户端**
 
-- [ ] **关于发消息：**登陆的时候一个帐号名绑定一个channel，发送消息时通过帐号名查找到对应的channel，然后通过服务器发送消息
+- [x] **关于发消息：**登陆的时候一个帐号名绑定一个channel，发送消息时通过帐号名查找到对应的channel，然后通过服务器发送消息
 
 - [ ] ```java
-  String sql = "select user2 from friend_list where user1=send and user2=yes and type=0 and user1='" + from + "'";
+  String sql = "select user2 from friend_list where user1=send and user2=yes and type=0 and user1='" + fromUser + "'";
   Statement stm = con.createStatement();
   ResultSet rs = stm.executeQuery(sql);
   while (rs.next())

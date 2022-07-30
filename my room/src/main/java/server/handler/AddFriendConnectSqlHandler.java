@@ -1,7 +1,9 @@
 package server.handler;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import messages.settoclientmsg.ChatHandlerMap;
 import messages.settoclientmsg.ServerToClientMsg;
 import messages.settoservermsg.FriendMsg;
 
@@ -81,25 +83,8 @@ public class AddFriendConnectSqlHandler extends SimpleChannelInboundHandler<Frie
                         ServerToClientMsg msg2 = new ServerToClientMsg(false, "用户添加失败，因为已经是好友!");
                         ctx.writeAndFlush(msg2);
                     } else {
-                        // 给对方发送好友请求
-                        // 设置数据表 -- friend_list
-                        String sql4 = "insert into friend_list(user1,send,user2) values(?,?,?)";
-                        ps = con.prepareStatement(sql4);
-                        ps.setString(1, me);
-                        ps.setString(2, me);
-                        ps.setString(3, friendName);
-                        int resultSet2 = ps.executeUpdate();
-                        if (resultSet2 > 0) {
-                            // 插入成功
-                            System.out.println("Success");
-                        } else {
-                            // 插入失败
-                            System.out.println("Failure");
-                        }
-                        // 发送好友申请
-                        // .................................
-
-                        System.out.println("好友申请发送成功！等待对方验证");
+                        System.out.println("不是好友 转战添加好友...");
+                        ServerToClientMsg msg2 = new ServerToClientMsg(true,"");
                     }
                 } else {
                     ServerToClientMsg setMsg = new ServerToClientMsg(false, "不存在帐号" + friendName + "!");

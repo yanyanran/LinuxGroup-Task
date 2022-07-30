@@ -5,6 +5,7 @@ import io.netty.channel.ChannelHandlerContext;
 import messages.settoclientmsg.ServerToClientMsg;
 import messages.settoservermsg.BlacklistMsg;
 import messages.settoservermsg.FriendMsg;
+import messages.settoservermsg.FriendRequestsMsg;
 import messages.settoservermsg.ListMsg;
 
 import java.util.ArrayList;
@@ -230,7 +231,28 @@ public class FriendManageHandler {
                 }catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                // ......
+
+                if(waitSuccess == 1) {
+                    // 可添加
+                    FriendRequestsMsg msg2 = new FriendRequestsMsg(me,friendName,0);
+                    ctx.writeAndFlush(msg2);
+                    try {
+                        synchronized (waitMessage) {
+                            waitMessage.wait();
+                        }
+                    }catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    if(waitSuccess == 1) {
+                        // ...
+                    }else {
+                        // ...
+                    }
+                } else {
+                    System.out.println("添加操作失败！");
+                    return;
+                }
                 break;
             case "N":
                 System.out.println("您已取消操作，正在跳转页面...");
