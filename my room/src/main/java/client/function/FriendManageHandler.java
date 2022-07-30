@@ -23,33 +23,36 @@ public class FriendManageHandler {
 
     // 都对数据库 friend_list 操作
     public FriendManageHandler(ChannelHandlerContext ctx, String me) throws Exception {
-        //System.out.println(me);
-        System.out.println("(A) 查看好友列表");
-        System.out.println("(B) 查看黑名单");
-        System.out.println("(C) 添加好友");
-        System.out.println("(D) 删除好友");
-        System.out.println("(E) 返回");
-        System.out.println("【请输入您的选择】:");
-        String i = input.nextLine();
+        boolean s = true;
+        while(s) {
+            //System.out.println(me);
+            System.out.println("(A) 查看好友列表");
+            System.out.println("(B) 查看黑名单");
+            System.out.println("(C) 添加好友");
+            System.out.println("(D) 删除好友");
+            System.out.println("(E) 返回");
+            System.out.println("【请输入您的选择】:");
+            String i = input.nextLine();
 
-        switch (i.toUpperCase()) {
-            case "A":
-                setFriendList(ctx, me);
-                break;
-            case "B":
-                setBlackList(ctx,me);
-                break;
-            case "C":
-                //System.out.println("me: " + me);
-                addFriend(ctx, me);
-                break;
-            case "D":
-                deleteFriend(ctx);
-                break;
-            case "E":
-                // return login success main page
-                new LoginSuccessHandler(ctx,me);
-                break;
+            switch (i.toUpperCase()) {
+                case "A":
+                    setFriendList(ctx, me);
+                    break;
+                case "B":
+                    setBlackList(ctx, me);
+                    break;
+                case "C":
+                    //System.out.println("me: " + me);
+                    addFriend(ctx, me);
+                    break;
+                case "D":
+                    deleteFriend(ctx, me);
+                    break;
+                case "E":
+                    // return login success main page
+                    s = false;
+                    break;
+            }
         }
     }
 
@@ -88,7 +91,6 @@ public class FriendManageHandler {
         }else {
             System.out.println("您的好友列表为空！");
             // return friend main page
-            new FriendManageHandler(ctx, me);
         }
     }
 
@@ -150,9 +152,8 @@ public class FriendManageHandler {
         }else {
             System.out.println("您的黑名单好友列表为空！");
             // return friend main page
-            new FriendManageHandler(ctx, me);
+            return;
         }
-
     }
 
     // 添加黑名单好友
@@ -177,7 +178,7 @@ public class FriendManageHandler {
             if(input.next() == "Y") {
                 setBlackList(ctx,me);
             }else {
-                new FriendManageHandler(ctx,me);
+                return;
             }
         }
     }
@@ -204,22 +205,21 @@ public class FriendManageHandler {
             if(input.next() == "Y") {
                 setBlackList(ctx,me);
             }else {
-                new FriendManageHandler(ctx,me);
+                return;
             }
         }
     }
 
     // 添加好友
     public void addFriend(ChannelHandlerContext ctx, String me) {
-        //
         System.out.println("-----------* 添加好友 *-------------");
-        System.out.println("【请输入您想要添加的好友名字】：");
+        System.out.println("【请输入您想要添加的好友名】：");
         friendName = input.next();
         System.out.println("是否确定添加[" + friendName + "]为好友？\n Y--确定  N--取消\n【请输入您的选择】:");
         String i = input.next();
         switch (i.toUpperCase()) {
             case "Y":
-                FriendMsg msg = new FriendMsg(friendName, me);
+                FriendMsg msg = new FriendMsg(friendName, me, 0);
                 ctx.writeAndFlush(msg);
 
                 // 等待服务端回信
@@ -233,13 +233,42 @@ public class FriendManageHandler {
                 // ......
                 break;
             case "N":
-                System.out.println("【您已取消操作】\n");
-                break;
+                System.out.println("您已取消操作，正在跳转页面...");
+                // return previous page
+                return;
         }
  }
 
     // 删除好友
-    public void deleteFriend(ChannelHandlerContext ctx) {
+    public void deleteFriend(ChannelHandlerContext ctx, String me) {
+        System.out.println("-----------* 删除好友 *-------------");
+        System.out.println("【请输入您想要删除的好友名】：");
+        friendName = input.next();
+        System.out.println("是否确定删除好友[" + friendName + "]？\n Y--确定  N--取消\n【请输入您的选择】:");
+        String i = input.next();
+        switch (i.toUpperCase()) {
+            case "Y":
+                FriendMsg msg = new FriendMsg(friendName, me ,1);
+                ctx.writeAndFlush(msg);
+                try {
+                    synchronized (waitMessage) {
+                        waitMessage.wait();
+                    }
+                }catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
+                if(waitSuccess == 1) {
+                    System.out.println("Success！");
+                    return;
+                } else {
+                    System.out.println("删除失败！");
+                    return;
+                }
+            case "N":
+                System.out.println("您已取消操作，正在跳转页面...");
+                // return previous page
+                return;
+        }
     }
 }

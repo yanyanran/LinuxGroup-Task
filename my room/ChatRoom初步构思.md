@@ -60,9 +60,7 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 - [ ] TCP快速重传
 
-- [ ] ​      /home/yanran/Downloads 
-
-  ------
+- [ ] ​      /home/yanran/Downloads   
 
   ![image-20220727121020667](/home/yanran/.config/Typora/typora-user-images/image-20220727121020667.png)
 

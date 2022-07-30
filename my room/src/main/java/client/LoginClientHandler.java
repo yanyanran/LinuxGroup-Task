@@ -21,30 +21,30 @@ public class LoginClientHandler {
 
     // home page
     public LoginClientHandler(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("---- Welcome to MyChatRoom -----");
-        System.out.println("请选择：\n 1:用户登录\n 2：用户注册\n 3：注销用户\n 4：退出");
-        System.out.println("--------------------------------");
-        int i = input.nextInt();
+        while(true){
+            System.out.println("---- Welcome to MyChatRoom -----");
+            System.out.println("请选择：\n 1:用户登录\n 2：用户注册\n 3：注销用户\n 4：退出");
+            System.out.println("--------------------------------");
+            int i = input.nextInt();
 
-        switch (i) {
-            case 1:
-                login(ctx);
-                break;
-            case 2:
-                register(ctx);
-                break;
-            case 3:
-                logout(ctx);
-                // return home page
-                new LoginClientHandler(ctx);
-                break;
-            case 4:
-                System.out.println("~ 886 ~");
-                System.exit(0);
-            default:
-                System.out.println("错误输入!请输入正确的选项");
-                // return home page
-                new LoginClientHandler(ctx);
+            switch (i) {
+                case 1:
+                    login(ctx);
+                    break;
+                case 2:
+                    register(ctx);
+                    break;
+                case 3:
+                    logout(ctx);
+                    // return home page
+                    break;
+                case 4:
+                    System.out.println("~ 886 ~");
+                    System.exit(0);
+                default:
+                    System.out.println("错误输入!请输入正确的选项");
+                    // return home page
+            }
         }
     }
 
