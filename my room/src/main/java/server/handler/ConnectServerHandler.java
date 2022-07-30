@@ -3,17 +3,33 @@ package server.handler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import messages.toclient.ChatHandlerMap;
+import messages.toserver.OfflineMsg;
 
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static client.ChatClient.waitMessage;
 
 /**
  * 聊天室业务处理类
  */
 public class ConnectServerHandler extends SimpleChannelInboundHandler<String> {
     public static List<Channel> channelList = new ArrayList<>();
+    private static final String url = "jdbc:mysql://localhost:3306/ChatRoomClient?useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
+    private static String user = "root";
+    private static String pass = "123456";
+    private static Connection con;
+    static {
+        try {
+            con = DriverManager.getConnection(url, user, pass);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * 通道就绪事件 --channel在线
@@ -35,11 +51,24 @@ public class ConnectServerHandler extends SimpleChannelInboundHandler<String> {
 
     /**
      * 通道未就绪--channel下线
+     * 当有客户端断开连接时
      */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         Channel channel = ctx.channel();
-        //当有客户端断开连接的时候,就移除对应的通道
+
+        /**直接关闭程序退出也要让state变为0*/
+        // 获取当前user
+        String userName = ChatHandlerMap.getUser(channel);
+        System.out.println("用户名：" + userName);  // ！！！！！有问题 无法获取username（null）！！！！！！
+
+        // connect mysql State --> 0
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        String sql = "update client set State=0 where username='"+ userName +"'";
+        Statement stmt = con.createStatement();
+        stmt.executeUpdate(sql);
+
+        // 移除对应的通道
         channelList.remove(channel);
 
         SimpleDateFormat sdf = new SimpleDateFormat();  // 格式化时间

@@ -58,6 +58,7 @@ public class ChatServer {
                             ch.pipeline().addLast("history-handler",new HistoryConnectSqlHandler());
                             ch.pipeline().addLast("friend-apply-handler", new ApplyConnectSqlHandler());
                             ch.pipeline().addLast("process-apply-handler",new ProcessApplyConnectSqlHandler());
+                            ch.pipeline().addLast("unread-number-handler", new UnreadNumConnectSqlHandler());
                             // //添加编解码器
                             ch.pipeline().addFirst(new MessageCode());
                             // 长度协议解码器
