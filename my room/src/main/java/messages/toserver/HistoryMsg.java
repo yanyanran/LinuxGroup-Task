@@ -1,8 +1,6 @@
-package messages.settoservermsg;
+package messages.toserver;
 
 import messages.UserMessage;
-
-import java.io.File;
 
 public class HistoryMsg extends UserMessage {
     private String friend;

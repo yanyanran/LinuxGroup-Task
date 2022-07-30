@@ -1,4 +1,4 @@
-package messages.settoservermsg;
+package messages.toserver;
 
 import messages.UserMessage;
 

@@ -4,8 +4,8 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.CharsetUtil;
-import messages.settoclientmsg.ServerToClientMsg;
-import messages.settoservermsg.LogoutMsg;
+import messages.toclient.ServerToClientMsg;
+import messages.toserver.LogoutMsg;
 
 import java.sql.*;
 

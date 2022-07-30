@@ -1,10 +1,10 @@
 package client.initial;
 
 import io.netty.channel.ChannelHandlerContext;
-import messages.settoservermsg.LoginMsg;
-import messages.settoservermsg.LogoutMsg;
-import messages.settoservermsg.OfflineMsg;
-import messages.settoservermsg.RegisterMsg;
+import messages.toserver.LoginMsg;
+import messages.toserver.LogoutMsg;
+import messages.toserver.OfflineMsg;
+import messages.toserver.RegisterMsg;
 
 import java.util.Scanner;
 

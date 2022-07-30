@@ -26,11 +26,11 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 ​																				   退出
 
-------
+- ------
 
+  用户注册、登陆、注销（7.19设计-----7.20完成）
 
-
-- 用户注册、登陆、注销（7.19设计-----7.20完成）
+- 框架以及页面选项设计（7.20设计-----7.25完成账户页面功能-----）
 
 ------
 
@@ -44,27 +44,17 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 - [x] 用户数据表 （注册后放到这里面）**client**--> id、username、password、state（初始0为离线，1为在线）
 
-- [ ] 好友列表 （*互为好友关系*时两人放到此表的同一行里）**friend_list** -->  user1（用户1），user2（用户2），type（属性：0普通好友，1为消息屏蔽(黑名单)好友），send（发送申请方），yes（接收申请方）
+- [x] 好友列表 （*互为好友关系*时两人放到此表的同一行里）**friend_list** -->  user1（用户1），user2（用户2），type（属性：0普通好友，1为消息屏蔽(黑名单)好友），send（发送申请方），yes（接收申请方）
 
-- [ ] 群聊列表 **group_list** -->  groupname、users、type（身份属性：群主为0，管理员为2，群众为1）
+- [x] 群聊列表 **group_list** -->  groupname、users、type（身份属性：群主为0，管理员为2，群众为1）
 
   一个对应一个群聊名对应一个群内身份，需要调用时直接使用共性查找 
 
-- [ ] 聊天记录的存储用一个表来记录（输入好友名发起聊天）**history_msg** -->   id，fromc（发送方），toc（接收方），msg_type（消息类型：0--文本  1--文件），msg（消息内容：字符串 本地路径），sendtime（发送时间）
+- [x] 聊天记录的存储用一个表来记录（输入好友名发起聊天）**history_msg** -->   id，fromc（发送方），toc（接收方），msg_type（消息类型：0--文本  1--文件），msg（消息内容：字符串 本地路径），sendtime（发送时间）
 
   state --> 消息状态，0：对方在线，已发送；1对方离线，可用于1登陆主页面显示未读消息数量2选择查看页面，显示未读消息内容（查看完未读消息后把state设置为0）
 
 - [ ] 群聊记录：一个群一个id，然后所有群记录放在同个表里，按照id区分，调用查看id即可（索引） --> GroupMsg 
-
-- [ ] TCP半关闭 find（告诉对端不发了） 那读关闭如何实现？
-
-- [ ] TCP快速重传 
-
-- [ ] ​      /home/yanran/Downloads
-
-- [ ] 是否需要一个表来存放好友申请？ （不需要）
-
-- [ ] 
 
 - [ ] ![image-20220727121020667](/home/yanran/.config/Typora/typora-user-images/image-20220727121020667.png)
 
@@ -74,13 +64,9 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 ![image-20220727110507738](/home/yanran/.config/Typora/typora-user-images/image-20220727110507738.png)
 
-- [ ] 框架以及页面选项设计（7.20设计-----7.25完成账户页面功能-----）
+------
 
-  
-
-  通过channel发消息
-
-  **问题：**
+### **问题：**
 
 - [x] 先启动服务端再启动客户端，两边成功连接后在客户端启动Logn.run()调出用户登陆页面。登陆成功后给服务器端发送XXX上线，**退出登陆同样给服务端发XXX离线，但现在是需要完全退出系统关闭通道，服务端才会报“离线”**。（已解决：将shutdownGracefully放到closeFuture前面去就OK）
 
@@ -120,14 +106,20 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 - [x] **关于发消息：**登陆的时候一个帐号名绑定一个channel，发送消息时通过帐号名查找到对应的channel，然后通过服务器发送消息
 
-- [ ] ```java
+- [ ] TCP半关闭 find（告诉对端不发了） 那读关闭如何实现？
+
+- [ ] TCP快速重传 
+
+- [ ] ​      /home/yanran/Downloads
+
+- [ ] 是否需要一个表来存放好友申请？ （不需要）
+
+  ```java
   String sql = "select user2 from friend_list where user1=send and user2=yes and type=0 and user1='" + fromUser + "'";
   Statement stm = con.createStatement();
   ResultSet rs = stm.executeQuery(sql);
   while (rs.next())
   ```
-
-  
 
   ```java
   // 启动客户端,等待连接服务端,同时将异步改为同步

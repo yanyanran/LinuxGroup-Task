@@ -2,8 +2,8 @@ package server.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import messages.settoclientmsg.ServerToClientMsg;
-import messages.settoservermsg.HistoryMsg;
+import messages.toclient.ServerToClientMsg;
+import messages.toserver.HistoryMsg;
 
 import java.sql.*;
 import java.util.HashMap;

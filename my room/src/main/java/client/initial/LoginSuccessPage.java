@@ -2,9 +2,11 @@ package client.initial;
 
 import client.function.*;
 import io.netty.channel.ChannelHandlerContext;
-import messages.UserMessage;
+import messages.toserver.UnreadNumMsg;
 
 import java.util.Scanner;
+
+import static client.ChatClient.*;
 
 /**
  * Client Page
@@ -16,8 +18,21 @@ public class LoginSuccessPage {
     // 登陆完成后显示页面
     public LoginSuccessPage(ChannelHandlerContext ctx, String me) throws Exception {
         while(true) {
-            // 主页面显示有几条未读消息
-
+            // 显示有几条未读消息
+            UnreadNumMsg msg = new UnreadNumMsg(me);
+            ctx.writeAndFlush(msg);
+            try {
+                synchronized (waitMessage) {
+                    waitMessage.wait();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if(waitSuccess == 1) {
+                System.out.println("-------- *>您有"+ unreadNum +"条未读消息 请注意查收<* --------");
+            }else {
+                System.out.println("-------- *>您没有未读消息<* --------");
+            }
 
             // main page 实现主要五大板块
             System.out.println("(A) 好友管理");

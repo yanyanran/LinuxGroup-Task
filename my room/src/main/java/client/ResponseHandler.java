@@ -2,10 +2,9 @@ package client;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import messages.settoclientmsg.ServerToClientMsg;
+import messages.toclient.ServerToClientMsg;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import static client.ChatClient.*;
@@ -18,6 +17,7 @@ public class ResponseHandler extends SimpleChannelInboundHandler<ServerToClientM
         String result = msg.getResult();
         Map<Integer,String> map = msg.getMsgMap();
         ArrayList<String> list = msg.getList();
+        int num = msg.getNum();
 
         if(result != null) {
             System.out.println(result);
@@ -32,6 +32,9 @@ public class ResponseHandler extends SimpleChannelInboundHandler<ServerToClientM
             msgMap = map;
             // 接收list
             userList = list;
+            // 接收unread num
+            unreadNum = num;
+
         }
 
         // 唤醒线程

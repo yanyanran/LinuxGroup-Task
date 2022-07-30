@@ -1,4 +1,4 @@
-package messages.settoclientmsg;
+package messages.toclient;
 
 import messages.UserMessage;
 
@@ -10,6 +10,7 @@ public class ServerToClientMsg extends UserMessage {
         private boolean success;
         private String result;
         private int ServerToClientMsg;
+        private int num;
         int MessageType = ServerToClientMsg;
         Map<Integer,String> msgMap;
         ArrayList<String> list;
@@ -17,6 +18,11 @@ public class ServerToClientMsg extends UserMessage {
         public ServerToClientMsg(boolean success,String reason) {
             this.success = success;
             this.result = reason;
+        }
+
+        public ServerToClientMsg(boolean success, int num) {
+            this.num = num;
+            this.success = success;
         }
 
         public ServerToClientMsg(boolean success,String reason,String username) {
@@ -45,6 +51,10 @@ public class ServerToClientMsg extends UserMessage {
 
         public String getResult() {
             return this.result;
+        }
+
+        public int getNum() {
+            return this.num;
         }
 
         public Map<Integer,String> getMsgMap() {

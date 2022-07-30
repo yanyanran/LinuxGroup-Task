@@ -1,4 +1,4 @@
-package messages.settoclientmsg;
+package messages.toclient;
 
 import io.netty.channel.Channel;
 
@@ -9,7 +9,7 @@ import java.util.Map;
  * map --> 绑定channel和对应帐号（聊天用）
  * key、channel需要分开两个map
  * */
-public final class ChatHandlerMap {
+public class ChatHandlerMap {
     private static Map<String, Channel> channelMap = new HashMap<>();
     private static Map<Channel,String> userMap = new HashMap<>();
 

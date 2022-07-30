@@ -1,13 +1,13 @@
-package messages.settoservermsg;
+package messages.toserver;
 
 import messages.UserMessage;
 
-public class FriendMsg extends UserMessage {
+public class BlacklistMsg extends UserMessage {
     private String friendName;
     private String me;
     private int num;
 
-    public FriendMsg(String friendName,String me,int num) {
+    public BlacklistMsg(String me,String friendName,int num) {
         this.friendName = friendName;
         this.me = me;
         this.num = num;

@@ -2,9 +2,9 @@ package client.function;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import messages.settoservermsg.ChatMsg;
-import messages.settoservermsg.HistoryMsg;
-import messages.settoservermsg.ListMsg;
+import messages.toserver.ChatMsg;
+import messages.toserver.HistoryMsg;
+import messages.toserver.ListMsg;
 
 import java.io.File;
 import java.text.SimpleDateFormat;

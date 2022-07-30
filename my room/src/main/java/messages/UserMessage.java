@@ -1,9 +1,5 @@
 package messages;
 
-import messages.settoservermsg.LoginMsg;
-import messages.settoservermsg.LogoutMsg;
-import messages.settoservermsg.RegisterMsg;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;

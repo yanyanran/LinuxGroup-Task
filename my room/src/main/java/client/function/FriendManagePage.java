@@ -1,10 +1,10 @@
 package client.function;
 
 import io.netty.channel.ChannelHandlerContext;
-import messages.settoservermsg.BlacklistMsg;
-import messages.settoservermsg.FriendMsg;
-import messages.settoservermsg.FriendApplyMsg;
-import messages.settoservermsg.ListMsg;
+import messages.toserver.BlacklistMsg;
+import messages.toserver.FriendMsg;
+import messages.toserver.FriendApplyMsg;
+import messages.toserver.ListMsg;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

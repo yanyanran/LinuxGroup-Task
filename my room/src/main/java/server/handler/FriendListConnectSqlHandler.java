@@ -2,9 +2,8 @@ package server.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import messages.settoclientmsg.ServerToClientMsg;
-import messages.settoservermsg.FriendMsg;
-import messages.settoservermsg.ListMsg;
+import messages.toclient.ServerToClientMsg;
+import messages.toserver.ListMsg;
 
 import java.sql.*;
 import java.util.ArrayList;

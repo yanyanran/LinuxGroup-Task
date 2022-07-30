@@ -2,9 +2,8 @@ package server.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import messages.settoclientmsg.ServerToClientMsg;
-import messages.settoservermsg.BlacklistMsg;
-import messages.settoservermsg.FriendMsg;
+import messages.toclient.ServerToClientMsg;
+import messages.toserver.BlacklistMsg;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
