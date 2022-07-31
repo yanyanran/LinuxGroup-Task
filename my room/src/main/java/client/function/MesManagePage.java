@@ -201,6 +201,44 @@ public class MesManagePage {
 
     // 查看群通知
     public static void CheckGroupMsg(ChannelHandlerContext ctx, String me) {
+        boolean s = true;
+        while (s) {
+            System.out.println("(A) 我的群验证");
+            System.out.println("(B) 我管理的群通知");   // 群主0和管理员2才能收到
+            System.out.println("(C) 退出");
+            System.out.println("【请输入您的选择】:");
+            String i = input.nextLine();
+
+            switch (i.toUpperCase()) {
+                case "A":
+                    ApplyGroupMsg(ctx, me);
+                    break;
+                case"B":
+                    ManageGroupMsg(ctx, me);
+                    break;
+                case"C":
+                    // return previous page
+                    s = false;
+                    break;
+            }
+        }
+    }
+
+    /**
+     * (A) 我的群验证
+     * 展示申请处理结果：您已加入群聊.../ 您加入群聊...的申请被驳回
+     * */
+    public static void ApplyGroupMsg(ChannelHandlerContext ctx, String me) {
+
+    }
+
+    /**
+     * (B) 我管理的群通知 （群主0和管理员2才能收到）
+     *  群申请 --- 选择同意/不同意
+     *  设置管理员通知 ---- 您已被群主设置为群...的管理员 / 您已被群主解除群...管理员身份
+     *  群友退出 --- XXX退出了群聊(暂不 可补)
+     * */
+    public static void ManageGroupMsg(ChannelHandlerContext ctx, String me) {
 
     }
 }
