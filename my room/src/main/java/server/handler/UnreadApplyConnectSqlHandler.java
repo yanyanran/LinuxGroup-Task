@@ -24,7 +24,8 @@ public class UnreadApplyConnectSqlHandler extends SimpleChannelInboundHandler<Un
             Connection con = DriverManager.getConnection(url, user, pass);
             String me = msg.getToMe();
             System.out.println("开始查找用户" + me + "的未处理好友申请....");
-            String sql = "select id,fromc,sendtime from history_msg where toc='" + me + "'and msg_type=3)";
+            // state=1才是未处理的
+            String sql = "select id,fromc,sendtime from history_msg where toc='" + me + "'and msg_type=3 and state=1)";
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
 
@@ -46,7 +47,7 @@ public class UnreadApplyConnectSqlHandler extends SimpleChannelInboundHandler<Un
             } else {
                 System.out.println("查询结果：有未处理好友申请!");
                 //  把map传给客户端
-                ServerToClientMsg msg2 = new ServerToClientMsg(true, msgMap, from);
+                ServerToClientMsg msg2 = new ServerToClientMsg(true, msgMap);
                 ctx.writeAndFlush(msg2);
             }
         } catch (ClassNotFoundException e) {

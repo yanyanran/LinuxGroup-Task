@@ -7,18 +7,20 @@ import messages.UserMessage;
  * （0通过申请、1拒绝申请）
  * */
 public class FriendProcessApplyMsg extends UserMessage {
-    private String fromUser;
+    private int msgId;
     private String toUser;
     private int num;    // 通过num区分对方是同意了还是拒绝了
+    String time;
 
-    public FriendProcessApplyMsg(String fromUser, String toUser, int num) {
-        this.fromUser = fromUser;
+    public FriendProcessApplyMsg(int msgId, String toUser, int num, String time) {
+        this.msgId = msgId;
         this.toUser = toUser;
         this.num = num;
+        this.time = time;
     }
 
-    public String getFromUser() {
-        return this.fromUser;
+    public int getMsgId() {
+        return this.msgId;
     }
 
     public String getToUser() {
@@ -27,6 +29,10 @@ public class FriendProcessApplyMsg extends UserMessage {
 
     public int getNum() {
         return this.num;
+    }
+
+    public String getTime() {
+        return this.time;
     }
 
     @Override

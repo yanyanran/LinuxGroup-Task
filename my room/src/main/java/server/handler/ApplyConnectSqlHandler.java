@@ -51,7 +51,7 @@ public class ApplyConnectSqlHandler extends SimpleChannelInboundHandler<FriendAp
                         Channel channel = ChatHandlerMap.getChannel(to);
                         channel.writeAndFlush(msg);
 
-                        // 将申请消息写入history_msg -- state=0 type=3
+                        // 将申请消息写入history_msg -- state=1 type=3
                         System.out.println("将好友申请写入历史消息表中....");
                         String sql2 = "insert into history_msg(fromc,toc,msg_type,msg,state,sendtime) values('" + from + "','" + to + "',3,'" + ms + "',1,'" + time + "')";
                         Statement ps2 = con.createStatement();

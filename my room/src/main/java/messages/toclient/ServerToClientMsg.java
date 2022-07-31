@@ -35,10 +35,11 @@ public class ServerToClientMsg extends UserMessage {
             this.msgMap = msgMap;
          }
 
-    public ServerToClientMsg(boolean success, Map<Integer, String> msgMap, String from) {
-        this.success = success;
-        this.msgMap = msgMap;
-    }
+//    public ServerToClientMsg(boolean success, Map<Integer, String> msgMap, String from) {
+//        this.success = success;
+//        this.msgMap = msgMap;
+//        this.from = from;
+//    }
 
         public ServerToClientMsg(boolean success, ArrayList<String> list) {
             this.success = success;
@@ -72,6 +73,10 @@ public class ServerToClientMsg extends UserMessage {
         public static String getMe() {
             return username;
         }
+
+//        public static String getFrom() {
+//            return from;
+//        }
 
         public int getMessageType() {
             return this.MessageType;

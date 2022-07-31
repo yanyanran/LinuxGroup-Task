@@ -6,6 +6,7 @@ import messages.toserver.FriendProcessApplyMsg;
 import messages.toserver.UnreadApplyMsg;
 import messages.toserver.UnreadMsg;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static client.ChatClient.*;
@@ -67,7 +68,6 @@ public class MesManagePage {
             }
             if(waitSuccess == 1){
                 System.out.println("以下是您还未处理的好友申请：");
-                String from = ServerToClientMsg.;
                 Map<Integer,String> unapplyMap = ServerToClientMsg.getMsgMap();
                 msgMap.clear();
 
@@ -85,25 +85,88 @@ public class MesManagePage {
                     System.out.println(entry.getValue());
                 }
 
-                // 用户选择处理id
+                // 用户选择处理id （顺着id可以找到from方
                 System.out.println("请选择您要处理的申请id：");
                 int id = input.nextInt();
                 System.out.println("是否通过好友请求？（Y--通过申请  N--拒绝申请）");
                 String i = input.next();
-                if (i.equals("Y")) {
-                    // 返回处理结果给from
-                    FriendProcessApplyMsg msg2 = new FriendProcessApplyMsg(from,me,0);
-                    ctx.writeAndFlush(msg2);
-                } else if (i.equals("N")) {
+                // catch time
+                SimpleDateFormat sdf = new SimpleDateFormat();
+                sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");
+                Date date = new Date();
+                String time = sdf.format((date));
 
+                if (i.equals("Y")) {  // 通过申请
+                    // 返回处理结果给from
+                    FriendProcessApplyMsg msg2 = new FriendProcessApplyMsg(id,me,0,time);
+                    ctx.writeAndFlush(msg2);
+                    try {
+                        synchronized (waitMessage) {
+                            waitMessage.wait();
+                        }
+                    }catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    if(waitSuccess == 1) {
+                        System.out.println("处理成功！您是否选择继续操作？【退出--输入1 继续--输入除1外任意数字键】");
+                        int ip = input.nextInt();
+                        if(ip == 1) {
+                            s = false;
+                        } else {
+                            continue;
+                        }
+                    }else {
+                        System.out.println("处理失败！您是否选择重新操作？【退出--输入1 继续--输入除1外任意数字键】");
+                        int ip = input.nextInt();
+                        if(ip == 1) {
+                            s = false;
+                        } else {
+                            continue;
+                        }
+                    }
+                } else if (i.equals("N")) { // 拒绝申请
+                    // 返回处理结果给from
+                    FriendProcessApplyMsg msg2 = new FriendProcessApplyMsg(id,me,1,time);
+                    ctx.writeAndFlush(msg2);
+                    try {
+                        synchronized (waitMessage) {
+                            waitMessage.wait();
+                        }
+                    }catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    if(waitSuccess == 1) {
+                        System.out.println("处理成功！您是否选择继续操作？【退出--输入1 继续--输入除1外任意数字键】");
+                        int ip = input.nextInt();
+                        if(ip == 1) {
+                            s = false;
+                        } else {
+                            continue;
+                        }
+                    }else {
+                        System.out.println("处理失败！您是否选择重新操作？【退出--输入1 继续--输入除1外任意数字键】");
+                        int ip = input.nextInt();
+                        if(ip == 1) {
+                            s = false;
+                        } else {
+                            continue;
+                        }
+                    }
                 } else {
-                    System.out.println("输入有误！请重新操作！");
+                    System.out.println("输入有误！您是否选择重新操作？【退出--输入1 继续--输入除1外任意数字键】");
+                    int ip = input.nextInt();
+                    if(ip == 1) {
+                        s = false;
+                    } else {
+                        continue;
+                    }
                 }
             }else {
                 System.out.println("您没有未处理好友申请！");
             }
         }
-
     }
 
     // 查看群通知
