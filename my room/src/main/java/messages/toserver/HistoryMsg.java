@@ -2,6 +2,9 @@ package messages.toserver;
 
 import messages.UserMessage;
 
+/**
+ *  查看全部历史记录
+ * */
 public class HistoryMsg extends UserMessage {
     private String friend;
     private String me;

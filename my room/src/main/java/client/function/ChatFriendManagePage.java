@@ -167,14 +167,30 @@ public class ChatFriendManagePage {
 
     // 查看历史消息
     public static void showHistoryMsg(ChannelHandlerContext ctx, String me) throws Exception {
-        // 开头打印好友列表和好友状态
-        // .....
-        Integer maxKey = 0;
+        // 开头打印好友列表
+        ListMsg msg = new ListMsg(me,1);
+        ctx.writeAndFlush(msg);
+        try {
+            synchronized (waitMessage) {
+                waitMessage.wait();
+            }
+        }catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if(waitSuccess == 1) {
+            System.out.println("以下是您的好友列表：");
+            // 循环输出list内容
+            for (int i = 0; i < userList.size(); i++) {
+                System.out.println(userList.get(i));
+            }
+        }
+        
+//        Integer maxKey = 0;
         System.out.println("您想查看与哪个好友的聊天记录？请输入对方用户名：");
         String friend = input.next();
 
-        HistoryMsg msg = new HistoryMsg(me, friend);
-        ctx.writeAndFlush(msg);
+        HistoryMsg msg2 = new HistoryMsg(me, friend);
+        ctx.writeAndFlush(msg2);
 
         // lock and wait
         try {
