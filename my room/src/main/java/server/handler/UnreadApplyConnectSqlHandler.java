@@ -9,6 +9,11 @@ import java.sql.*;
 
 import static client.ChatClient.msgMap;
 
+/**
+ * 连接数据库
+ * 查看好友请求Handler
+ * 查看history_msg中的id,state=1，toc=me，type=3的消息，展示完将state设为0
+ * */
 public class UnreadApplyConnectSqlHandler extends SimpleChannelInboundHandler<UnreadApplyMsg> {
     private static final String url = "jdbc:mysql://localhost:3306/ChatRoomClient?useSSL=false&serverTimezone=UTC&rewriteBatchedStatements=true";
     private static final String user = "root";

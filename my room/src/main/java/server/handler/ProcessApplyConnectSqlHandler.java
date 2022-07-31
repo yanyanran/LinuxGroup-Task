@@ -59,7 +59,7 @@ public class ProcessApplyConnectSqlHandler extends SimpleChannelInboundHandler<F
                         System.out.println("数据表插入成功!");
                         // 原本history_msg里的申请信息的state置为0
                         System.out.println("正在将history_msg中的申请消息状态标记为“已处理”....");
-                        String sql3 = "update history_msg set state=1 where id='"+ id +"'";
+                        String sql3 = "update history_msg set state=0 where id='"+ id +"'";
                         int rs2 = ps.executeUpdate(sql3);
                         if(rs2 > 0) {
                             System.out.println("申请信息已标记为“已处理状态”！查询对方是否在线...");
@@ -115,7 +115,7 @@ public class ProcessApplyConnectSqlHandler extends SimpleChannelInboundHandler<F
                             System.out.println("数据表清空成功!");
                             // 原本history_msg里的申请信息的state置为0
                             System.out.println("正在将history_msg中的申请消息状态标记为“已处理”....");
-                            String sql3 = "update history_msg set state=1 where id='"+ id +"'";
+                            String sql3 = "update history_msg set state=0 where id='"+ id +"'";
                             int rs2 = ps.executeUpdate(sql3);
                             if(rs2 > 0) {
                                 System.out.println("申请信息已标记为“已处理状态”！查询对方是否在线...");

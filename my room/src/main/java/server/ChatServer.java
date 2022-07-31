@@ -60,6 +60,7 @@ public class ChatServer {
                             ch.pipeline().addLast("process-apply-handler",new ProcessApplyConnectSqlHandler());
                             ch.pipeline().addLast("unread-number-handler", new UnreadNumConnectSqlHandler());
                             ch.pipeline().addLast("unapply-handler",new UnreadApplyConnectSqlHandler());
+                            ch.pipeline().addLast("unread-msg-handler",new UnreadMsgConnectSqlHandler());
                             // //添加编解码器
                             ch.pipeline().addFirst(new MessageCode());
                             // 长度协议解码器

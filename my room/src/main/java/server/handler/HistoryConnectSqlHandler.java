@@ -20,8 +20,8 @@ public class HistoryConnectSqlHandler extends SimpleChannelInboundHandler<Histor
     private static final String user = "root";
     private static final String pass = "123456";
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-//    // 用map存消息记录 --> <id，消息体>
-//    public static Map<Integer,String> msgMap = new HashMap<>();
+    // 用map存消息记录 --> <id，消息体>
+    public static Map<Integer,String> msgMap = new HashMap<>();
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HistoryMsg msg) throws Exception {

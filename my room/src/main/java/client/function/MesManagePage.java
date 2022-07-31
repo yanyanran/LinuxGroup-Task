@@ -46,13 +46,43 @@ public class MesManagePage {
         }
     }
 
-    // 查看未读消息 --> 展示history_msg中state=1，toc=me,type=1or2的消息，展示完将state设为0
+    // 查看未读消息
     public static void CheckUnreadMsg(ChannelHandlerContext ctx, String me) {
-        UnreadMsg msg = new UnreadMsg();
+        UnreadMsg msg = new UnreadMsg(me);
+        ctx.writeAndFlush(msg);
+        try {
+            synchronized (waitMessage) {
+                waitMessage.wait();
+            }
+        }catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
+        if(waitSuccess == 1) {
+            System.out.println("您的未读消息如下：");
+            Map<Integer,String> unreadMsg = ServerToClientMsg.getMsgMap();
+            msgMap.clear();  // 归0
+
+            // map按照键排个序
+            List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer, String>>(unreadMsg.entrySet());
+            Collections.sort(list, new Comparator<Map.Entry<Integer, String>>() {
+                @Override
+                public int compare(Map.Entry<Integer, String> o1, Map.Entry<Integer, String> o2) {
+                    // 升序排
+                    return Integer.parseInt(String.valueOf(o1.getKey()))-Integer.parseInt(String.valueOf(o2.getKey()));
+                }
+            });
+
+            // 输出未读消息
+            for (Map.Entry<Integer, String> entry : list) {
+                System.out.println(entry.getValue());
+            }
+        }else {
+            return;
+        }
     }
 
-    // 查看好友请求  --> 查看history_msg中的id,state=1，toc=me，type=3的消息，展示完将state设为0
+    // 查看、处理好友请求
     public static void CheckFriendApply(ChannelHandlerContext ctx, String me){
         boolean s = true;
         while (s) {
