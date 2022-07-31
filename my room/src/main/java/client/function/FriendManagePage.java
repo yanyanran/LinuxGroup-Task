@@ -249,6 +249,7 @@ public class FriendManagePage {
                         e.printStackTrace();
                     }
 
+                    // 发送好友申请成功
                     if(waitSuccess == 1) {
                         System.out.println("等待对方验证...");
                         return;

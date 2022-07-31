@@ -10,7 +10,7 @@ import static client.ChatClient.*;
 public class ChatReceiveHandler extends SimpleChannelInboundHandler<ChatMsg> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ChatMsg msg) throws Exception {
-        System.out.println(msg.getMsgBody());
+        //System.out.println(msg.getMsgBody());
         // 唤醒线程
         synchronized (waitMessage){
             waitMessage.notifyAll();

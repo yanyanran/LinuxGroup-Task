@@ -1,8 +1,14 @@
 package client.function;
 
 import io.netty.channel.ChannelHandlerContext;
+import messages.toclient.ServerToClientMsg;
+import messages.toserver.FriendProcessApplyMsg;
+import messages.toserver.UnreadApplyMsg;
+import messages.toserver.UnreadMsg;
 
-import java.util.Scanner;
+import java.util.*;
+
+import static client.ChatClient.*;
 
 /**
  * Client Page
@@ -39,13 +45,64 @@ public class MesManagePage {
         }
     }
 
-    // 查看未读消息 --> 展示history_msg中state=1，toc=me的消息，展示完将state设为0
+    // 查看未读消息 --> 展示history_msg中state=1，toc=me,type=1or2的消息，展示完将state设为0
     public static void CheckUnreadMsg(ChannelHandlerContext ctx, String me) {
+        UnreadMsg msg = new UnreadMsg();
 
     }
 
-    // 查看好友请求
+    // 查看好友请求  --> 查看history_msg中的id,state=1，toc=me，type=3的消息，展示完将state设为0
     public static void CheckFriendApply(ChannelHandlerContext ctx, String me){
+        boolean s = true;
+        while (s) {
+            // 展示id + msg
+            UnreadApplyMsg msg = new UnreadApplyMsg(me);
+            ctx.writeAndFlush(msg);
+            try {
+                synchronized (waitMessage) {
+                    waitMessage.wait();
+                }
+            }catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if(waitSuccess == 1){
+                System.out.println("以下是您还未处理的好友申请：");
+                String from = ServerToClientMsg.;
+                Map<Integer,String> unapplyMap = ServerToClientMsg.getMsgMap();
+                msgMap.clear();
+
+                // map按照键排个序
+                List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer, String>>(unapplyMap.entrySet());
+                Collections.sort(list, new Comparator<Map.Entry<Integer, String>>() {
+                    @Override
+                    public int compare(Map.Entry<Integer, String> o1, Map.Entry<Integer, String> o2) {
+                        // 升序排序
+                        return Integer.parseInt(String.valueOf(o1.getKey()))-Integer.parseInt(String.valueOf(o2.getKey()));
+                    }
+                });
+                // 输出
+                for (Map.Entry<Integer, String> entry : list) {
+                    System.out.println(entry.getValue());
+                }
+
+                // 用户选择处理id
+                System.out.println("请选择您要处理的申请id：");
+                int id = input.nextInt();
+                System.out.println("是否通过好友请求？（Y--通过申请  N--拒绝申请）");
+                String i = input.next();
+                if (i.equals("Y")) {
+                    // 返回处理结果给from
+                    FriendProcessApplyMsg msg2 = new FriendProcessApplyMsg(from,me,0);
+                    ctx.writeAndFlush(msg2);
+                } else if (i.equals("N")) {
+
+                } else {
+                    System.out.println("输入有误！请重新操作！");
+                }
+            }else {
+                System.out.println("您没有未处理好友申请！");
+            }
+        }
 
     }
 

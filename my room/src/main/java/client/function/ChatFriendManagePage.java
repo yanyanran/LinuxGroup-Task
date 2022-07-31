@@ -2,6 +2,7 @@ package client.function;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import messages.toclient.ServerToClientMsg;
 import messages.toserver.ChatMsg;
 import messages.toserver.HistoryMsg;
 import messages.toserver.ListMsg;
@@ -186,7 +187,10 @@ public class ChatFriendManagePage {
 
         if(waitSuccess == 1){
             System.out.println("查询成功！以下是你和用户[" + friend+ "]的聊天记录：");
-            Map<Integer,String> historyMsg = msgMap;
+//            Map<Integer,String> historyMsg = msgMap;
+            Map<Integer,String> historyMsg = ServerToClientMsg.getMsgMap();
+            msgMap.clear();  // 归0
+
             /*  ----弃用----
             // 遍历查到最大的键
             for(Map.Entry<Integer, String> m : msgMap.entrySet()) {
@@ -200,7 +204,7 @@ public class ChatFriendManagePage {
              */
 
             // map按照键排个序
-            List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer, String>>(msgMap.entrySet());
+            List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer, String>>(historyMsg.entrySet());
             Collections.sort(list, new Comparator<Map.Entry<Integer, String>>() {
                 @Override
                 public int compare(Map.Entry<Integer, String> o1, Map.Entry<Integer, String> o2) {

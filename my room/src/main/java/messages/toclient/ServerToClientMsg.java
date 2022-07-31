@@ -12,7 +12,6 @@ public class ServerToClientMsg extends UserMessage {
         private int ServerToClientMsg;
         private int num;
         int MessageType = ServerToClientMsg;
-        Map<Integer,String> msgMap;
         ArrayList<String> list;
 
         public ServerToClientMsg(boolean success,String reason) {
@@ -36,6 +35,11 @@ public class ServerToClientMsg extends UserMessage {
             this.msgMap = msgMap;
          }
 
+    public ServerToClientMsg(boolean success, Map<Integer, String> msgMap, String from) {
+        this.success = success;
+        this.msgMap = msgMap;
+    }
+
         public ServerToClientMsg(boolean success, ArrayList<String> list) {
             this.success = success;
             this.list = list;
@@ -57,8 +61,8 @@ public class ServerToClientMsg extends UserMessage {
             return this.num;
         }
 
-        public Map<Integer,String> getMsgMap() {
-            return this.msgMap;
+        public static Map<Integer,String> getMsgMap() {
+            return msgMap;
         }
 
         public ArrayList<String> getList() {

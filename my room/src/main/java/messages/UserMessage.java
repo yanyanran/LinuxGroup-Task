@@ -9,6 +9,7 @@ public abstract class UserMessage implements Serializable {
 //    private static final long serialVersionUID = -7815896088464512553L;
 
     protected static String username;
+    protected static Map<Integer, String> msgMap;
     private int sequenceId;
     public abstract int getMessageType();
 

@@ -24,8 +24,8 @@ public class ChatClient {
     public static volatile Object waitMessage = new Object();    // 服务端消息返回 --> notify唤醒
     public static volatile int waitSuccess;   // 1成功，0失败
     public static volatile  int unreadNum;  // 未读消息数量
-    public static volatile Map<Integer,String> msgMap = new HashMap<>(); //  存消息记录的map
-    public static volatile ArrayList<String> userList = new ArrayList<>();  //  存用户列表的list
+    public static volatile Map<Integer,String> msgMap = new HashMap<>(); // 存消息记录或申请记录的map
+    public static volatile ArrayList<String> userList = new ArrayList<>();  // 存用户列表的list
 
     public ChatClient(String ip, int port) {
         this.ip = ip;

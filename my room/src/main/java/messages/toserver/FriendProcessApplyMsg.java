@@ -9,14 +9,12 @@ import messages.UserMessage;
 public class FriendProcessApplyMsg extends UserMessage {
     private String fromUser;
     private String toUser;
-    private int num;    //
-    private String time;
+    private int num;    // 通过num区分对方是同意了还是拒绝了
 
-    public FriendProcessApplyMsg(String fromUser, String toUser, String time , int num) {
+    public FriendProcessApplyMsg(String fromUser, String toUser, int num) {
         this.fromUser = fromUser;
         this.toUser = toUser;
-        this.num = num;     // 通过num区分对方是同意了还是拒绝了
-        this.time = time;
+        this.num = num;
     }
 
     public String getFromUser() {
@@ -29,10 +27,6 @@ public class FriendProcessApplyMsg extends UserMessage {
 
     public int getNum() {
         return this.num;
-    }
-
-    public String getTime() {
-        return this.time;
     }
 
     @Override

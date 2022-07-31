@@ -9,6 +9,8 @@ import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static client.ChatClient.msgMap;
+
 /**
  * 连接数据库
  * 列出XX聊天记录Handler
@@ -18,8 +20,8 @@ public class HistoryConnectSqlHandler extends SimpleChannelInboundHandler<Histor
     private static final String user = "root";
     private static final String pass = "123456";
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    // 用map存消息记录 --> <id，消息体>
-    public static Map<Integer,String> msgMap = new HashMap<>();
+//    // 用map存消息记录 --> <id，消息体>
+//    public static Map<Integer,String> msgMap = new HashMap<>();
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HistoryMsg msg) throws Exception {
@@ -72,10 +74,10 @@ public class HistoryConnectSqlHandler extends SimpleChannelInboundHandler<Histor
                     flag = 1;
                     int id = rs.getInt("id");
                     String from = rs.getString("fromc");
-                    String to = rs.getString("toc");
+                    //String to = rs.getString("toc");
                     String sendTime = rs.getString("sendtime");
                     String msg1 = rs.getString("msg");
-                    String resultMsg = "[" + sendTime + "]" +  "from" + from + "to" + to + ": " +msg;
+                    String resultMsg = "[" + sendTime + "]" + from + "说：" +msg1;
                     //  写入map
                     msgMap.put(id, resultMsg);
                 }
