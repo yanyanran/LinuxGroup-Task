@@ -208,10 +208,11 @@ public class GroupManagePage {
             // ....
 
         } else if(i.equals("N")) {
-            System.out.println("您已取消申请，是否继续申请加入群聊操作？（Y--确定 N--取消）");
-            
+            System.out.println("您已取消申请!");
+            return;
         } else {
             System.out.println("您的输入有误！请重新操作！");
+            return;
         }
     }
 
