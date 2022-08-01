@@ -147,12 +147,12 @@ public class GroupManagePage {
         }
     }
 
-    // 添加群管理员
+    // 添加群管理员 send--您已被群主设置为群...的管理员
     public static void AddGroupManager(ChannelHandlerContext ctx, String me) {
 
     }
 
-    // 删除群管理员
+    // 删除群管理员 send -- 您已被群主解除群...管理员身份
     public static void DeleteGroupManager(ChannelHandlerContext ctx, String me) {
 
     }

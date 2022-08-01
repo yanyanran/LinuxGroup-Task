@@ -46,7 +46,8 @@ public class MesManagePage {
         }
     }
 
-    // 查看未读消息
+    // 查看未读消息（群聊和单聊未读）
+    /***群聊设置/解除管理员通知就当作msg_type=0来存和读*/
     public static void CheckUnreadMsg(ChannelHandlerContext ctx, String me) {
         UnreadMsg msg = new UnreadMsg(me);
         ctx.writeAndFlush(msg);
@@ -225,7 +226,7 @@ public class MesManagePage {
     }
 
     /**
-     * (A) 我的群验证
+     * (A) 我的群验证（群申请回复）msg_type -- 4 to=me
      * 展示申请处理结果：您已加入群聊.../ 您加入群聊...的申请被驳回
      * */
     public static void ApplyGroupMsg(ChannelHandlerContext ctx, String me) {
@@ -233,10 +234,9 @@ public class MesManagePage {
     }
 
     /**
-     * (B) 我管理的群通知 （群主0和管理员2才能收到）
-     *  群申请 --- 选择同意/不同意
-     *  设置管理员通知 ---- 您已被群主设置为群...的管理员 / 您已被群主解除群...管理员身份
-     *  群友退出 --- XXX退出了群聊(暂不 可补)
+     * (B) 我管理的群申请处理 （群主0和管理员2才能收到） msg_type -- 4 from=me
+     *  选择同意/不同意
+     *  处理前加一个是否已被处理状态判断，一个管理员处理了就改为已处理状态
      * */
     public static void ManageGroupMsg(ChannelHandlerContext ctx, String me) {
 
