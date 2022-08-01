@@ -1,3 +1,5 @@
+
+
 # **ChatRoom初步构思**
 
 ![image-20220712115302120](/home/yanran/.config/Typora/typora-user-images/image-20220712115302120.png)
@@ -42,27 +44,51 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 **群聊列表和好友列表避免一个用户/一个群创建一个表** 
 
-- [x] 用户数据表 （注册后放到这里面）**client**--> id、username、password、state（初始0为离线，1为在线）
+- [x] 用户数据表 （注册后放到这里面）**client** --> id、username、password、state（初始0为离线，1为在线）
 
 - [x] 好友列表 （*互为好友关系*时两人放到此表的同一行里）**friend_list** -->  user1（用户1），user2（用户2），type（属性：0普通好友，1为消息屏蔽(黑名单)好友），send（发送申请方），yes（接收申请方）
 
-- [x] 群聊列表 **group_list** -->  groupname、users、type（身份属性：群主为0，管理员为2，群众为1）
-
-  一个对应一个群聊名对应一个群内身份，需要调用时直接使用共性查找 
-
-- [x] 聊天记录的存储用一个表来记录（输入好友名发起聊天）**history_msg** -->   id，fromc（发送方），toc（接收方），msg_type（消息类型：0--文本  1--文件//3 -- 好友申请），msg（消息内容：字符串 本地路径），sendtime（发送时间）
+- [x] 聊天记录的存储用一个表来记录（输入好友名发起聊天）**history_msg** -->   id，fromc（发送方），toc（接收方），msg_type（消息类型：0--文本  1--文件//3 -- 好友申请  4 --群申请），msg（消息内容：字符串 本地路径），sendtime（发送时间）**【show单聊记录、单聊未读、群聊未读】**
 
   state --> 消息状态，0：对方在线，已发送；1对方离线，可用于1登陆主页面显示未读消息数量2选择查看页面，显示未读消息内容（查看完未读消息后把state设置为0）
 
-- [ ] 群聊记录：一个群一个id，然后所有群记录放在同个表里，按照id区分，调用查看id即可（索引） --> GroupMsg 在线发送后存表 不在线直接存表
+- [x] 群聊列表 **group_list** -->  group_id （唯一群聊ID）、group_name、user、user_type（身份属性 0：群主、1：群众、2：管理员）
+
+  一个对应一个群聊名对应一个群内身份，需要调用时直接使用共性查找 
+
+- [x] 群聊记录 **group_msg** --> id（群id）、fromc （发送人me）、msg_type （消息类型）、msg （消息内容）、time （发送时间）。一个群一个id，所有群记录放在同个表里，按照id区分，调用查看id即可（索引）**【show群聊记录】**
+
+  群聊有人发送消息时，消息*存俩表*：
+
+  1、（查询全群聊天记录用 -- group_msg）
+
+  2、（个人查询未读消息的时候用 -- history_msg）
+
+  from -- 【group_msg获取，存上面那个表里的 id+from 合成的String】
+
+  to -- me
+
+  msg_type -- 【group_msg表获取】
+
+  msg -- 【group_msg表获取】
+
+  state -- 按照状态正常定
+
+  sendtime -- 【group_msg表获取】
+
+  > 发送的时候ResultSet扫描群内用户，分两个ArrayList，一个个判断是否在线，在线的存一个ArrayList不在线的存一个，消息发送的时候遍历两个ArrayList发送（在线的通知+存表state=0，不在线的存表state=1）历史消息存表需要存两次
 
 - [ ] 
+
+- [ ] 
+
+- [ ] ![image-20220801092318289](/home/yanran/.config/Typora/typora-user-images/image-20220801092318289.png)
+
+- [ ] ![image-20220801093506912](/home/yanran/.config/Typora/typora-user-images/image-20220801093506912.png)
 
 - [ ] ![image-20220727121020667](/home/yanran/.config/Typora/typora-user-images/image-20220727121020667.png)
 
 ![image-20220727110424181](/home/yanran/.config/Typora/typora-user-images/image-20220727110424181.png)
-
-![image-20220727110440188](/home/yanran/.config/Typora/typora-user-images/image-20220727110440188.png)
 
 ![image-20220727110507738](/home/yanran/.config/Typora/typora-user-images/image-20220727110507738.png)
 
@@ -116,7 +142,7 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 - [ ] ​      /home/yanran/Downloads
 
-- [ ] 是否需要一个表来存放好友申请？ （不需要）
+- [x] 是否需要一个表来存放好友申请？ （不需要）
 
   ```java
   String sql = "select user2 from friend_list where user1=send and user2=yes and type=0 and user1='" + fromUser + "'";
@@ -229,58 +255,3 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 ​									//群友退出 --- XXX退出了群聊
 
 **（F）退出登陆**（将接收消息数据表改为未读消息表，状态改为离线）
-
-------
-
-群聊的表（列）：
-
-【存群信息和群成员身份】
-
-user -- 用户名
-
-group_id -- 群聊ID（唯一）
-
-group_name -- 群聊名称（可重复）
-
-user_type -- 群聊身份（0：群主、1：群众、2：管理员）
-
-
-
-发消息时，获取在这个群里的所有成员，然后一个个发过去（记得判断人在不在线，在线--推送通知“群XX有新消息！”）
-
-
-
-【存历史消息】在查询未读消息那一栏的查询判断记得加上这个（还用history_msg的话应该就不用加判断了）
-
-1、发送消息时消息存在这个表里：（查询全群聊天记录用）
-
-id -- 群id
-
-from -- 发送人（me）
-
-msg_type -- 消息类型
-
-msg -- 消息内容
-
-send_time -- 发送时间
-
-
-
-发送的时候扫描群内用户ResultSet，分两个ArrayList，一个个判断是否在线，在线的存一个ArrayList不在线的存一个，消息发送的时候遍历两个ArrayList发送（在线的通知+存表state=0，不在线的存表state=1）
-
-
-
-2、接收消息时：（个人查询未读消息的时候用）照旧用history_msg
-
-from -- 【上表获取，存上面那个表里的 id+from 合成的String】
-
-to -- me
-
-msg_type -- 【上表获取】
-
-msg -- 【上表获取】
-
-state -- 按照状态正常定
-
-sendtime -- 【上表获取】
-

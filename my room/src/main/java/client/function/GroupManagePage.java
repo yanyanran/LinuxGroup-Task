@@ -1,8 +1,14 @@
 package client.function;
 
 import io.netty.channel.ChannelHandlerContext;
+import messages.toserver.AddGroupMsg;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
+
+import static client.ChatClient.waitMessage;
+import static client.ChatClient.waitSuccess;
 
 /**
  * Client Page
@@ -204,9 +210,29 @@ public class GroupManagePage {
         System.out.println("您确定申请加入此群吗？（Y--确定 N--取消）：");
         String i = input.next();
         if(i.equals("Y")) {
-            // id传给服务端
-            // ....
+            // 获取发送时间
+            SimpleDateFormat sdf = new SimpleDateFormat();
+            sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");
+            Date date = new Date();
+            String time = sdf.format((date));
 
+            // id传给服务端
+            AddGroupMsg msg = new AddGroupMsg(me, id, time);
+            ctx.writeAndFlush(msg);
+            try {
+                synchronized (waitMessage) {
+                    waitMessage.wait();
+                }
+            }catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            if(waitSuccess == 1) {
+                System.out.println("等待群管理员处理申请");
+            } else {
+                System.out.println("没有找到该群！");
+            }
+            return;
         } else if(i.equals("N")) {
             System.out.println("您已取消申请!");
             return;
