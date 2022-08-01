@@ -2,9 +2,7 @@ package client.function;
 
 import io.netty.channel.ChannelHandlerContext;
 import messages.toclient.ServerToClientMsg;
-import messages.toserver.FriendProcessApplyMsg;
-import messages.toserver.UnreadApplyMsg;
-import messages.toserver.UnreadMsg;
+import messages.toserver.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -239,6 +237,120 @@ public class MesManagePage {
      *  处理前加一个是否已被处理状态判断，一个管理员处理了就改为已处理状态
      * */
     public static void ManageGroupMsg(ChannelHandlerContext ctx, String me) {
+        boolean s = true;
+        while (s) {
+            // 展示id + msg
+            UnreadGroupApplyMsg msg = new UnreadGroupApplyMsg(me);
+            ctx.writeAndFlush(msg);
+            try {
+                synchronized (waitMessage) {
+                    waitMessage.wait();
+                }
+            }catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if(waitSuccess == 1){
+                System.out.println("以下是您还未处理的入群申请：");
+                String Msg = ServerToClientMsg.getMsg();   // 这样就可以知道群ID了（卑微）
+                Map<Integer,String> unapplyMap = ServerToClientMsg.getMsgMap();
+                msgMap.clear();
 
+                // map按照键排个序
+                List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer, String>>(unapplyMap.entrySet());
+                Collections.sort(list, new Comparator<Map.Entry<Integer, String>>() {
+                    @Override
+                    public int compare(Map.Entry<Integer, String> o1, Map.Entry<Integer, String> o2) {
+                        // 升序排序
+                        return Integer.parseInt(String.valueOf(o1.getKey()))-Integer.parseInt(String.valueOf(o2.getKey()));
+                    }
+                });
+                // 输出
+                for (Map.Entry<Integer, String> entry : list) {
+                    System.out.println(entry.getValue());
+                }
+
+                // 用户选择处理id （顺着id可以找到from方
+                System.out.println("请选择您要处理的申请id：");
+                int id = input.nextInt();
+                System.out.println("是否通过入群请求？（Y--通过申请  N--拒绝申请）");
+                String i = input.next();
+                // catch time
+                SimpleDateFormat sdf = new SimpleDateFormat();
+                sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");
+                Date date = new Date();
+                String time = sdf.format((date));
+
+                // 通过申请
+                if (i.equals("Y")) {
+                    // 返回处理结果给from
+                    ProcessGroupApplyMsg msg2 = new ProcessGroupApplyMsg(id,Msg,0,time);
+                    ctx.writeAndFlush(msg2);
+                    try {
+                        synchronized (waitMessage) {
+                            waitMessage.wait();
+                        }
+                    }catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    if(waitSuccess == 1) {
+                        System.out.println("处理成功！您是否选择继续操作？【退出--输入1 继续--输入除1外任意数字键】");
+                        int ip = input.nextInt();
+                        if(ip == 1) {
+                            s = false;
+                        } else {
+                            continue;
+                        }
+                    }else {
+                        System.out.println("处理失败！您是否选择重新操作？【退出--输入1 继续--输入除1外任意数字键】");
+                        int ip = input.nextInt();
+                        if(ip == 1) {
+                            s = false;
+                        } else {
+                            continue;
+                        }
+                    }
+                } else if (i.equals("N")) { // 拒绝申请
+                    // 返回处理结果给from
+                    ProcessGroupApplyMsg msg2 = new ProcessGroupApplyMsg(id,me,1,time);
+                    ctx.writeAndFlush(msg2);
+                    try {
+                        synchronized (waitMessage) {
+                            waitMessage.wait();
+                        }
+                    }catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    if(waitSuccess == 1) {
+                        System.out.println("处理成功！您是否选择继续操作？【退出--输入1 继续--输入除1外任意数字键】");
+                        int ip = input.nextInt();
+                        if(ip == 1) {
+                            s = false;
+                        } else {
+                            continue;
+                        }
+                    }else {
+                        System.out.println("处理失败！您是否选择重新操作？【退出--输入1 继续--输入除1外任意数字键】");
+                        int ip = input.nextInt();
+                        if(ip == 1) {
+                            s = false;
+                        } else {
+                            continue;
+                        }
+                    }
+                } else {
+                    System.out.println("输入有误！您是否选择重新操作？【退出--输入1 继续--输入除1外任意数字键】");
+                    int ip = input.nextInt();
+                    if(ip == 1) {
+                        s = false;
+                    } else {
+                        continue;
+                    }
+                }
+            }else {
+                System.out.println("您没有未处理好友申请！");
+            }
+        }
     }
 }

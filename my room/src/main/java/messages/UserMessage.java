@@ -10,6 +10,7 @@ public abstract class UserMessage implements Serializable {
 
     protected static String username;
     protected static Map<Integer, String> msgMap;
+    protected static String msg;  // 传群申请内容（获取群名）
     private int sequenceId;
     public abstract int getMessageType();
 
