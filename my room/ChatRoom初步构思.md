@@ -72,8 +72,6 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
   state -- 按照状态正常定sendtime -- 【group_msg表获取】您有一条管理员身份变动通知
 
-  
-
   > 发送的时候ResultSet扫描群内用户，分两个ArrayList，一个个判断是否在线，在线的存一个ArrayList不在线的存一个，消息发送的时候遍历两个ArrayList发送（在线的通知+存表state=0，不在线的存表state=1）历史消息存表需要存两次![image-20220801092318289](/home/yanran/.config/Typora/typora-user-images/image-20220801092318289.png)
 
 - [ ] ![](/home/yanran/.config/Typora/typora-user-images/image-20220803151250503.png)
@@ -243,6 +241,8 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 ​												**查看群组成员**
 
+输出：（用户名group_list） （是否是自己的好友friend_list） （在线情况client） （群身份group_list）
+
 ​												**删除群成员**
 
 ​												**退出群聊**
@@ -251,9 +251,9 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 ​					**申请加入群聊** 数据库查找是否存在此群 --- 存在
 
-**（C）好友聊天**
+**（C）好友聊天**					
 
-​					**发起聊天**
+​				**发起聊天**
 
 发起聊天：先列出非黑名单的好友列表
 再选择想要聊天的对象（输入对方名字）

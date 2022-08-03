@@ -121,7 +121,7 @@ public class GroupManagePage {
 
             switch (i.toUpperCase()) {
                 case "A":
-                    CheckGroupMembers(ctx, me, 1);
+                    CheckGroupMembers(ctx, me);
                     break;
                 case "B":
                     exitGroup(ctx, me, 1);
@@ -183,7 +183,7 @@ public class GroupManagePage {
 
             switch (i.toUpperCase()) {
                 case "A":
-                    CheckGroupMembers(ctx, me, 0);
+                    CheckGroupMembers(ctx, me);
                     break;
                 case "B":
                     AddGroupManager(ctx, me);
@@ -240,6 +240,7 @@ public class GroupManagePage {
             return;
         } else{
             System.out.println("您的输入有误！请按要求正确输入！");
+            return;
         }
     }
 
@@ -272,6 +273,7 @@ public class GroupManagePage {
             return;
         } else {
             System.out.println("您的输入有误！请按要求正确输入！");
+            return;
         }
     }
 
@@ -309,6 +311,7 @@ public class GroupManagePage {
             return;
         } else {
             System.out.println("您的输入有误！请按要求正确输入！");
+            return;
         }
     }
 
@@ -360,7 +363,7 @@ public class GroupManagePage {
 
             switch (i.toUpperCase()) {
                 case "A":
-                    CheckGroupMembers(ctx, me, 2);
+                    CheckGroupMembers(ctx, me);
                     break;
                 case "B":
                     DeleteGroupManager(ctx, me, 2);
@@ -452,13 +455,24 @@ public class GroupManagePage {
      * 三个身份的查看群成员共用一个方法
      * type -- 0群主、1群众、2管理员
      */
-    public static void CheckGroupMembers(ChannelHandlerContext ctx, String me, int type) {
-        if (type == 0) { // 群主
+    public static void CheckGroupMembers(ChannelHandlerContext ctx, String me) {
+        System.out.println("您想要查看哪个群的群成员列表？请输入该群ID号：");
+        int id = input.nextInt();
+        GroupMemberMsg msg = new GroupMemberMsg(me,id);
+        ctx.writeAndFlush(msg);
+        try {
+            synchronized (waitMessage) {
+                waitMessage.wait();
+            }
+        }catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        } else if(type == 1) { // 群众
-
-        } else if(type ==2) { // 管理员
-
+        if(waitSuccess == 1) {
+            System.out.println("以下是该群的群成员列表：");
+            // ....
+        } else {
+            System.out.println("查看失败！");
         }
     }
 
