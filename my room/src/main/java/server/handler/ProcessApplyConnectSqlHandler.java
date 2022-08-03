@@ -66,7 +66,7 @@ public class ProcessApplyConnectSqlHandler extends SimpleChannelInboundHandler<F
                             String sql5 = "select State from client where username='"+ from +"'";
                             ResultSet rs4 = ps.executeQuery(sql5);
                             while(rs4.next()) {
-                                int state = m.getInt("State");
+                                int state = rs4.getInt("State");
                                 if (state == 1) {
                                     // 在线，发送消息通知申请方
                                     System.out.println("对方在线！正在给对方发送回复申请信息....");

@@ -40,8 +40,8 @@ public class UnreadGroupApplyConnectSqlHandler extends SimpleChannelInboundHandl
                 int id = rs.getInt("id");
                 from = rs.getString("fromc");
                 String sendTime = rs.getString("sendtime");
-                Msg = rs.getString("msg");  // 传msg
-                String resultMsg = "【" + sendTime + "】 " + from + Msg;
+                Msg = rs.getString("msg");  // 传msg(群ID)
+                String resultMsg = "【" + sendTime + "】 " + from +  "申请加入群聊" + Msg;
                 //  写入map
                 msgMap.put(id, resultMsg);
             }

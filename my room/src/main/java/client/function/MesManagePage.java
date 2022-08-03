@@ -272,7 +272,7 @@ public class MesManagePage {
                 // 用户选择处理id （顺着id可以找到from方
                 System.out.println("请选择您要处理的申请id：");
                 int id = input.nextInt();
-                System.out.println("是否通过入群请求？（Y--通过申请  N--拒绝申请）");
+                System.out.println("是否通过此入群请求？（Y--通过申请  N--拒绝申请）");
                 String i = input.next();
                 // catch time
                 SimpleDateFormat sdf = new SimpleDateFormat();
@@ -282,7 +282,7 @@ public class MesManagePage {
 
                 // 通过申请
                 if (i.equals("Y")) {
-                    // 返回处理结果给from
+                    // 返回处理结果给from（Msg里面包含群ID号，传回去即可
                     ProcessGroupApplyMsg msg2 = new ProcessGroupApplyMsg(id,Msg,0,time);
                     ctx.writeAndFlush(msg2);
                     try {
@@ -312,7 +312,7 @@ public class MesManagePage {
                     }
                 } else if (i.equals("N")) { // 拒绝申请
                     // 返回处理结果给from
-                    ProcessGroupApplyMsg msg2 = new ProcessGroupApplyMsg(id,me,1,time);
+                    ProcessGroupApplyMsg msg2 = new ProcessGroupApplyMsg(id,Msg,1,time);
                     ctx.writeAndFlush(msg2);
                     try {
                         synchronized (waitMessage) {
@@ -349,7 +349,7 @@ public class MesManagePage {
                     }
                 }
             }else {
-                System.out.println("您没有未处理好友申请！");
+                System.out.println("您没有未处理的好友申请！");
             }
         }
     }

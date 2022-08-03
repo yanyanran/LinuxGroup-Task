@@ -8,13 +8,13 @@ import messages.UserMessage;
  * */
 public class ProcessGroupApplyMsg extends UserMessage {
     private int msgId;
-    private String toUser;
+    private String GroupID;
     private int num;    // 通过num区分对方是同意了还是拒绝了
     String time;
 
-    public ProcessGroupApplyMsg(int msgId, String toUser, int num, String time) {
+    public ProcessGroupApplyMsg(int msgId, String GroupID, int num, String time) {
         this.msgId = msgId;
-        this.toUser = toUser;
+        this.GroupID = GroupID;
         this.num = num;
         this.time = time;
     }
@@ -23,8 +23,9 @@ public class ProcessGroupApplyMsg extends UserMessage {
         return this.msgId;
     }
 
-    public String getToUser() {
-        return this.toUser;
+    public String getGroupID() {
+        // msg
+        return this.GroupID;
     }
 
     public int getNum() {
@@ -37,8 +38,8 @@ public class ProcessGroupApplyMsg extends UserMessage {
 
     @Override
     public String toString() {
-        // 申请通过和申请拒绝区分
-        return "----- *>您发出的入群申请：【" + toUser + "】已被处理<* -----";
+        // 申请通过和申请拒绝区分（处理完通知给申请方
+        return "----- *>您对群【" + GroupID + "】发出的入群申请已被处理<* -----";
     }
     @Override
     public int getMessageType() {

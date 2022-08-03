@@ -41,8 +41,8 @@ public class AddGroupConnectSqlHandler extends SimpleChannelInboundHandler<AddGr
             ResultSet rs = stmt.executeQuery(sql);
             if(rs.next()) {
                 System.out.println("群存在！正在获取该群管理员和群主列表....");
-                groupName = rs.getString("group_name");
-                String ms = me +"申请加入群聊" + groupName;
+                groupName = rs.getString("group_name") ;
+                String ms = String.valueOf(groupID); // 在这里存群id号
 
                 // 确定to群体：遍历group_list里面user_type=0/2的，对应user存入ArrayList中
                 String sql2 = "select user from group_list where user_type=0 or user_type=2";

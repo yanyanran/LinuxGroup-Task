@@ -80,8 +80,6 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 - [ ] 
 
-- [ ] 
-
 - [ ] ![image-20220801092318289](/home/yanran/.config/Typora/typora-user-images/image-20220801092318289.png)
 
 - [ ] ![image-20220801093506912](/home/yanran/.config/Typora/typora-user-images/image-20220801093506912.png)
