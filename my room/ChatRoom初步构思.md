@@ -76,8 +76,6 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
   > 发送的时候ResultSet扫描群内用户，分两个ArrayList，一个个判断是否在线，在线的存一个ArrayList不在线的存一个，消息发送的时候遍历两个ArrayList发送（在线的通知+存表state=0，不在线的存表state=1）历史消息存表需要存两次
 
-- [ ] 
-
 - [ ] ![image-20220801092318289](/home/yanran/.config/Typora/typora-user-images/image-20220801092318289.png)
 
 - [ ] ![](/home/yanran/.config/Typora/typora-user-images/image-20220803151250503.png)
@@ -140,13 +138,43 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 - [x] 是否需要一个表来存放好友申请？ （不需要）
 
+- [x] ```java
+  // 查看加入的群列表 -- 客户端接收群列表
+  try {
+      synchronized (waitMessage) {
+          waitMessage.wait();
+      }
+  } catch (InterruptedException e) {
+      e.printStackTrace();
+  }
+  
+  if (waitSuccess == 1) {
+      System.out.println("以下是您已加入的群列表：");
+      // 输出群ID和群名（map）
+      Map<Integer, String> groupList = ServerToClientMsg.getMsgMap();
+      msgMap.clear();  // 归0
+      // map按照键排个序
+      List<Map.Entry<Integer, String>> list = new ArrayList<Map.Entry<Integer, String>>(groupList.entrySet());
+      Collections.sort(list, new Comparator<Map.Entry<Integer, String>>() {
+          @Override
+          public int compare(Map.Entry<Integer, String> o1, Map.Entry<Integer, String> o2) {
+              // 升序排
+              return Integer.parseInt(String.valueOf(o1.getKey())) - Integer.parseInt(String.valueOf(o2.getKey()));
+          }
+      });
+      // 输出
+      for (Map.Entry<Integer, String> entry : list) {
+          System.out.println(entry.getValue());
+      }
+  ```
+  
   ```java
   String sql = "select user2 from friend_list where user1=send and user2=yes and type=0 and user1='" + fromUser + "'";
   Statement stm = con.createStatement();
   ResultSet rs = stm.executeQuery(sql);
   while (rs.next())
   ```
-
+  
   ```java
   // 启动客户端,等待连接服务端,同时将异步改为同步
   ChannelFuture channelFuture = bootstrap.connect(ip,port).sync();

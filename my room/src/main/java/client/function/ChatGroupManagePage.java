@@ -51,7 +51,7 @@ public class ChatGroupManagePage {
         boolean s = true;
         while (s) {
             // 展示用户加入的群列表 -- group_list
-            GroupMsg msg = new GroupMsg(me);
+            GroupMsg msg = new GroupMsg(me,3);
             ctx.writeAndFlush(msg);
             try {
                 synchronized (waitMessage) {

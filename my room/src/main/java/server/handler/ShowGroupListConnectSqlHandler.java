@@ -22,16 +22,29 @@ public class ShowGroupListConnectSqlHandler extends SimpleChannelInboundHandler<
             Class.forName(JDBC_DRIVER);
             Connection con = DriverManager.getConnection(url, user, pass);
             String me = msg.getMe();
+            int type = msg.getType();
 
             System.out.println("开始查找" + me + "用户加入的群列表....");
-            String sql = "select group_id,group_name from group_list where user='" + me + "'";
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-                flag = 1;
-                String name = rs.getString("group_name");
-                int id = rs.getInt("group_id");
-                msgMap.put(id, name);
+            if(type == 3) {  // 全部显示
+                String sql = "select group_id,group_name from group_list where user='" + me + "'";
+                Statement stmt = con.createStatement();
+                ResultSet rs = stmt.executeQuery(sql);
+                while (rs.next()) {
+                    flag = 1;
+                    String name = rs.getString("group_name");
+                    int id = rs.getInt("group_id");
+                    msgMap.put(id, name);
+                }
+            }else {  // 按需索取
+                String sql = "select group_id,group_name from group_list where user='" + me + "' and user_type='"+ type +"'";
+                Statement stmt = con.createStatement();
+                ResultSet rs = stmt.executeQuery(sql);
+                while (rs.next()) {
+                    flag = 1;
+                    String name = rs.getString("group_name");
+                    int id = rs.getInt("group_id");
+                    msgMap.put(id, name);
+                }
             }
 
             if (flag == 0) {
