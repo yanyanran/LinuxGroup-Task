@@ -30,8 +30,8 @@ public class ProcessGroupApplyConnectSqlHandler extends SimpleChannelInboundHand
             int groupID = Integer.parseInt(msg.getGroupID());
             String time = msg.getTime();
             String groupName = null;
-            String ms1 = "您的入群申请已通过";
-            String ms2 = "您的入群申请被拒绝";
+            String ms1 = "您的入群申请已通过!您已加入群聊" + groupID;
+            String ms2 = "您加入群聊"+ groupID +"的申请被驳回";
 
             // 回复前先查一下消息状态state是不是已经置为0（0就是已处理）
             System.out.println("正在检测此申请是否已被处理...");

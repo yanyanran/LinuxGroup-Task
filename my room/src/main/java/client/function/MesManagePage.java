@@ -77,6 +77,7 @@ public class MesManagePage {
                 System.out.println(entry.getValue());
             }
         }else {
+            System.out.println("查找结果为空！");
             return;
         }
     }
@@ -202,7 +203,7 @@ public class MesManagePage {
     public static void CheckGroupMsg(ChannelHandlerContext ctx, String me) {
         boolean s = true;
         while (s) {
-            System.out.println("(A) 我的群验证");
+            System.out.println("(A) 我的未读群验证");
             System.out.println("(B) 我管理的群通知");   // 群主0和管理员2才能收到
             System.out.println("(C) 退出");
             System.out.println("【请输入您的选择】:");
@@ -224,10 +225,44 @@ public class MesManagePage {
     }
 
     /**
-     * (A) 我的群验证（群申请回复）msg_type -- 4 to=me
+     * (A) 我的未读群验证（未读群申请回复）
+     * history_list： msg_type -- 4 to=me
      * 展示申请处理结果：您已加入群聊.../ 您加入群聊...的申请被驳回
      * */
     public static void ApplyGroupMsg(ChannelHandlerContext ctx, String me) {
+        UnreadGroupReplyMsg msg = new UnreadGroupReplyMsg(me);
+        ctx.writeAndFlush(msg);
+        try {
+            synchronized (waitMessage) {
+                waitMessage.wait();
+            }
+        }catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        if(waitSuccess == 1) {
+            System.out.println("以下是您的未读群验证回复消息：");
+            Map<Integer,String> unreadMsg = ServerToClientMsg.getMsgMap();
+            msgMap.clear();  // 归0
+
+            // map按照键排个序
+            List<Map.Entry<Integer,String>> list = new ArrayList<Map.Entry<Integer, String>>(unreadMsg.entrySet());
+            Collections.sort(list, new Comparator<Map.Entry<Integer, String>>() {
+                @Override
+                public int compare(Map.Entry<Integer, String> o1, Map.Entry<Integer, String> o2) {
+                    // 升序排
+                    return Integer.parseInt(String.valueOf(o1.getKey()))-Integer.parseInt(String.valueOf(o2.getKey()));
+                }
+            });
+
+            // 输出未读消息
+            for (Map.Entry<Integer, String> entry : list) {
+                System.out.println(entry.getValue());
+            }
+        }else {
+            System.out.println("查找结果为空！");
+            return;
+        }
 
     }
 

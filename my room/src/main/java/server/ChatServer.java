@@ -64,6 +64,7 @@ public class ChatServer {
                             ch.pipeline().addLast("add-group-handler", new AddGroupConnectSqlHandler());
                             ch.pipeline().addLast("unread-group-apply-handler", new UnreadGroupApplyConnectSqlHandler());
                             ch.pipeline().addLast("process-group-apply-handler",new ProcessGroupApplyConnectSqlHandler());
+                            ch.pipeline().addLast("unread-group-reply-handler", new UnreadGroupReplyConnectSqlHandler());
                             //添加编解码器
                             ch.pipeline().addFirst(new MessageCode());
                             // 长度协议解码器
