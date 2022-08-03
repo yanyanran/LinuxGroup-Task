@@ -66,9 +66,7 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
   from -- 【group_msg获取，存上面那个表里的 id+from 合成的String】
 
-  to -- me
-
-  msg_type -- 【group_msg表获取】
+  to -- memsg_type -- 【group_msg表获取】
 
   msg -- 【group_msg表获取】
 
@@ -82,7 +80,7 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 - [ ] ![image-20220801092318289](/home/yanran/.config/Typora/typora-user-images/image-20220801092318289.png)
 
-- [ ] ![image-20220801093506912](/home/yanran/.config/Typora/typora-user-images/image-20220801093506912.png)
+- [ ] ![](/home/yanran/.config/Typora/typora-user-images/image-20220803151250503.png)
 
 - [ ] ![image-20220727121020667](/home/yanran/.config/Typora/typora-user-images/image-20220727121020667.png)
 

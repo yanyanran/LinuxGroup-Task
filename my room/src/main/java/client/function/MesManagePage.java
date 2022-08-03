@@ -204,7 +204,7 @@ public class MesManagePage {
         boolean s = true;
         while (s) {
             System.out.println("(A) 我的未读群验证");
-            System.out.println("(B) 我管理的群通知");   // 群主0和管理员2才能收到
+            System.out.println("(B) 我管理的群申请通知");   // 群主0和管理员2才能收到
             System.out.println("(C) 退出");
             System.out.println("【请输入您的选择】:");
             String i = input.nextLine();

@@ -79,6 +79,8 @@ public class FriendManagePage {
             for(int i = 0; i < userList.size(); i++) {
                 System.out.println(userList.get(i));
             }
+            userList.clear();  // 清空不影响下一次存储和输出
+
             System.out.println("您想操作：\n【1】向好友发起会话\n【2】查看好友聊天记录（* 输入除1、2外任意键即可退出当前页面 *） \n请输入您的选择：");
             int i = input.nextInt();
             if(i == 1) {
@@ -115,6 +117,8 @@ public class FriendManagePage {
             for(int i = 0; i < userList.size(); i++) {
                 System.out.println(userList.get(i));
             }
+            userList.clear();  // 清空不影响下一次存储和输出
+
             System.out.println("您想操作：\n【1】 添加黑名单好友\n【2】删除黑名单好友\n* 输入除1、2外任意键即可退出当前页面* \n请输入您的选择：");
             int i = input.nextInt();
 
@@ -146,7 +150,6 @@ public class FriendManagePage {
                         new FriendManagePage(ctx, me);
                         break;
                 }
-
             } else {
                 new FriendManagePage(ctx, me);
             }
