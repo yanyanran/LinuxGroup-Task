@@ -2,10 +2,7 @@ package client.function;
 
 import io.netty.channel.ChannelHandlerContext;
 import messages.toclient.ServerToClientMsg;
-import messages.toserver.AddGroupMsg;
-import messages.toserver.CreateGroupMsg;
-import messages.toserver.GroupManagerMsg;
-import messages.toserver.GroupMsg;
+import messages.toserver.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -213,26 +210,36 @@ public class GroupManagePage {
         int id = input.nextInt();
         System.out.println("您想要添加哪个帐号为此群的群管理员？");
         String name = input.next();
-        // 获取时间
-        SimpleDateFormat sdf = new SimpleDateFormat();
-        sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");
-        Date date = new Date();
-        String time = sdf.format((date));
+        System.out.println("您确定要添加" + name + "为群" + id + "的管理员吗？（Y -- 确定  N --取消）\n【请输入您的选择】：");
+        String i = input.next();
 
-        GroupManagerMsg msg = new GroupManagerMsg(id, me, name, 0,time);  // 添加0
-        ctx.writeAndFlush(msg);
-        try {
-            synchronized (waitMessage) {
-                waitMessage.wait();
+        if((i).equalsIgnoreCase("Y")) {
+            // 获取时间
+            SimpleDateFormat sdf = new SimpleDateFormat();
+            sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");
+            Date date = new Date();
+            String time = sdf.format((date));
+
+            GroupManagerMsg msg = new GroupManagerMsg(id, me, name, 0, time);  // 添加0
+            ctx.writeAndFlush(msg);
+            try {
+                synchronized (waitMessage) {
+                    waitMessage.wait();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
-        if(waitSuccess == 1) {
-            System.out.println("已将"+ name +"设为群"+ id +"的管理员！");
-        }else {
-            System.out.println("添加失败！");
+            if (waitSuccess == 1) {
+                System.out.println("已将" + name + "设为群" + id + "的管理员！");
+            } else {
+                System.out.println("添加失败！");
+            }
+            return;
+        } else if((i).equalsIgnoreCase("N")) {
+            return;
+        } else{
+            System.out.println("您的输入有误！请按要求正确输入！");
         }
     }
 
@@ -242,25 +249,67 @@ public class GroupManagePage {
         int id = input.nextInt();
         System.out.println("您想要移除此群的哪个管理员？");
         String name = input.next();
+        System.out.println("您确定要移除" + name + "在群" + id + "的管理员身份吗？（Y -- 确定  N --取消）\n【请输入您的选择】：");
+        String i = input.next();
+
+        if((i).equalsIgnoreCase("Y")) {
+            // 获取时间
+            SimpleDateFormat sdf = new SimpleDateFormat();
+            sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");
+            Date date = new Date();
+            String time = sdf.format((date));
+
+            GroupManagerMsg msg = new GroupManagerMsg(id, me, name, 1, time);  // 删除1
+            ctx.writeAndFlush(msg);
+
+            if (waitSuccess == 1) {
+                System.out.println("已经将" + name + "移除群" + id + "的管理员身份！");
+            } else {
+                System.out.println("删除失败！");
+            }
+            return;
+        } else if((i).equalsIgnoreCase("N")) {
+            return;
+        } else {
+            System.out.println("您的输入有误！请按要求正确输入！");
+        }
+    }
+
+    // 0解散群聊 -- 并告诉所有人该群已被解散
+    public static void DisbandGroup(ChannelHandlerContext ctx, String me) {
+        System.out.println("请输入您想要解散的群ID：");
+        int id = input.nextInt();
+        System.out.println("您确定要解散此群吗？（Y -- 确定  N --取消）\n【请输入您的选择】：");
+        String i = input.next();
         // 获取时间
         SimpleDateFormat sdf = new SimpleDateFormat();
         sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");
         Date date = new Date();
         String time = sdf.format((date));
 
-        GroupManagerMsg msg = new GroupManagerMsg(id, me, name, 1, time);  // 删除1
-        ctx.writeAndFlush(msg);
+        if((i).equalsIgnoreCase("Y")) {
+            DisbandGroupMsg msg = new DisbandGroupMsg(me, id,time);
+            ctx.writeAndFlush(msg);
+            try {
+                synchronized (waitMessage) {
+                    waitMessage.wait();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-        if(waitSuccess == 1) {
-            System.out.println("已经将"+ name +"移除群"+ id +"的管理员身份！");
-        }else {
-            System.out.println("删除失败！");
+            if (waitSuccess == 1) {
+
+                System.out.println("群聊"+ id +"已解散！");
+            } else {
+                System.out.println("操作失败！");
+            }
+
+        }else if((i).equalsIgnoreCase("N")) {
+            return;
+        } else {
+            System.out.println("您的输入有误！请按要求正确输入！");
         }
-    }
-
-    // 0解散群聊
-    public static void DisbandGroup(ChannelHandlerContext ctx, String me) {
-
     }
 
     /**

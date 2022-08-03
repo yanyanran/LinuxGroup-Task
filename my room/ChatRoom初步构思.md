@@ -72,9 +72,9 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
   state -- 按照状态正常定sendtime -- 【group_msg表获取】您有一条管理员身份变动通知
 
-  > 发送的时候ResultSet扫描群内用户，分两个ArrayList，一个个判断是否在线，在线的存一个ArrayList不在线的存一个，消息发送的时候遍历两个ArrayList发送（在线的通知+存表state=0，不在线的存表state=1）历史消息存表需要存两次
+  
 
-- [ ] ![image-20220801092318289](/home/yanran/.config/Typora/typora-user-images/image-20220801092318289.png)
+  > 发送的时候ResultSet扫描群内用户，分两个ArrayList，一个个判断是否在线，在线的存一个ArrayList不在线的存一个，消息发送的时候遍历两个ArrayList发送（在线的通知+存表state=0，不在线的存表state=1）历史消息存表需要存两次![image-20220801092318289](/home/yanran/.config/Typora/typora-user-images/image-20220801092318289.png)
 
 - [ ] ![](/home/yanran/.config/Typora/typora-user-images/image-20220803151250503.png)
 
@@ -227,11 +227,17 @@ ServerProcess.java -> 服务器与客户端的处理 -> 登陆
 
 判断2：正在查询操作对象是否是此群的管理员（移除失败！用户不是此群的群管理员！）
 
-
-
 ​												**删除群成员**
 
 ​												**解散群聊**
+
+群主（0）才能删除。解散群聊时候：
+
+判断1：查询操作人是否是该群群主（您不是该群群主！无权解散该群！）
+
+操作2：发送解散群的通知，写入历史记录
+
+操作3：删除group_list中group_id=id的项
 
 ​									***我管理的群***（管理员2）
 
