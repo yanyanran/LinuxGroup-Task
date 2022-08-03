@@ -11,6 +11,7 @@ import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import messages.MessageCode;
+import messages.toserver.GroupManagerMsg;
 import server.handler.*;
 
 /**
@@ -68,6 +69,7 @@ public class ChatServer {
                             ch.pipeline().addLast("join-group-handler", new ShowGroupListConnectSqlHandler());
                             ch.pipeline().addLast("group-history-handler", new HistoryGroupConnectSqlHandler());
                             ch.pipeline().addLast("create-group-handler", new CreateGroupHandler());
+                            ch.pipeline().addLast("group-manager-handler", new GroupManagerHandler());
                             //添加编解码器
                             ch.pipeline().addFirst(new MessageCode());
                             // 长度协议解码器

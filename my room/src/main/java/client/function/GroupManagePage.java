@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 import messages.toclient.ServerToClientMsg;
 import messages.toserver.AddGroupMsg;
 import messages.toserver.CreateGroupMsg;
+import messages.toserver.GroupManagerMsg;
 import messages.toserver.GroupMsg;
 
 import java.text.SimpleDateFormat;
@@ -206,17 +207,58 @@ public class GroupManagePage {
         }
     }
 
-    // 添加群管理员 send--您已被群主设置为群...的管理员
+    // 0添加群管理员 send（消息类型为0）--您已被群主设置为群...的管理员
     public static void AddGroupManager(ChannelHandlerContext ctx, String me) {
+        System.out.println("请输入你想要管理的群ID：");
+        int id = input.nextInt();
+        System.out.println("您想要添加哪个帐号为此群的群管理员？");
+        String name = input.next();
+        // 获取时间
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");
+        Date date = new Date();
+        String time = sdf.format((date));
 
+        GroupManagerMsg msg = new GroupManagerMsg(id, me, name, 0,time);  // 添加0
+        ctx.writeAndFlush(msg);
+        try {
+            synchronized (waitMessage) {
+                waitMessage.wait();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        if(waitSuccess == 1) {
+            System.out.println("已将"+ name +"设为群"+ id +"的管理员！");
+        }else {
+            System.out.println("添加失败！");
+        }
     }
 
-    // 删除群管理员 send -- 您已被群主解除群...管理员身份
+    // 0删除群管理员 send （消息类型为0）-- 您已被群主解除群...管理员身份
     public static void DeleteGroupManager(ChannelHandlerContext ctx, String me) {
+        System.out.println("请输入你想要管理的群ID：");
+        int id = input.nextInt();
+        System.out.println("您想要移除此群的哪个管理员？");
+        String name = input.next();
+        // 获取时间
+        SimpleDateFormat sdf = new SimpleDateFormat();
+        sdf.applyPattern("yyyy-MM-dd HH:mm:ss a ");
+        Date date = new Date();
+        String time = sdf.format((date));
 
+        GroupManagerMsg msg = new GroupManagerMsg(id, me, name, 1, time);  // 删除1
+        ctx.writeAndFlush(msg);
+
+        if(waitSuccess == 1) {
+            System.out.println("已经将"+ name +"移除群"+ id +"的管理员身份！");
+        }else {
+            System.out.println("删除失败！");
+        }
     }
 
-    // 解散群聊
+    // 0解散群聊
     public static void DisbandGroup(ChannelHandlerContext ctx, String me) {
 
     }
