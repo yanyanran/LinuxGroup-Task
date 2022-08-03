@@ -3,6 +3,7 @@ package client.function;
 import io.netty.channel.ChannelHandlerContext;
 import messages.toclient.ServerToClientMsg;
 import messages.toserver.AddGroupMsg;
+import messages.toserver.CreateGroupMsg;
 import messages.toserver.GroupMsg;
 
 import java.text.SimpleDateFormat;
@@ -82,7 +83,7 @@ public class GroupManagePage {
     public static void MyJoinGroup(ChannelHandlerContext ctx, String me) {
         boolean s = true;
         while (s) {
-            // 开头列出我加入的群列表
+            // 开头列出我加入的群列表名字和ID
             GroupMsg msg = new GroupMsg(me,1);
             ctx.writeAndFlush(msg);
             try {
@@ -141,7 +142,7 @@ public class GroupManagePage {
     public static void MyCreateGroup(ChannelHandlerContext ctx, String me) {
         boolean s = true;
         while (s) {
-            // 开头列出我创建的群列表
+            // 开头列出我创建的群列表名字和ID
             GroupMsg msg = new GroupMsg(me, 0);
             ctx.writeAndFlush(msg);
             try {
@@ -227,7 +228,7 @@ public class GroupManagePage {
     public static void MyManageGroup(ChannelHandlerContext ctx, String me) {
         boolean s = true;
         while (s) {
-            // 开头列出我管理的群列表
+            // 开头列出我管理的群列表名字和ID
             GroupMsg msg = new GroupMsg(me, 2);
             ctx.writeAndFlush(msg);
             try {
@@ -286,8 +287,34 @@ public class GroupManagePage {
 
     // (B)创建新的群聊
     public static void createNewGroup(ChannelHandlerContext ctx, String me) {
-        // 允许创建同名的群名，靠群ID区分
+        // 允许创建同名的群名，靠群ID区分（自动生成的ID）
+        System.out.println("请设置你想要创建的新群的群名：");
+        String name = input.next();
+        System.out.println("你确定要创建此群吗？（Y -- 创建  除Y任意键取消创建）\n【请输入您的选择】：");
+        if((input.next()).equals("Y")) {
+            // 群名传给handler插入 返回群id号给创建人
+            CreateGroupMsg msg = new CreateGroupMsg(me, name);
+            ctx.writeAndFlush(msg);
+            try {
+                synchronized (waitMessage) {
+                    waitMessage.wait();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
+            if (waitSuccess == 1) {
+                // 不确定这里直接调用unreadNum会不会重，先试试
+                System.out.println("创建群聊成功！您创建的群：【"+ name +"】所对应的群id号为：【" + unreadNum + "】");
+                return;
+            }else {
+                System.out.println("创建群聊失败！请重试！");
+                return;
+            }
+        } else {
+            System.out.println("您已取消创建操作！");
+            return;
+        }
     }
 
     // (C)申请加入群聊
